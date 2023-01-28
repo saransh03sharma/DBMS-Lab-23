@@ -285,3 +285,59 @@ VALUES
 (20231412,177,6,(SELECT STR_TO_DATE('17/12/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10022,170039)
 ;
 ---------------------------------------------------------- Done till here
+/*
+
+BUILDING OF THE DATABASE DONE, NOW THE QUERIES
+
+*/
+
+--1. Names of all physicians who are trained in procedure name “Bypass Surgery”
+SELECT Name
+FROM Physician
+WHERE EmployeeID IN (SELECT Physician
+                     FROM Trained_in
+                     WHERE Treatment = (SELECT Code
+                                        FROM 20CS10085.Procedure
+                                        WHERE Name = "Bypass Surgery"));
+
+--2. Names of all physicians affiliated with the department name “cardiology” and trained in “bypass surgery”
+SELECT Name
+FROM Physician
+WHERE EmployeeID IN (SELECT Physician
+                     FROM Trained_in
+                     WHERE Treatment = (SELECT Code
+                                        FROM 20CS10085.Procedure
+                                        WHERE Name = "Bypass Surgery") AND Physician IN (SELECT Physician
+                                                                                          FROM Affiliated_with
+                                                                                          WHERE Department = (SELECT DepartmentID
+                                                                                                               FROM Department
+                                                                                                               WHERE Name = "Cardiology"))); 
+
+--3. Names of all the nurses who have ever been on call for room 1402
+SELECT Name
+FROM Nurse
+WHERE EmployeeID IN (SELECT Nurse
+                    FROM On_Call
+                    WHERE (BlockFloor,BlockCode) IN (SELECT BlockFloor,BlockCode
+                                                    FROM Room
+                                                    WHERE Number = 1402));
+
+--4. Names and addresses of all patients who were prescribed the medication named “remdesivir”
+SELECT Name,Address
+FROM Patient
+WHERE SSN IN (SELECT Patient
+                    FROM Prescribes
+                    WHERE Medication IN (SELECT Code
+                                    FROM Medication
+                                    WHERE Name = 'Remdesivir'));
+
+--5. Name and insurance id of all patients who stayed in the “icu” room type for more than 15 days
+SELECT Name,InsuranceID
+FROM Patient
+WHERE SSN IN (SELECT Patient
+                    FROM Stay
+                    WHERE Room IN (SELECT Number
+                                    FROM Room
+                                    WHERE Type = 'ICU') AND DATEDIFF(`End`,Start)>15);
+
+--6. Names of all nurses who assisted in the procedure name “bypass surgery”
