@@ -1,3 +1,4 @@
+---------------Entities----------------
 CREATE TABLE Block (
     Floor int NOT NULL,
     Code int NOT NULL,
@@ -90,14 +91,14 @@ VALUES
 (20231436,"Argus Filch" ,"701 Rohan Orchard, Apt. 995, 16113-7152, East Roselyn, Alabama, United States","307-237-8667",231436,30023)
 ;
 CREATE TABLE Appointment (
-    AppointmtentID int NOT NULL,
+    AppointmentID int NOT NULL,
     Patient int NOT NULL,
     PrepNurse int,
     Physician int NOT NULL,
     Start datetime NOT NULL,
     `End` datetime NOT NULL,
     ExaminationRoom TINYTEXT NOT NULL,
-    CONSTRAINT PK_Appointment PRIMARY KEY (AppointmtentID),
+    CONSTRAINT PK_Appointment PRIMARY KEY (AppointmentID),
     CONSTRAINT FK_Appointment_Nurse FOREIGN KEY (PrepNurse) REFERENCES Nurse(EmployeeID),
     CONSTRAINT FK_Appointment_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
     CONSTRAINT FK_Appointment_Patient FOREIGN KEY (Patient) REFERENCES Patient(SSN)
@@ -168,7 +169,119 @@ VALUES
 (5,20231396,1113,(SELECT STR_TO_DATE('07/12/2022 13:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('13/12/2022 12:30:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
 (6,20231412,1007,(SELECT STR_TO_DATE('17/12/2022 14:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('24/12/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS `End`))
 ;
+---------------Relations----------------
+CREATE TABLE Affiliated_with (
+    Physician int NOT NULL,
+    Department int NOT NULL,
+    PrimaryAffiliation boolean NOT NULL,
+    CONSTRAINT PK_Affiliated_with PRIMARY KEY (Physician,Department),
+    CONSTRAINT FK_Affiliated_with_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Affiliated_with_Department FOREIGN KEY (Department) REFERENCES Department(DepartmentID)
+);
+INSERT INTO Affiliated_with
+VALUES
+(10006,100,TRUE),
+(10013,100,TRUE),
+(10022,100,TRUE),
+(20018,200,TRUE),
+(20021,200,TRUE),
+(30007,300,TRUE),
+(30023,300,TRUE),
+(40017,400,TRUE),
+(40019,400,TRUE),
+(50033,500,TRUE),
+(10022,200,FALSE)
+;
+CREATE TABLE On_Call (
+    Nurse int NOT NULL,
+    BlockFloor int NOT NULL,
+    BlockCode int NOT NULL,
+    Start datetime NOT NULL,
+    `End` datetime NOT NULL,
+    CONSTRAINT PK_On_Call PRIMARY KEY (Nurse,BlockFloor,BlockCode,Start,`End`),
+    CONSTRAINT FK_On_Call_Nurse FOREIGN KEY (Nurse) REFERENCES Nurse(EmployeeID),
+    CONSTRAINT FK_On_Call_Block FOREIGN KEY (BlockFloor,BlockCode) REFERENCES Block(Floor,Code)
+);
+INSERT INTO On_Call
+VALUES
+(170056,2,400,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170063,4,100,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170023,1,500,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170077,3,300,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170034,2,400,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170039,4,100,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170045,3,300,(SELECT STR_TO_DATE('01/01/2022 09:00:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('31/12/2022 20:00:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(170039,0,200,(SELECT STR_TO_DATE('17/12/2022 14:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('24/12/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS `End`))
+;
+CREATE TABLE Prescribes (
+    Physician int NOT NULL,
+    Patient int NOT NULL,
+    Medication int NOT NULL,
+    Date datetime NOT NULL,
+    Appointment int,
+    Dose TINYTEXT NOT NULL,
+    CONSTRAINT PK_Prescribes PRIMARY KEY (Physician,Patient,Medication,Date),
+    CONSTRAINT FK_Prescribes_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Prescribes_Patient FOREIGN KEY (Patient) REFERENCES Patient(SSN),
+    CONSTRAINT FK_Prescribes_Medication FOREIGN KEY (Medication) REFERENCES Medication(Code),
+    CONSTRAINT FK_Prescribes_Appointment FOREIGN KEY (Appointment) REFERENCES Appointment(AppointmentID)
+);
+INSERT INTO Prescribes
+VALUES
+(40017,20231356,406589,(SELECT STR_TO_DATE('11/01/2022 14:30:00', '%d/%m/%Y %H:%i:%s') AS Date),1,"Twice a day"),
+(10013,20231372,393620,(SELECT STR_TO_DATE('13/02/2022 12:30:00', '%d/%m/%Y %H:%i:%s') AS Date),2,"Twice a day"),
+(50033,20231396,412368,(SELECT STR_TO_DATE('17/03/2022 19:30:00', '%d/%m/%Y %H:%i:%s') AS Date),3,"Twice a day"),
+(30023,20231398,436589,(SELECT STR_TO_DATE('05/04/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Date),4,"Once a day"),
+(40019,20231412,406589,(SELECT STR_TO_DATE('23/05/2022 14:45:00', '%d/%m/%Y %H:%i:%s') AS Date),5,"Twice a day"),
+(10022,20231425,393620,(SELECT STR_TO_DATE('21/06/2022 14:15:00', '%d/%m/%Y %H:%i:%s') AS Date),6,"Twice a day"),
+(30023,20231436,436589,(SELECT STR_TO_DATE('27/07/2022 11:30:00', '%d/%m/%Y %H:%i:%s') AS Date),7,"Once a day"),
+(30023,20231398,436589,(SELECT STR_TO_DATE('29/08/2022 16:30:00', '%d/%m/%Y %H:%i:%s') AS Date),8,"Once a day"),
+(10013,20231372,393620,(SELECT STR_TO_DATE('16/09/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS Date),9,"Twice a day"),
+(30023,20231436,436589,(SELECT STR_TO_DATE('10/10/2022 18:00:00', '%d/%m/%Y %H:%i:%s') AS Date),10,"Once a day")
+;
+CREATE TABLE Trained_in (
+    Physician int NOT NULL,
+    Treatment int NOT NULL,
+    CertificationDate datetime NOT NULL,
+    CertificationExpires datetime NOT NULL,
+    CONSTRAINT PK_Trained_in PRIMARY KEY (Physician,Treatment),
+    CONSTRAINT FK_Trained_in_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Trained_in_Procedure FOREIGN KEY (Treatment) REFERENCES 20CS10085.Procedure(Code)
+);
+INSERT INTO Trained_in
+VALUES
+(10006,213,(SELECT STR_TO_DATE('14/05/2001 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('14/05/2031 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(10013,213,(SELECT STR_TO_DATE('17/02/2007 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('17/02/2037 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(10022,213,(SELECT STR_TO_DATE('12/07/2011 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('12/07/2041 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(20018,177,(SELECT STR_TO_DATE('10/02/2012 11:00:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('10/02/2032 11:00:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(20021,177,(SELECT STR_TO_DATE('29/07/2012 09:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('29/07/2032 09:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(30007,132,(SELECT STR_TO_DATE('07/05/2013 18:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('07/05/2028 18:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(30023,165,(SELECT STR_TO_DATE('09/07/2013 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('09/07/2028 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(40017,303,(SELECT STR_TO_DATE('16/09/2017 11:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('16/09/2027 11:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(40019,303,(SELECT STR_TO_DATE('23/10/2018 17:00:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('23/10/2028 17:00:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
+(50033,177,(SELECT STR_TO_DATE('20/05/2002 15:45:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('20/05/2022 15:45:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires))
+;
+CREATE TABLE Undergoes (
+    Patient int NOT NULL,
+    `Procedure` int NOT NULL,
+    Stay int NOT NULL,
+    Date datetime NOT NULL,
+    Physician int NOT NULL,
+    AssistingNurse int,
+    CONSTRAINT PK_Undergoes PRIMARY KEY (Patient,`Procedure`,Stay,Date),
+    CONSTRAINT FK_Undergoes_Patient FOREIGN KEY (Patient) REFERENCES Patient(SSN),
+    CONSTRAINT FK_Undergoes_Procedure FOREIGN KEY (`Procedure`) REFERENCES 20CS10085.Procedure(Code),
+    CONSTRAINT FK_Undergoes_Stay FOREIGN KEY (Stay) REFERENCES Stay(StayID),
+    CONSTRAINT FK_Undergoes_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Undergoes_AssistingNurse FOREIGN KEY (AssistingNurse) REFERENCES Nurse(EmployeeID)
+);
+INSERT INTO Undergoes
+VALUES
+(20231398,132,1,(SELECT STR_TO_DATE('17/10/2022 09:30:00', '%d/%m/%Y %H:%i:%s') AS Date),30023,170045),
+(20231436,165,2,(SELECT STR_TO_DATE('24/10/2022 13:30:00', '%d/%m/%Y %H:%i:%s') AS Date),30023,170077),
+(20231372,213,3,(SELECT STR_TO_DATE('03/11/2022 17:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10013,170063),
+(20231356,303,4,(SELECT STR_TO_DATE('23/10/2022 20:30:00', '%d/%m/%Y %H:%i:%s') AS Date),40017,170056),
+(20231396,177,5,(SELECT STR_TO_DATE('10/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS Date),50033,170023),
+(20231412,177,6,(SELECT STR_TO_DATE('17/12/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10022,170039)
+;
 ---------------------------------------------------------- Done till here
-
-
-
