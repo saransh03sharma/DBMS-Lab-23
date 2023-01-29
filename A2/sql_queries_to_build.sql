@@ -295,7 +295,7 @@ BUILDING OF THE DATABASE DONE, NOW THE QUERIES
 */
 
 --1. Names of all physicians who are trained in procedure name “Bypass Surgery”
-SELECT Name
+SELECT Name "Physician Name"
 FROM Physician
 WHERE EmployeeID IN (SELECT Physician
                      FROM Trained_in
@@ -304,7 +304,7 @@ WHERE EmployeeID IN (SELECT Physician
                                         WHERE Name = "Bypass Surgery"));
 
 --2. Names of all physicians affiliated with the department name “cardiology” and trained in “bypass surgery”
-SELECT Name
+SELECT Name "Physician Name"
 FROM Physician
 WHERE EmployeeID IN (SELECT Physician
                      FROM Trained_in
@@ -317,7 +317,7 @@ WHERE EmployeeID IN (SELECT Physician
                                                                                                                WHERE Name = "Cardiology"))); 
 
 --3. Names of all the nurses who have ever been on call for room 1402
-SELECT Name
+SELECT Name "Nurse Name"
 FROM Nurse
 WHERE EmployeeID IN (SELECT Nurse
                     FROM On_Call
@@ -326,7 +326,7 @@ WHERE EmployeeID IN (SELECT Nurse
                                                     WHERE Number = 1402));
 
 --4. Names and addresses of all patients who were prescribed the medication named “remdesivir”
-SELECT Name,Address
+SELECT Name "Patient Name",Address "Patient Address"
 FROM Patient
 WHERE SSN IN (SELECT Patient
                     FROM Prescribes
@@ -335,7 +335,7 @@ WHERE SSN IN (SELECT Patient
                                     WHERE Name = 'Remdesivir'));
 
 --5. Name and insurance id of all patients who stayed in the “icu” room type for more than 15 days
-SELECT Name,InsuranceID
+SELECT Name "Patient Name",InsuranceID "Patient Insurance ID"
 FROM Patient
 WHERE SSN IN (SELECT Patient
                     FROM Stay
@@ -344,7 +344,7 @@ WHERE SSN IN (SELECT Patient
                                     WHERE Type = 'ICU') AND DATEDIFF(`End`,Start)>15);
 
 --6. Names of all nurses who assisted in the procedure name “bypass surgery”
-SELECT Name
+SELECT Name "Nurse Name"
 FROM Nurse
 WHERE EmployeeID IN (SELECT AssistingNurse
                     FROM Undergoes U
@@ -362,7 +362,7 @@ WHERE (P.EmployeeID,N.EmployeeID) IN (SELECT Physician,AssistingNurse
                                     WHERE Name = "Bypass Surgery"));
 
 --8. Obtain the names of all physicians who have performed a medical procedure they have never been trained to perform
-SELECT Name
+SELECT Name "Physician Name"
 FROM Physician
 WHERE EmployeeID IN (SELECT Physician
         FROM Undergoes U
@@ -371,7 +371,7 @@ WHERE EmployeeID IN (SELECT Physician
 
 --9. Names of all physicians who have performed a medical procedure that they are trained to perform, 
 -- but such that the procedure was done at a date (Undergoes.Date) after the physician's certification expired (Trained_In.CertificationExpires)
-SELECT P.Name
+SELECT P.Name "Physician Name"
 FROM ((Undergoes U
 INNER JOIN Trained_in T        
 ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
@@ -379,7 +379,7 @@ INNER JOIN Physician P ON U.Physician = P.EmployeeID);
 
 --10. Same as the previous query, but include the following information in the results: Physician name, name of procedure, 
 -- date when the procedure was carried out, name of the patient the procedure was carried out on
-SELECT P.Name,PR.Name,U.Date,PA.Name
+SELECT P.Name "Physician Name",PR.Name "Procedure Name",U.Date "Procedure Date",PA.Name "Patient Name"
 FROM ((((Undergoes U
 INNER JOIN Trained_in T        
 ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
@@ -421,7 +421,7 @@ INNER JOIN Physician P ON A.Physician = P.EmployeeID)
 INNER JOIN Patient PA ON A.Patient = PA.SSN);
 
 --12. Name and brand of the medication which has been prescribed to the highest number of patients
-SELECT Name,Brand
+SELECT Name "Medication Name",Brand "Medication Brand"
 FROM Medication
 WHERE Code = (SELECT Medication
                 FROM Prescribes
