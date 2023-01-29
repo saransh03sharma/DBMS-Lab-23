@@ -148,7 +148,8 @@ VALUES
 (1303,"ICU",3,300,TRUE),
 (1307,"Deluxe",3,300,TRUE),
 (1402,"ICU",4,100,FALSE),
-(1409,"Deluxe",4,100,TRUE)
+(1409,"Deluxe",4,100,TRUE),
+(123,"ICU",0,200,FALSE)
 ;
 CREATE TABLE Stay (
     StayID int NOT NULL,
@@ -167,7 +168,8 @@ VALUES
 (3,20231372,1402,(SELECT STR_TO_DATE('23/10/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('20/11/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
 (4,20231356,1205,(SELECT STR_TO_DATE('23/10/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('24/10/2022 11:30:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
 (5,20231396,1113,(SELECT STR_TO_DATE('07/12/2022 13:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('13/12/2022 12:30:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
-(6,20231412,1007,(SELECT STR_TO_DATE('17/12/2022 14:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('24/12/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS `End`))
+(6,20231412,1007,(SELECT STR_TO_DATE('17/12/2022 14:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('24/12/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS `End`)),
+(7,20231425,123,(SELECT STR_TO_DATE('19/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('23/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS `End`))
 ;
 ---------------Relations----------------
 CREATE TABLE Affiliated_with (
@@ -282,7 +284,8 @@ VALUES
 (20231372,213,3,(SELECT STR_TO_DATE('03/11/2022 17:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10013,170063),
 (20231356,303,4,(SELECT STR_TO_DATE('23/10/2022 20:30:00', '%d/%m/%Y %H:%i:%s') AS Date),40017,170056),
 (20231396,177,5,(SELECT STR_TO_DATE('10/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS Date),50033,170023),
-(20231412,177,6,(SELECT STR_TO_DATE('17/12/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10022,170039)
+(20231412,177,6,(SELECT STR_TO_DATE('17/12/2022 15:30:00', '%d/%m/%Y %H:%i:%s') AS Date),10022,170039),
+(20231425,132,7,(SELECT STR_TO_DATE('19/12/2022 13:00:00', '%d/%m/%Y %H:%i:%s') AS Date),50033,170039)
 ;
 ---------------------------------------------------------- Done till here
 /*
@@ -341,3 +344,67 @@ WHERE SSN IN (SELECT Patient
                                     WHERE Type = 'ICU') AND DATEDIFF(`End`,Start)>15);
 
 --6. Names of all nurses who assisted in the procedure name “bypass surgery”
+SELECT Name
+FROM Nurse
+WHERE EmployeeID IN (SELECT AssistingNurse
+                    FROM Undergoes U
+                    WHERE U.Procedure = (SELECT Code
+                                    FROM 20CS10085.Procedure
+                                    WHERE Name = "Bypass Surgery"));
+
+--7. Name and position of all nurses who assisted in the procedure name “bypass surgery” along with the names of and the accompanying physicians
+SELECT N.Name 'Nurse Name',N.Position 'Nurse Position',P.Name 'Physician Name'
+FROM Physician P,Nurse N
+WHERE (P.EmployeeID,N.EmployeeID) IN (SELECT Physician,AssistingNurse
+                    FROM Undergoes
+                    WHERE Undergoes.Procedure = (SELECT Code
+                                    FROM 20CS10085.Procedure
+                                    WHERE Name = "Bypass Surgery"));
+
+--8. Obtain the names of all physicians who have performed a medical procedure they have never been trained to perform
+SELECT Name
+FROM Physician
+WHERE EmployeeID IN (SELECT Physician
+        FROM Undergoes U
+        WHERE (Physician,U.Procedure) NOT IN (SELECT Physician,Treatment
+                                    FROM Trained_in));
+
+--9. Names of all physicians who have performed a medical procedure that they are trained to perform, 
+-- but such that the procedure was done at a date (Undergoes.Date) after the physician's certification expired (Trained_In.CertificationExpires)
+SELECT P.Name
+FROM ((Undergoes U
+INNER JOIN Trained_in T        
+ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
+INNER JOIN Physician P ON U.Physician = P.EmployeeID);
+
+--10. Same as the previous query, but include the following information in the results: Physician name, name of procedure, 
+-- date when the procedure was carried out, name of the patient the procedure was carried out on
+SELECT P.Name,PR.Name,U.Date,PA.Name
+FROM ((((Undergoes U
+INNER JOIN Trained_in T        
+ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
+INNER JOIN 20CS10085.Procedure PR ON U.Procedure = PR.Code)
+INNER JOIN Patient PA ON U.Patient = PA.SSN)
+INNER JOIN Physician P ON U.Physician = P.EmployeeID);
+
+/* 11. Names of all patients (also include, for each patient, the name of the patient's physician), such that all the following are true:
+• The patient has been prescribed some medication by his/her physician
+• The patient has undergone a procedure with a cost larger that 5000
+• The patient has had at least two appointment where the physician was
+affiliated with the cardiology department
+• The patient's physician is not the head of any department */
+
+
+
+
+
+--12. Name and brand of the medication which has been prescribed to the highest number of patients
+SELECT Name,Brand
+FROM Medication
+WHERE Code = (SELECT Medication
+                FROM Prescribes
+                GROUP BY Medication
+                ORDER BY COUNT(*) DESC
+                LIMIT 1);
+
+
