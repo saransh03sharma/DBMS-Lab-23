@@ -388,15 +388,37 @@ INNER JOIN Patient PA ON U.Patient = PA.SSN)
 INNER JOIN Physician P ON U.Physician = P.EmployeeID);
 
 /* 11. Names of all patients (also include, for each patient, the name of the patient's physician), such that all the following are true:
-• The patient has been prescribed some medication by his/her physician
-• The patient has undergone a procedure with a cost larger that 5000
-• The patient has had at least two appointment where the physician was
-affiliated with the cardiology department
-• The patient's physician is not the head of any department */
+1. The patient has been prescribed some medication by his/her physician
+2. The patient has undergone a procedure with a cost larger that 5000
+3. Name of all the patient who had at least two appointment where the physician was affiliated with the cardiology department
+4. The patient's physician is not the head of any department */
 
-
-
-
+SELECT PA.Name "Patient's Name",P.Name "Physician's Name"
+FROM (((SELECT Patient,Physician
+        FROM Undergoes
+        WHERE (Patient,Physician) IN (SELECT Patient,Physician
+                                        FROM Prescribes
+                                        WHERE (Patient,Physician) IN (SELECT Patient,Physician
+                                                                    FROM Appointment
+                                                                    WHERE Physician IN (SELECT Physician
+                                                                                        FROM Affiliated_with
+                                                                                        WHERE Department = (SELECT DepartmentID
+                                                                                                            FROM Department
+                                                                                                            WHERE Name = "Cardiology") AND Physician NOT IN (SELECT Head
+                                                                                                                                                            FROM Department)
+                                                                                        )
+                                                                    GROUP BY Patient,Physician
+                                                                    HAVING COUNT(*)>=2
+                                                                    )
+                                        GROUP BY Patient,Physician
+                                        HAVING COUNT(*)>=1
+                                        ) AND `Procedure` IN (SELECT Code
+                                                            FROM 20CS10085.Procedure
+                                                            WHERE Cost>5000)
+        GROUP BY Patient,Physician
+        HAVING COUNT(*)>=1) AS A
+INNER JOIN Physician P ON A.Physician = P.EmployeeID)
+INNER JOIN Patient PA ON A.Patient = PA.SSN);
 
 --12. Name and brand of the medication which has been prescribed to the highest number of patients
 SELECT Name,Brand
