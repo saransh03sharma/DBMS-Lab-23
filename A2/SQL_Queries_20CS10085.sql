@@ -314,14 +314,14 @@ WHERE EmployeeID IN (SELECT Physician
                                                                                                                FROM Department
                                                                                                                WHERE Name = "Cardiology"))); 
 
--- 3. Names of all the nurses who have ever been on call for room 1402
+-- 3. Names of all the nurses who have ever been on call for room 123
 SELECT Name "Nurse Name"
 FROM Nurse
 WHERE EmployeeID IN (SELECT Nurse
                     FROM On_Call
                     WHERE (BlockFloor,BlockCode) IN (SELECT BlockFloor,BlockCode
                                                     FROM Room
-                                                    WHERE Number = 1402));
+                                                    WHERE Number = 123));
 
 -- 4. Names and addresses of all patients who were prescribed the medication named “remdesivir”
 SELECT Name "Patient Name",Address "Patient Address"
