@@ -56,13 +56,13 @@ VALUES
 (40019,"Ronald Weasley","Fellow",20231499),
 (50033,"Alastor Moody","HOD",20231507)
 ;
-CREATE TABLE 20CS10085.Procedure (
+CREATE TABLE Procedures (
     Code int NOT NULL,
     Name TINYTEXT NOT NULL,
     Cost int NOT NULL,
-    CONSTRAINT PK_Procedure PRIMARY KEY (Code)
+    CONSTRAINT PK_Procedures PRIMARY KEY (Code)
 );
-INSERT INTO 20CS10085.Procedure
+INSERT INTO Procedures
 VALUES
 (132,"Bypass Surgery",120000),
 (165,"Pacemaker Surgery",270000),
@@ -172,15 +172,15 @@ VALUES
 (7,20231425,123,(SELECT STR_TO_DATE('19/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS Start),(SELECT STR_TO_DATE('23/12/2022 10:30:00', '%d/%m/%Y %H:%i:%s') AS `End`))
 ;
 ---------------Relations----------------
-CREATE TABLE Affiliated_with (
+CREATE TABLE Affiliated_With (
     Physician int NOT NULL,
     Department int NOT NULL,
     PrimaryAffiliation boolean NOT NULL,
-    CONSTRAINT PK_Affiliated_with PRIMARY KEY (Physician,Department),
-    CONSTRAINT FK_Affiliated_with_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
-    CONSTRAINT FK_Affiliated_with_Department FOREIGN KEY (Department) REFERENCES Department(DepartmentID)
+    CONSTRAINT PK_Affiliated_With PRIMARY KEY (Physician,Department),
+    CONSTRAINT FK_Affiliated_With_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Affiliated_With_Department FOREIGN KEY (Department) REFERENCES Department(DepartmentID)
 );
-INSERT INTO Affiliated_with
+INSERT INTO Affiliated_With
 VALUES
 (10006,100,TRUE),
 (10013,100,TRUE),
@@ -241,16 +241,16 @@ VALUES
 (10013,20231372,393620,(SELECT STR_TO_DATE('16/09/2022 18:30:00', '%d/%m/%Y %H:%i:%s') AS Date),9,"Twice a day"),
 (30023,20231436,436589,(SELECT STR_TO_DATE('10/10/2022 18:00:00', '%d/%m/%Y %H:%i:%s') AS Date),10,"Once a day")
 ;
-CREATE TABLE Trained_in (
+CREATE TABLE Trained_In (
     Physician int NOT NULL,
     Treatment int NOT NULL,
     CertificationDate datetime NOT NULL,
     CertificationExpires datetime NOT NULL,
-    CONSTRAINT PK_Trained_in PRIMARY KEY (Physician,Treatment),
-    CONSTRAINT FK_Trained_in_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
-    CONSTRAINT FK_Trained_in_Procedure FOREIGN KEY (Treatment) REFERENCES 20CS10085.Procedure(Code)
+    CONSTRAINT PK_Trained_In PRIMARY KEY (Physician,Treatment),
+    CONSTRAINT FK_Trained_In_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
+    CONSTRAINT FK_Trained_In_Procedures FOREIGN KEY (Treatment) REFERENCES Procedures(Code)
 );
-INSERT INTO Trained_in
+INSERT INTO Trained_In
 VALUES
 (10006,213,(SELECT STR_TO_DATE('14/05/2001 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('14/05/2031 14:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
 (10013,213,(SELECT STR_TO_DATE('17/02/2007 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationDate),(SELECT STR_TO_DATE('17/02/2037 10:30:00', '%d/%m/%Y %H:%i:%s') AS CertificationExpires)),
@@ -272,7 +272,7 @@ CREATE TABLE Undergoes (
     AssistingNurse int,
     CONSTRAINT PK_Undergoes PRIMARY KEY (Patient,`Procedure`,Stay,Date),
     CONSTRAINT FK_Undergoes_Patient FOREIGN KEY (Patient) REFERENCES Patient(SSN),
-    CONSTRAINT FK_Undergoes_Procedure FOREIGN KEY (`Procedure`) REFERENCES 20CS10085.Procedure(Code),
+    CONSTRAINT FK_Undergoes_Procedures FOREIGN KEY (`Procedure`) REFERENCES Procedures(Code),
     CONSTRAINT FK_Undergoes_Stay FOREIGN KEY (Stay) REFERENCES Stay(StayID),
     CONSTRAINT FK_Undergoes_Physician FOREIGN KEY (Physician) REFERENCES Physician(EmployeeID),
     CONSTRAINT FK_Undergoes_AssistingNurse FOREIGN KEY (AssistingNurse) REFERENCES Nurse(EmployeeID)
@@ -298,20 +298,20 @@ BUILDING OF THE DATABASE DONE, NOW THE QUERIES
 SELECT Name "Physician Name"
 FROM Physician
 WHERE EmployeeID IN (SELECT Physician
-                     FROM Trained_in
+                     FROM Trained_In
                      WHERE Treatment = (SELECT Code
-                                        FROM 20CS10085.Procedure
+                                        FROM Procedures
                                         WHERE Name = "Bypass Surgery"));
 
 --2. Names of all physicians affiliated with the department name “cardiology” and trained in “bypass surgery”
 SELECT Name "Physician Name"
 FROM Physician
 WHERE EmployeeID IN (SELECT Physician
-                     FROM Trained_in
+                     FROM Trained_In
                      WHERE Treatment = (SELECT Code
-                                        FROM 20CS10085.Procedure
+                                        FROM Procedures
                                         WHERE Name = "Bypass Surgery") AND Physician IN (SELECT Physician
-                                                                                          FROM Affiliated_with
+                                                                                          FROM Affiliated_With
                                                                                           WHERE Department = (SELECT DepartmentID
                                                                                                                FROM Department
                                                                                                                WHERE Name = "Cardiology"))); 
@@ -349,7 +349,7 @@ FROM Nurse
 WHERE EmployeeID IN (SELECT AssistingNurse
                     FROM Undergoes U
                     WHERE U.Procedure = (SELECT Code
-                                    FROM 20CS10085.Procedure
+                                    FROM Procedures
                                     WHERE Name = "Bypass Surgery"));
 
 --7. Name and position of all nurses who assisted in the procedure name “bypass surgery” along with the names of and the accompanying physicians
@@ -358,7 +358,7 @@ FROM Physician P,Nurse N
 WHERE (P.EmployeeID,N.EmployeeID) IN (SELECT Physician,AssistingNurse
                     FROM Undergoes
                     WHERE Undergoes.Procedure = (SELECT Code
-                                    FROM 20CS10085.Procedure
+                                    FROM Procedures
                                     WHERE Name = "Bypass Surgery"));
 
 --8. Obtain the names of all physicians who have performed a medical procedure they have never been trained to perform
@@ -367,13 +367,13 @@ FROM Physician
 WHERE EmployeeID IN (SELECT Physician
         FROM Undergoes U
         WHERE (Physician,U.Procedure) NOT IN (SELECT Physician,Treatment
-                                    FROM Trained_in));
+                                    FROM Trained_In));
 
 --9. Names of all physicians who have performed a medical procedure that they are trained to perform, 
 -- but such that the procedure was done at a date (Undergoes.Date) after the physician's certification expired (Trained_In.CertificationExpires)
 SELECT P.Name "Physician Name"
 FROM ((Undergoes U
-INNER JOIN Trained_in T        
+INNER JOIN Trained_In T        
 ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
 INNER JOIN Physician P ON U.Physician = P.EmployeeID);
 
@@ -381,9 +381,9 @@ INNER JOIN Physician P ON U.Physician = P.EmployeeID);
 -- date when the procedure was carried out, name of the patient the procedure was carried out on
 SELECT P.Name "Physician Name",PR.Name "Procedure Name",U.Date "Procedure Date",PA.Name "Patient Name"
 FROM ((((Undergoes U
-INNER JOIN Trained_in T        
+INNER JOIN Trained_In T        
 ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0)
-INNER JOIN 20CS10085.Procedure PR ON U.Procedure = PR.Code)
+INNER JOIN Procedures PR ON U.Procedure = PR.Code)
 INNER JOIN Patient PA ON U.Patient = PA.SSN)
 INNER JOIN Physician P ON U.Physician = P.EmployeeID);
 
@@ -401,7 +401,7 @@ FROM (((SELECT Patient,Physician
                                         WHERE (Patient,Physician) IN (SELECT Patient,Physician
                                                                     FROM Appointment
                                                                     WHERE Physician IN (SELECT Physician
-                                                                                        FROM Affiliated_with
+                                                                                        FROM Affiliated_With
                                                                                         WHERE Department = (SELECT DepartmentID
                                                                                                             FROM Department
                                                                                                             WHERE Name = "Cardiology") AND Physician NOT IN (SELECT Head
@@ -413,7 +413,7 @@ FROM (((SELECT Patient,Physician
                                         GROUP BY Patient,Physician
                                         HAVING COUNT(*)>=1
                                         ) AND `Procedure` IN (SELECT Code
-                                                            FROM 20CS10085.Procedure
+                                                            FROM Procedures
                                                             WHERE Cost>5000)
         GROUP BY Patient,Physician
         HAVING COUNT(*)>=1) AS A
