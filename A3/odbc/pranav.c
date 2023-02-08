@@ -1,8 +1,10 @@
 #include <stdio.h>
-#include<windows.h>
+#include <windows.h>
 #include <string.h>
 #include <sql.h>
 #include <sqlext.h>
+
+#define MAX_ARR_LEN 200
 
 SQLHENV  henv=NULL;
 SQLHDBC  hdbc=NULL;
@@ -86,15 +88,13 @@ int db_fetch()
 {
   SQLRETURN r;
   SQLHSTMT hstmt;
-  SQLCHAR sql[1000];
+  SQLCHAR sql[4096];
   SQLLEN n;
   SQLINTEGER id;
-  SQLCHAR name[100];
-  SQLCHAR addr[100];
-  SQLCHAR phy[100];
-  SQLREAL age;
-  SQL_DATE_STRUCT birthday;
-  SQL_TIMESTAMP_STRUCT create_timestamp;
+  SQLCHAR sql_name[MAX_ARR_LEN];
+  SQLCHAR sql_address[MAX_ARR_LEN];
+  SQLCHAR sql_physician[MAX_ARR_LEN];
+  SQL_TIMESTAMP_STRUCT sql_date_time;
 
   if(hdbc==NULL || henv==NULL) return 0;
 
@@ -102,18 +102,60 @@ int db_fetch()
   if(!(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)) return 0;
 
   int i;
-  printf("Enter a number: ");
+  printf("Enter the query number: ");
   scanf("%d", &i);
   if(i==1)
   {
-    printf("\nPhysician Name\n");
+    strcpy(sql,"SELECT Name \"Physician Name\" "
+                "FROM Physician "
+                "WHERE EmployeeID IN (SELECT Physician "
+                                     "FROM Trained_In "
+                                     "WHERE Treatment = (SELECT Code "
+                                                        "FROM Procedures "
+                                                        "WHERE Name = \"Bypass Surgery\"));");
+    // strcpy(sql, query);
+    r=SQLExecDirect(hstmt, sql, SQL_NTS);
+    if(r!=SQL_SUCCESS) 
+    {
+      printf("cannot access [%s]\n", sql);
+      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+      return 0;
+    }
+
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+      printf("\nPhysician Name\n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
+    while(1)
+    {
+      if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+      {
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        printf("%s\n",sql_name);
+      }
+      else if(SQL_NO_DATA==r) break;
+      else
+      {
+        printf("%s\n", "fail to fetch data");
+        break;
+      }
+      r=SQLFetch(hstmt);
+    }
+  }
+  
+  else if(i==2)
+  {
     strcpy(sql,"SELECT Name \"Physician Name\" "
 "FROM Physician "
 "WHERE EmployeeID IN (SELECT Physician "
                      "FROM Trained_In "
                      "WHERE Treatment = (SELECT Code "
                                         "FROM Procedures "
-                                        "WHERE Name = \"Bypass Surgery\")); ");
+                                        "WHERE Name = \"Bypass Surgery\") AND Physician IN (SELECT Physician "
+                                                                                          "FROM Affiliated_With "
+                                                                                          "WHERE Department = (SELECT DepartmentID "
+                                                                                                               "FROM Department "
+                                                                                                               "WHERE Name = \"Cardiology\")));");
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     if(r!=SQL_SUCCESS) 
     {
@@ -122,47 +164,16 @@ int db_fetch()
       return 0;
     }
 
-    while(1)
-    {
-      r=SQLFetch(hstmt);
-      if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
-      {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 20, &n);
-        printf("%s\n",name);
-      }
-      else if(SQL_NO_DATA==r) break;
-      else
-      {
-        printf("%s\n", "fail to fetch data");
-        break;
-      }
-    }
-  }
-  
-  else if(i==2)
-  {
-    char query[10000] = "SELECT p.Name FROM Department " 
-    "INNER JOIN Affiliated_with a ON a.Department = Department.DepartmentID and Department.Name = \'Cardiology\' "
-    "INNER JOIN Physician p ON p.EmployeeID=a.Physician "
-    "INNER JOIN Trained_in t ON t.Physician = p.EmployeeID "
-    "INNER JOIN Procedures pr ON pr.Code = t.Treatment and pr.Name = \'Bypass Surgery\';";
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
     printf("\nPhysician Name\n");
-    strcpy(sql, query);
-    r=SQLExecDirect(hstmt, sql, SQL_NTS);
-    if(r!=SQL_SUCCESS) 
-    {
-      printf("cannot access [%s]\n", sql);
-      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-      return 0;
-    }
-
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 20, &n);
-        printf("%s\n",name);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        printf("%s\n",sql_name);
       }
       else if(SQL_NO_DATA==r) break;
       else
@@ -170,17 +181,19 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==3)
   {
-    char query[10000] = "SELECT Nurse.Name "
-            "FROM  Nurse "
-            "INNER JOIN On_Call n ON n.Nurse = Nurse.EmployeeID "
-            "INNER JOIN Room ON Room.BlockCode = n.BlockCode and Room.BlockFloor = n.BlockFloor and Room.Number = 123;"; 
-    printf("\nNurse Name\n");
-    strcpy(sql, query);
+    strcpy(sql,"SELECT Name \"Nurse Name\" "
+"FROM Nurse "
+"WHERE EmployeeID IN (SELECT Nurse "
+                    "FROM On_Call "
+                    "WHERE (BlockFloor,BlockCode) IN (SELECT BlockFloor,BlockCode "
+                                                    "FROM Room "
+                                                    "WHERE Number = 123));"); 
     
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     if(r!=SQL_SUCCESS) 
@@ -190,13 +203,16 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+    printf("\nNurse Name\n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 20, &n);
-        printf("%s\n",name);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        printf("%s\n",sql_name);
       }
       else if(SQL_NO_DATA==r) break;
       else
@@ -204,21 +220,20 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
 
   else if(i==4)
-  {
-    printf("\nPatient Name");
-    for(int j=0;j<40-strlen("Patient Name");++j)printf(" ");
-    printf("Patient Address\n");
-    
-    char query[10000] ="SELECT pa.Name, pa.Address "
-            "FROM Medication "
-            "INNER JOIN Prescribes p ON p.Medication = Medication.Code and Medication.Name='Remdesivir' "
-            "INNER JOIN Patient pa ON pa.SSN = p.Patient;";
-    strcpy(sql, query);
+  { 
+    strcpy(sql,"SELECT Name \"Patient Name\",Address \"Patient Address\" "
+"FROM Patient "
+"WHERE SSN IN (SELECT Patient "
+                    "FROM Prescribes "
+                    "WHERE Medication IN (SELECT Code "
+                                    "FROM Medication "
+                                    "WHERE Name = 'Remdesivir'));");
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -229,16 +244,23 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
+    printf("\nPatient Name");
+    for(int j=0;j<40-strlen("Patient Name");++j)printf(" ");
+    printf("Patient Address\n");
+    }
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
+    
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
-        r=SQLGetData(hstmt, 2, SQL_C_CHAR, addr, 100, &n);
-        printf("%s",name);
-        for(int j=0;j<40-strlen(name);++j)printf(" ");
-        printf("%s\n",addr);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 2, SQL_C_CHAR, sql_address, MAX_ARR_LEN, &n);
+        printf("%s",sql_name);
+        for(int j=0;j<40-strlen(sql_name);++j)printf(" ");
+        printf("%s\n",sql_address);
       }
       else if(SQL_NO_DATA==r) break;
       else
@@ -246,21 +268,20 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==5)
   {
-    printf("\nPatient Name");
-    for(int j=0;j<25-strlen("Patient Name");++j)printf(" ");
-    printf("Patient Inusrance ID\n");
-    
-    char query[10000] ="SELECT p.Name, p.InsuranceID "
-            "FROM Room "
-            "INNER JOIN Stay s ON s.Room = Room.Number and Room.Type = \"ICU\" "
-            "INNER JOIN Patient p ON p.SSN = s.Patient and  DATEDIFF(s.End, s.Start)>15;";
+    strcpy(sql,"SELECT Name \"Patient Name\",InsuranceID \"Patient Insurance ID\" "
+"FROM Patient "
+"WHERE SSN IN (SELECT Patient "
+                    "FROM Stay "
+                    "WHERE Room IN (SELECT Number "
+                                    "FROM Room "
+                                    "WHERE Type = 'ICU') AND DATEDIFF(`End`,Start)>15);");
             
-    strcpy(sql, query);
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -271,15 +292,21 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
+    printf("\nPatient Name");
+    for(int j=0;j<25-strlen("Patient Name");++j)printf(" ");
+    printf("Patient Inusrance ID\n");
+    }
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
         r=SQLGetData(hstmt, 2, SQL_C_ULONG, &id, 0, &n);
-        printf("%s",name);
-        for(int j=0;j<25-strlen(name);++j)printf(" ");
+        printf("%s",sql_name);
+        for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
         printf("%d\n",id);
       }
       else if(SQL_NO_DATA==r) break;
@@ -288,19 +315,20 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==6)
   {
-    printf("\nNurse Name \n");
+    strcpy(sql,"SELECT Name \"Nurse Name\" "
+"FROM Nurse "
+"WHERE EmployeeID IN (SELECT AssistingNurse "
+                    "FROM Undergoes U "
+                    "WHERE U.Procedure = (SELECT Code "
+                                    "FROM Procedures "
+                                    "WHERE Name = \"Bypass Surgery\"));");
 
-    
-    char query[10000] ="SELECT n.Name "
-            "FROM Procedures "
-            "INNER JOIN Undergoes u ON u.Procedures = Procedures.Code and Procedures.Name = \"Bypass Surgery\" "
-            "INNER JOIN Nurse n ON n.EmployeeID = u.AssistingNurse;";
-    strcpy(sql, query);
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -311,14 +339,17 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+    printf("\nNurse Name \n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
        
-        printf("%s\n",name);
+        printf("%s\n",sql_name);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -326,47 +357,52 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==7)
   {
+    strcpy(sql,"SELECT N.Name 'Nurse Name',N.Position 'Nurse Position',P.Name 'Physician Name' "
+"FROM Physician P,Nurse N "
+"WHERE (P.EmployeeID,N.EmployeeID) IN (SELECT Physician,AssistingNurse "
+                    "FROM Undergoes "
+                    "WHERE Undergoes.Procedure = (SELECT Code "
+                                    "FROM Procedures "
+                                    "WHERE Name = \"Bypass Surgery\"));");
+
+    r=SQLExecDirect(hstmt, sql, SQL_NTS);
+    
+    
+    if(r!=SQL_SUCCESS) 
+    {
+      printf("cannot access [%s]\n", sql);
+      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+      return 0;
+    }
+
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
     printf("\nNurse Name");
     for(int j=0;j<25-strlen("Nurse Name");++j)printf(" ");
     printf("Nurse Position");
     for(int j=0;j<25-strlen("Nurse Position");++j)printf(" ");
     printf("Physician Name\n");
-    
-    char query[10000] ="SELECT n.Name as Nurse, n.Position, p.Name as Physician "
-            "FROM Procedures "
-            "INNER JOIN Undergoes u ON u.Procedures = Procedures.Code and Procedures.Name = \"Bypass Surgery\" "
-            "INNER JOIN Nurse n ON n.EmployeeID = u.AssistingNurse "
-            "INNER JOIN Physician p ON p.EmployeeID = u.Physician; ";
-    strcpy(sql, query);
-    r=SQLExecDirect(hstmt, sql, SQL_NTS);
-    
-    
-    if(r!=SQL_SUCCESS) 
-    {
-      printf("cannot access [%s]\n", sql);
-      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-      return 0;
     }
-
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
-        r=SQLGetData(hstmt, 2, SQL_C_CHAR, phy, 100, &n);
-        r=SQLGetData(hstmt, 3, SQL_C_CHAR, addr, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 2, SQL_C_CHAR, sql_physician, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 3, SQL_C_CHAR, sql_address, MAX_ARR_LEN, &n);
         
-        printf("%s",name);
-        for(int j=0;j<25-strlen(name);++j)printf(" ");
-        printf("%s",phy);
-        for(int j=0;j<25-strlen(phy);++j)printf(" ");
-        printf("%s\n",addr);
+        printf("%s",sql_name);
+        for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
+        printf("%s",sql_physician);
+        for(int j=0;j<25-strlen(sql_physician);++j)printf(" ");
+        printf("%s\n",sql_address);
       }
       else if(SQL_NO_DATA==r) break;
       else
@@ -374,19 +410,19 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==8)
   {
-    printf("\nPhysician Name \n");
+    strcpy(sql,"SELECT Name \"Physician Name\" "
+"FROM Physician "
+"WHERE EmployeeID IN (SELECT Physician "
+        "FROM Undergoes U "
+        "WHERE (Physician,U.Procedure) NOT IN (SELECT Physician,Treatment "
+                                    "FROM Trained_In));");
 
-    
-    char query[10000] ="SELECT Physician.Name "
-            "FROM Physician "
-            "INNER JOIN Undergoes ON Undergoes.Physician = Physician.EmployeeID "
-            "WHERE (Undergoes.Physician , Undergoes.Procedures ) NOT IN (SELECT Physician, Treatment FROM Trained_in);";
-    strcpy(sql, query);
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -397,14 +433,17 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+    printf("\nPhysician Name \n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
        
-        printf("%s\n",name);
+        printf("%s\n",sql_name);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -412,24 +451,18 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==9)
   {
-    printf("\nPhysician Name \n");
+    strcpy(sql,"SELECT P.Name \"Physician Name\" "
+"FROM ((Undergoes U "
+"INNER JOIN Trained_In T "
+"ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0) "
+"INNER JOIN Physician P ON U.Physician = P.EmployeeID);");
 
-    
-    char query[10000] ="WITH train AS ( "
-            "SELECT p.Name, p.EmployeeID as te, Trained_in.Treatment as a, Trained_in.CertificationExpires as ce "
-            "From Trained_in "
-            "INNER JOIN Physician p ON p.EmployeeID = Trained_in.Physician "
-            ") "
-            "SELECT distinct t.Name "
-            "FROM Physician "
-            "INNER JOIN Undergoes u ON u.Physician = Physician.EmployeeID "
-            "INNER JOIN train t ON t.te = u. Physician and t.a = u.Procedures and DATEDIFF(u.Date, t.ce)>0;";
-    strcpy(sql, query);
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -440,14 +473,17 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+    printf("\nPhysician Name \n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
        
-        printf("%s\n",name);
+        printf("%s\n",sql_name);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -455,11 +491,32 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==10)
   {
+    strcpy(sql,"SELECT P.Name \"Physician Name\",PR.Name \"Procedure Name\",U.Date \"Procedure Date\",PA.Name \"Patient Name\" "
+"FROM ((((Undergoes U "
+"INNER JOIN Trained_In T "
+"ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0) "
+"INNER JOIN Procedures PR ON U.Procedure = PR.Code) "
+"INNER JOIN Patient PA ON U.Patient = PA.SSN) "
+"INNER JOIN Physician P ON U.Physician = P.EmployeeID);");
+
+    r=SQLExecDirect(hstmt, sql, SQL_NTS);
+    
+    
+    if(r!=SQL_SUCCESS) 
+    {
+      printf("cannot access [%s]\n", sql);
+      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+      return 0;
+    }
+
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
     printf("\nPhysician Name");
     for(int j=0;j<25-strlen("Physician Name");++j)printf(" ");
     printf("Procedure Name");
@@ -467,46 +524,24 @@ int db_fetch()
     printf("Date");
     for(int j=0;j<38-strlen("Date");++j)printf(" ");
     printf("Patient Name\n");
-    
-    char query[10000] ="WITH train AS ( "
-            "    SELECT p.Name, p.EmployeeID as te, Trained_in.Treatment as a, Trained_in.CertificationExpires as ce "
-            "    From Trained_in "
-            "    INNER JOIN Physician p ON p.EmployeeID = Trained_in.Physician "
-            ") "
-            "SELECT t.Name as Physician, pr.Name, u.Date, pa.Name as Patient "
-            "FROM Physician "
-            "INNER JOIN Undergoes u ON u.Physician = Physician.EmployeeID "
-            "INNER JOIN train t ON t.te = u. Physician and t.a = u.Procedures and DATEDIFF(u.Date, t.ce)>0 "
-            "INNER JOIN Patient pa ON pa.SSN = u.patient "
-            "INNER JOIN Procedures pr ON u.Procedures = pr.Code;";
-    strcpy(sql, query);
-    r=SQLExecDirect(hstmt, sql, SQL_NTS);
-    
-    
-    if(r!=SQL_SUCCESS) 
-    {
-      printf("cannot access [%s]\n", sql);
-      SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
-      return 0;
     }
-
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
-        r=SQLGetData(hstmt, 2, SQL_C_CHAR, addr, 100, &n);
-        r=SQLGetData(hstmt, 3, SQL_C_TYPE_TIMESTAMP,&create_timestamp,0,&n);
-        r=SQLGetData(hstmt, 4, SQL_C_CHAR, phy, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 2, SQL_C_CHAR, sql_address, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 3, SQL_C_TYPE_TIMESTAMP,&sql_date_time,0,&n);
+        r=SQLGetData(hstmt, 4, SQL_C_CHAR, sql_physician, MAX_ARR_LEN, &n);
 
-        printf("%s",name);
-        for(int j=0;j<25-strlen(name);++j)printf(" ");
-        printf("%s",addr);
-        for(int j=0;j<25-strlen(addr);++j)printf(" ");
-        printf("%d-%d-%d 0%d:0%d:0%d",create_timestamp.year,create_timestamp.month,create_timestamp.day,create_timestamp.hour,create_timestamp.minute,create_timestamp.second);
+        printf("%s",sql_name);
+        for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
+        printf("%s",sql_address);
+        for(int j=0;j<25-strlen(sql_address);++j)printf(" ");
+        printf("%d-%d-%d 0%d:0%d:0%d",sql_date_time.year,sql_date_time.month,sql_date_time.day,sql_date_time.hour,sql_date_time.minute,sql_date_time.second);
         for(int j=0;j<20;++j)printf(" ");
-        printf("%s\n",phy);
+        printf("%s\n",sql_physician);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -514,38 +549,39 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==11)
   {
-     printf("\nPatient Name");
-    for(int j=0;j<25-strlen("Patient Name");++j)printf(" ");
-    printf("Physician Name\n");
+     strcpy(sql,"SELECT PA.Name \"Patient's Name\",P.Name \"Physician's Name\" "
+"FROM (((SELECT Patient,Physician "
+        "FROM Undergoes "
+        "WHERE (Patient,Physician) IN (SELECT Patient,Physician "
+                                        "FROM Prescribes "
+                                        "WHERE (Patient,Physician) IN (SELECT Patient,Physician "
+                                                                    "FROM Appointment "
+                                                                    "WHERE Physician IN (SELECT Physician "
+                                                                                        "FROM Affiliated_With "
+                                                                                        "WHERE Department = (SELECT DepartmentID "
+                                                                                                            "FROM Department "
+                                                                                                            "WHERE Name = \"Cardiology\") AND Physician NOT IN (SELECT Head "
+                                                                                                                                                            "FROM Department) "
+                                                                                        ") "
+                                                                    "GROUP BY Patient,Physician "
+                                                                    "HAVING COUNT(*)>=2 "
+                                                                    ") "
+                                        "GROUP BY Patient,Physician "
+                                        "HAVING COUNT(*)>=1 "
+                                        ") AND `Procedure` IN (SELECT Code "
+                                                            "FROM Procedures "
+                                                            "WHERE Cost>5000) "
+        "GROUP BY Patient,Physician "
+        "HAVING COUNT(*)>=1) AS A "
+"INNER JOIN Physician P ON A.Physician = P.EmployeeID) "
+"INNER JOIN Patient PA ON A.Patient = PA.SSN);");
 
-    
-    char query[10000] ="WITH pat AS( "
-            "SELECT Patient.SSN, Patient.Name, Patient.PCP, COUNT(Patient.SSN) "
-            "FROM Patient "
-            "INNER JOIN Appointment a ON a.Patient = Patient.SSN "
-            "INNER JOIN Physician ph ON ph.EmployeeID = a.Physician "
-            "INNER JOIN Affiliated_with af ON af.Physician = a.Physician "
-            "INNER JOIN Department d ON af.Department = d.DepartmentID and d.Name=\"Cardiology\" "
-            "GROUP BY Patient.SSN "
-            "HAVING COUNT(Patient.SSN) >= 2 "
-            ") "
-            "SELECT distinct pa.Name, ph.Name as PhysicianName "
-            "FROM pat "
-            "INNER JOIN Patient pa ON pa.SSN = pat.SSN "
-            "INNER JOIN Appointment a ON a.Patient = pa.SSN "
-            "INNER JOIN Affiliated_with af ON af.Physician = a.Physician "
-            "INNER JOIN Department d ON af.Department = d.DepartmentID and d.Head != a.Physician "
-            "INNER JOIN Undergoes u ON u.patient = pat.SSN "
-            "INNER JOIN Procedures p ON p.Code = u.Procedures " 
-            "INNER JOIN Prescribes pr ON  pr.Patient = pat.SSN and pr.Physician = pat.PCP "
-            "INNER JOIN Physician ph ON ph.EmployeeID = pa.PCP "
-            "WHERE p.Cost > 5000;";
-    strcpy(sql, query);
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -556,17 +592,23 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
+    printf("\nPatient Name");
+    for(int j=0;j<25-strlen("Patient Name");++j)printf(" ");
+    printf("Physician Name\n");
+    }
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
-        r=SQLGetData(hstmt, 2, SQL_C_CHAR, addr, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 2, SQL_C_CHAR, sql_address, MAX_ARR_LEN, &n);
        
-        printf("%s",name);
-        for(int j=0;j<25-strlen(name);++j)printf(" ");
-        printf("%s\n",addr);
+        printf("%s",sql_name);
+        for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
+        printf("%s\n",sql_address);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -574,26 +616,19 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==12)
   {
-    printf("\nMedicine Name");
-    for(int j=0;j<25-strlen("Medicine Name");++j)printf(" ");
-    printf("Medicine Brand\n");
-
-    
-    char query[10000] ="WITH medicine AS ( "
-                "SELECT Medication, COUNT(*) as med_count "
+    strcpy(sql,"SELECT Name \"Medication Name\",Brand \"Medication Brand\" "
+"FROM Medication "
+"WHERE Code = (SELECT Medication "
                 "FROM Prescribes "
                 "GROUP BY Medication "
-            ") "
-            "SELECT Name, Brand "
-            "FROM Medication "
-            "INNER JOIN medicine ON Medication.Code = medicine.Medication "
-            "WHERE medicine.med_count = (SELECT MAX(med_count) FROM medicine);";
-    strcpy(sql, query);
+                "ORDER BY COUNT(*) DESC "
+                "LIMIT 1);");
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     
     
@@ -604,17 +639,23 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO){
+    printf("\nMedicine Name");
+    for(int j=0;j<25-strlen("Medicine Name");++j)printf(" ");
+    printf("Medicine Brand\n");
+    }
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 100, &n);
-        r=SQLGetData(hstmt, 2, SQL_C_CHAR, addr, 100, &n);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        r=SQLGetData(hstmt, 2, SQL_C_CHAR, sql_address, MAX_ARR_LEN, &n);
        
-        printf("%s",name);
-        for(int j=0;j<25-strlen(name);++j)printf(" ");
-        printf("%s\n",addr);
+        printf("%s",sql_name);
+        for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
+        printf("%s\n",sql_address);
        }
       else if(SQL_NO_DATA==r) break;
       else
@@ -622,35 +663,26 @@ int db_fetch()
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
   }
   
   else if(i==13)
   {
     char input[1000];
-    char c;
-    printf("Enter a Procedure: ");
-    scanf("%c", &c);
-    int j=0;
-    
+    printf("\nEnter a Procedure: ");
+    fgets(input,1000,stdin);
+    input[strlen(input)-1]='\0';
+    strcpy(sql,"SELECT Name \"Physician Name\" "
+                "FROM Physician "
+                "WHERE EmployeeID IN (SELECT Physician "
+                                     "FROM Trained_In "
+                                     "WHERE Treatment = (SELECT Code "
+                                                        "FROM Procedures "
+                                                        "WHERE Name = '");
+    strcat(sql,input);
+    strcat(sql,"'));");
 
-    while(1){
-      scanf("%c",&input[j]);
-      if (input[j]=='\n'){
-        input[j]='\0'; 
-        break;
-      }
-      j++;
-      
-    }
-    char query[10000] = "SELECT Physician.Name FROM Physician INNER JOIN Trained_in t ON t.Physician = Physician.EmployeeID INNER JOIN Procedures pr ON pr.Code = t.Treatment and pr.Name = '";
-    strcat(query,input);
-    strcat(query,"';");
-
-    
-    printf("\nPhysician Name\n");
-    strcpy(sql, query);
-    
     r=SQLExecDirect(hstmt, sql, SQL_NTS);
     if(r!=SQL_SUCCESS) 
     {
@@ -659,33 +691,34 @@ int db_fetch()
       return 0;
     }
 
+    r=SQLFetch(hstmt);
+    if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
+    printf("\nPhysician Name\n");
+    else if(SQL_NO_DATA==r) printf("No Data Found related to the query\n");
     while(1)
     {
-      r=SQLFetch(hstmt);
       if(r==SQL_SUCCESS||r==SQL_SUCCESS_WITH_INFO)
       {
-        r=SQLGetData(hstmt, 1, SQL_C_CHAR, name, 20, &n);
-        printf("%s\n",name);
+        r=SQLGetData(hstmt, 1, SQL_C_CHAR, sql_name, MAX_ARR_LEN, &n);
+        printf("%s\n",sql_name);
       }
-      else if(SQL_NO_DATA==r) break;
+      else if(SQL_NO_DATA==r){
+        break;
+      } 
       else
       {
         printf("%s\n", "fail to fetch data");
         break;
       }
+      r=SQLFetch(hstmt);
     }
    }
   
-
   SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
 }
 int main(void)
 { 
-  // char pass[20];
-  // scanf("%s",pass);
-  // printf("%s\n",pass);
   ODBCConnectDB("PRANAV_MYSQL", "20CS10085", "20CS10085");
-  // printf("Hello\n");
   db_fetch();
   ODBCDisconnectDB();
 }
