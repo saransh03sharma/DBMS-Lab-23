@@ -713,6 +713,7 @@ int db_fetch()
       r=SQLFetch(hstmt);
     }
    }
+   else printf("Invalid Query Number\n");
   
   SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
 }

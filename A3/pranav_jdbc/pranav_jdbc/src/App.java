@@ -3,12 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
-// import java.awt.BorderLayosut;
 import java.util.ArrayList;
-// import javax.swing.JFrame;
-// import javax.swing.JScrollPane;
-// import javax.swing.JTable;
-// import javax.swing.table.AbstractTableModel;
 
 public class App {
 
@@ -68,10 +63,16 @@ public class App {
             ArrayList<ArrayList<String>> arr = new ArrayList<>();
             ArrayList<String> row = new ArrayList<>();
             // ArrayList<String> col = new ArrayList<>();
-            
+            // for (int a = 1; a <= 13; a++) {
             switch(a) {
                 case 1:
-                SQL_QUERY = "SELECT Physician.Name FROM Physician INNER JOIN Trained_in t ON t.Physician = Physician.EmployeeID INNER JOIN Procedures pr ON pr.Code = t.Treatment and pr.Name = 'Bypass Surgery';";
+                SQL_QUERY = "SELECT Name \"Physician Name\" "+
+                "FROM Physician "+
+                "WHERE EmployeeID IN (SELECT Physician "+
+                                     "FROM Trained_In "+
+                                     "WHERE Treatment = (SELECT Code "+
+                                                        "FROM Procedures "+
+                                                        "WHERE Name = \"Bypass Surgery\"));";
                 resultSet = statement.executeQuery(SQL_QUERY); 
                 arr.clear();
                 row.clear();
@@ -85,11 +86,17 @@ public class App {
                 printTable(arr);
                   break;
                 case 2:
-                SQL_QUERY = "SELECT p.Name FROM Department " 
-                + "INNER JOIN Affiliated_with a ON a.Department = Department.DepartmentID and Department.Name = \'Cardiology\' "
-                + "INNER JOIN Physician p ON p.EmployeeID=a.Physician "
-                + "INNER JOIN Trained_in t ON t.Physician = p.EmployeeID "
-                + "INNER JOIN Procedures pr ON pr.Code = t.Treatment and pr.Name = \'Bypass Surgery\';";
+                SQL_QUERY = "SELECT Name \"Physician Name\" "+
+                "FROM Physician "+
+                "WHERE EmployeeID IN (SELECT Physician "+
+                                     "FROM Trained_In "+
+                                     "WHERE Treatment = (SELECT Code "+
+                                                        "FROM Procedures "+
+                                                        "WHERE Name = \"Bypass Surgery\") AND Physician IN (SELECT Physician "+
+                                                                                                          "FROM Affiliated_With "+
+                                                                                                          "WHERE Department = (SELECT DepartmentID "+
+                                                                                                                               "FROM Department "+
+                                                                                                                               "WHERE Name = \"Cardiology\")));";
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -104,10 +111,13 @@ public class App {
                 printTable(arr);     
                 break;
                 case 3:
-                SQL_QUERY ="SELECT Nurse.Name "
-                + "FROM  Nurse "
-                + "INNER JOIN On_Call n ON n.Nurse = Nurse.EmployeeID "
-                + "INNER JOIN Room ON Room.BlockCode = n.BlockCode and Room.BlockFloor = n.BlockFloor and Room.Number = 123;"; 
+                SQL_QUERY ="SELECT Name \"Nurse Name\" "+
+                "FROM Nurse "+
+                "WHERE EmployeeID IN (SELECT Nurse "+
+                                    "FROM On_Call "+
+                                    "WHERE (BlockFloor,BlockCode) IN (SELECT BlockFloor,BlockCode "+
+                                                                    "FROM Room "+
+                                                                    "WHERE Number = 123));"; 
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -146,10 +156,13 @@ public class App {
                 break;
                 case 5:
 
-                SQL_QUERY ="SELECT p.Name, p.InsuranceID "
-                + "FROM Room "
-                + "INNER JOIN Stay s ON s.Room = Room.Number and Room.Type = \"ICU\" "
-                + "INNER JOIN Patient p ON p.SSN = s.Patient and  DATEDIFF(s.End, s.Start)>15;";
+                SQL_QUERY ="SELECT Name \"Patient Name\",InsuranceID \"Patient Insurance ID\" "+
+                "FROM Patient "+
+                "WHERE SSN IN (SELECT Patient "+
+                                    "FROM Stay "+
+                                    "WHERE Room IN (SELECT Number "+
+                                                    "FROM Room "+
+                                                    "WHERE Type = 'ICU') AND DATEDIFF(`End`,Start)>15);";
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -168,10 +181,13 @@ public class App {
                 
                 case 6:
 
-                SQL_QUERY ="SELECT n.Name "
-                + "FROM Procedures "
-                + "INNER JOIN Undergoes u ON u.Procedures = Procedures.Code and Procedures.Name = \"Bypass Surgery\" "
-                + "INNER JOIN Nurse n ON n.EmployeeID = u.AssistingNurse;";
+                SQL_QUERY ="SELECT Name \"Nurse Name\" "+
+                "FROM Nurse "+
+                "WHERE EmployeeID IN (SELECT AssistingNurse "+
+                                    "FROM Undergoes U "+
+                                    "WHERE U.Procedure = (SELECT Code "+
+                                                    "FROM Procedures "+
+                                                    "WHERE Name = \"Bypass Surgery\"));";
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -188,11 +204,13 @@ public class App {
                 
                 case 7:
 
-                SQL_QUERY ="SELECT n.Name as Nurse, n.Position, p.Name as Physician "
-                + "FROM Procedures "
-                + "INNER JOIN Undergoes u ON u.Procedures = Procedures.Code and Procedures.Name = \"Bypass Surgery\" "
-                + "INNER JOIN Nurse n ON n.EmployeeID = u.AssistingNurse "
-                + "INNER JOIN Physician p ON p.EmployeeID = u.Physician; ";
+                SQL_QUERY ="SELECT N.Name 'Nurse Name',N.Position 'Nurse Position',P.Name 'Physician Name' "+
+                "FROM Physician P,Nurse N "+
+                "WHERE (P.EmployeeID,N.EmployeeID) IN (SELECT Physician,AssistingNurse "+
+                                    "FROM Undergoes "+
+                                    "WHERE Undergoes.Procedure = (SELECT Code "+
+                                                    "FROM Procedures "+
+                                                    "WHERE Name = \"Bypass Surgery\"));";
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -213,10 +231,12 @@ public class App {
                 
                 case 8:
 
-                SQL_QUERY ="SELECT Physician.Name "
-                + "FROM Physician "
-                + "INNER JOIN Undergoes ON Undergoes.Physician = Physician.EmployeeID "
-                + "WHERE (Undergoes.Physician , Undergoes.Procedures ) NOT IN (SELECT Physician, Treatment FROM Trained_in);";
+                SQL_QUERY ="SELECT Name \"Physician Name\" "+
+                "FROM Physician "+
+                "WHERE EmployeeID IN (SELECT Physician "+
+                        "FROM Undergoes U "+
+                        "WHERE (Physician,U.Procedure) NOT IN (SELECT Physician,Treatment "+
+                                                    "FROM Trained_In));";
       
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
@@ -234,15 +254,11 @@ public class App {
 
                 case 9:
 
-                SQL_QUERY ="WITH train AS ( "
-                + "SELECT p.Name, p.EmployeeID as te, Trained_in.Treatment as a, Trained_in.CertificationExpires as ce "
-                + "From Trained_in "
-                + "INNER JOIN Physician p ON p.EmployeeID = Trained_in.Physician "
-                + ") "
-                + "SELECT distinct t.Name "
-                + "FROM Physician "
-                + "INNER JOIN Undergoes u ON u.Physician = Physician.EmployeeID "
-                + "INNER JOIN train t ON t.te = u. Physician and t.a = u.Procedures and DATEDIFF(u.Date, t.ce)>0;";
+                SQL_QUERY ="SELECT P.Name \"Physician Name\" "+
+                "FROM ((Undergoes U "+
+                "INNER JOIN Trained_In T "+
+                "ON U.Physician = T.Physician AND U.Procedure = T.Treatment AND DATEDIFF(U.Date,T.CertificationExpires)>0) "+
+                "INNER JOIN Physician P ON U.Physician = P.EmployeeID);";
     
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
@@ -289,27 +305,32 @@ public class App {
 
                 case 11:
 
-                SQL_QUERY ="WITH pat AS( "
-                + "SELECT Patient.SSN, Patient.Name, Patient.PCP, COUNT(Patient.SSN) "
-                + "FROM Patient "
-                + "INNER JOIN Appointment a ON a.Patient = Patient.SSN "
-                + "INNER JOIN Physician ph ON ph.EmployeeID = a.Physician "
-                + "INNER JOIN Affiliated_with af ON af.Physician = a.Physician "
-                + "INNER JOIN Department d ON af.Department = d.DepartmentID and d.Name=\"Cardiology\" "
-                + "GROUP BY Patient.SSN "
-                + "HAVING COUNT(Patient.SSN) >= 2 "
-                + ") "
-                + "SELECT distinct pa.Name, ph.Name as PhysicianName "
-                + "FROM pat "
-                + "INNER JOIN Patient pa ON pa.SSN = pat.SSN "
-                + "INNER JOIN Appointment a ON a.Patient = pa.SSN "
-                + "INNER JOIN Affiliated_with af ON af.Physician = a.Physician "
-                + "INNER JOIN Department d ON af.Department = d.DepartmentID and d.Head != a.Physician "
-                + "INNER JOIN Undergoes u ON u.patient = pat.SSN "
-                + "INNER JOIN Procedures p ON p.Code = u.Procedures " 
-                + "INNER JOIN Prescribes pr ON  pr.Patient = pat.SSN and pr.Physician = pat.PCP "
-                + "INNER JOIN Physician ph ON ph.EmployeeID = pa.PCP "
-                + "WHERE p.Cost > 5000;";
+                SQL_QUERY ="SELECT PA.Name \"Patient's Name\",P.Name \"Physician's Name\" "+
+                "FROM (((SELECT Patient,Physician "+
+                        "FROM Undergoes "+
+                        "WHERE (Patient,Physician) IN (SELECT Patient,Physician "+
+                                                        "FROM Prescribes "+
+                                                        "WHERE (Patient,Physician) IN (SELECT Patient,Physician "+
+                                                                                    "FROM Appointment "+
+                                                                                    "WHERE Physician IN (SELECT Physician "+
+                                                                                                        "FROM Affiliated_With "+
+                                                                                                        "WHERE Department = (SELECT DepartmentID "+
+                                                                                                                            "FROM Department "+
+                                                                                                                            "WHERE Name = \"Cardiology\") AND Physician NOT IN (SELECT Head "+
+                                                                                                                                                                            "FROM Department) "+
+                                                                                                        ") "+
+                                                                                    "GROUP BY Patient,Physician "+
+                                                                                    "HAVING COUNT(*)>=2 "+
+                                                                                    ") "+
+                                                        "GROUP BY Patient,Physician "+
+                                                        "HAVING COUNT(*)>=1 "+
+                                                        ") AND `Procedure` IN (SELECT Code "+
+                                                                            "FROM Procedures "+
+                                                                            "WHERE Cost>5000) "+
+                        "GROUP BY Patient,Physician "+
+                        "HAVING COUNT(*)>=1) AS A "+
+                "INNER JOIN Physician P ON A.Physician = P.EmployeeID) "+
+                "INNER JOIN Patient PA ON A.Patient = PA.SSN);";
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
                 arr.clear();
@@ -328,15 +349,13 @@ public class App {
 
                 case 12:
 
-                SQL_QUERY ="WITH medicine AS ( "
-                + "SELECT Medication, COUNT(*) as med_count "
-                + "FROM Prescribes "
-                + "GROUP BY Medication "
-                + ") "
-                + "SELECT Name, Brand "
-                + "FROM Medication "
-                + "INNER JOIN medicine ON Medication.Code = medicine.Medication "
-                + "WHERE medicine.med_count = (SELECT MAX(med_count) FROM medicine);";
+                SQL_QUERY ="SELECT Name \"Medication Name\",Brand \"Medication Brand\" "+
+                "FROM Medication "+
+                "WHERE Code = (SELECT Medication "+
+                                "FROM Prescribes "+
+                                "GROUP BY Medication "+
+                                "ORDER BY COUNT(*) DESC "+
+                                "LIMIT 1);";
       
                 resultSet = statement.executeQuery(SQL_QUERY); 
 
@@ -360,30 +379,40 @@ public class App {
                 String b= sc.nextLine(); 
                 
                 
-                SQL_QUERY ="SELECT Physician.Name FROM Physician INNER JOIN Trained_in t ON t.Physician = Physician.EmployeeID INNER JOIN Procedures pr ON pr.Code = t.Treatment and pr.Name = '"+b+"';"
-                ;
+                SQL_QUERY = "SELECT Name \"Physician Name\" "+
+                "FROM Physician "+
+                "WHERE EmployeeID IN (SELECT Physician "+
+                                     "FROM Trained_In "+
+                                     "WHERE Treatment = (SELECT Code "+
+                                                        "FROM Procedures "+
+                                                        "WHERE Name = '" + b + "'));";
                 
                 
                 resultSet = statement.executeQuery(SQL_QUERY); 
-
+                if(resultSet.next()==false)
+                {
+                    System.out.println("No Physician Trained in this Procedure");
+                    break;
+                }
                 arr.clear();
                 row.clear();
                 row.add("Physician Name");
                 arr.add(new ArrayList<>(row));
-                while(resultSet.next())  {
+                while(true)  {
                     row.clear();
                     row.add(resultSet.getString(1));
                     arr.add(new ArrayList<>(row));
+                    if(resultSet.next()==false) break;
                 }
                 printTable(arr);  
                 break;
 
                 default:
-                System.out.print("Invalid Input"); 
+                System.out.print("Invalid Query Number"); 
                   // code block
               }
            
-           
+            // }
                
             sc.close();
         } catch (Exception e) {
