@@ -5,7 +5,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class App {
+public class _20CS10085 {
     // JDBC driver name and database URL
     private static String MYSQL_JDBC_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
     private static String MYSQL_DB_URL = "jdbc:mysql://10.5.18.70:3306/20CS10085";

@@ -536,7 +536,7 @@ int db_fetch()
       printf("Procedure Name");
       for(int j=0;j<25-strlen("Procedure Name");++j)printf(" ");
       printf("Date");
-      for(int j=0;j<38-strlen("Date");++j)printf(" ");
+      for(int j=0;j<30-strlen("Date");++j)printf(" ");
       printf("Patient Name\n");
       }
       else if(SQL_NO_DATA==sql_return_val) printf("No Data Found related to the query\n");
@@ -553,8 +553,8 @@ int db_fetch()
           for(int j=0;j<25-strlen(sql_name);++j)printf(" ");
           printf("%s",sql_address);
           for(int j=0;j<25-strlen(sql_address);++j)printf(" ");
-          printf("%d-%d-%d 0%d:0%d:0%d",sql_date_time.year,sql_date_time.month,sql_date_time.day,sql_date_time.hour,sql_date_time.minute,sql_date_time.second);
-          for(int j=0;j<20;++j)printf(" ");
+          printf("%d-%d-%d %d:%d:0%d",sql_date_time.year,sql_date_time.month,sql_date_time.day,sql_date_time.hour,sql_date_time.minute,sql_date_time.second);
+          for(int j=0;j<11;++j)printf(" ");
           printf("%s\n",sql_physician);
         }
         else if(SQL_NO_DATA==sql_return_val) break;
