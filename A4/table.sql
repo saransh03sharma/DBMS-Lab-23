@@ -1,3 +1,8 @@
+CREATE TABLE accounts_db_admin (
+    username varchar(255) primary key,
+    password varchar(255) not null
+);
+
 CREATE TABLE accounts_department (
     DepartmentID int primary key,
     Name varchar(255) not null,
@@ -32,19 +37,22 @@ CREATE TABLE  accounts_physician (
     EmployeeID int primary key,
     Name varchar(255) not null,
     Position varchar(255) not null,
-    SSN int not null
+    SSN int not null,
+    password varchar(255) not null
 );
 
 CREATE TABLE  accounts_front_desk (
     name varchar(255) not null,
     surname varchar(255) not null,
-    reg_id int primary key
+    reg_id int primary key,
+    password varchar(255) not null
 );
 
 CREATE TABLE  accounts_data_entry (
     name varchar(255) not null,
     surname varchar(255) not null,
-    reg_id int primary key
+    reg_id int primary key,
+    password varchar(255) not null
 );
 
 CREATE TABLE accounts_room (

@@ -1,5 +1,13 @@
 from django.db import models
 
+class db_admin(models.Model):
+    
+    username = models.CharField(max_length=255, primary_key=True)
+    password = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.username
+
 class front_desk(models.Model):
     
     name = models.CharField(max_length=255)
@@ -30,7 +38,6 @@ class physician(models.Model):
     
     def __str__(self):
         return self.name
-    
     
 class department(models.Model):
     

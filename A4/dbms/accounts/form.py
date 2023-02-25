@@ -4,6 +4,7 @@ from django.db import transaction
 from .models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.hashers import make_password, check_password
 
 
 # Dep_choices = (# tuple of (what appears in the backend,what appears in frontend)
@@ -32,12 +33,12 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     name =forms.CharField(required=True)
     Position =forms.CharField(required=True)
     SSN = forms.IntegerField(required=True)
-    
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = physician
         # Order of Fields in the Form
-        fields = ['EmployeeID','name','Position','SSN']
+        fields = ['EmployeeID','name','Position','SSN', 'password']
     
     def clean_strings(self,*args,**kwargs):
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
@@ -53,8 +54,10 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
         Position = self.cleaned_data.get('Position').upper() #extract email from form
         EmployeeID = self.cleaned_data.get('EmployeeID')
+        password = make_password(self.cleaned_data.get('password'))
+        
         SSN = self.cleaned_data.get('SSN')
-        doctor = physician(name=name,Position = Position, EmployeeID = EmployeeID, SSN = SSN)
+        doctor = physician(name=name,Position = Position, EmployeeID = EmployeeID, SSN = SSN, password=password)
         doctor.save()
         return doctor
 
@@ -65,12 +68,13 @@ class FrontSignUpForm(forms.ModelForm):#form and formfields defined
     name =forms.CharField(required=True)
     surname =forms.CharField(required=True)
     reg_id = forms.IntegerField(required=True)
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
     
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = front_desk
         # Order of Fields in the Form
-        fields = ['name', 'surname', 'reg_id']
+        fields = ['name', 'surname', 'reg_id', 'password']
     
     def clean_strings(self,*args,**kwargs):
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
@@ -86,7 +90,8 @@ class FrontSignUpForm(forms.ModelForm):#form and formfields defined
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
         surname = self.cleaned_data.get('surname').upper() #extract email from form
         reg_id = self.cleaned_data.get('reg_id')
-        front = front_desk(name=name,surname = surname, reg_id = reg_id)
+        password = make_password(self.cleaned_data.get('password'))
+        front = front_desk(name=name,surname = surname, reg_id = reg_id, password=password)
         front.save()
         return front
     
@@ -95,17 +100,18 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
     name =forms.CharField(required=True)
     surname =forms.CharField(required=True)
     reg_id = forms.IntegerField(required=True)
-    
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = data_entry
         # Order of Fields in the Form
-        fields = ['name', 'surname', 'reg_id']
+        fields = ['name', 'surname', 'reg_id', 'password']
     
     def clean_strings(self,*args,**kwargs):
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
         surname = self.cleaned_data.get('surname').upper() #extract email from form
         reg_id = self.cleaned_data.get('reg_id')
+        
         
         # print(email)
 
@@ -116,7 +122,8 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
         surname = self.cleaned_data.get('surname').upper() #extract email from form
         reg_id = self.cleaned_data.get('reg_id')
-        data = data_entry(name=name,surname = surname, reg_id = reg_id)
+        password = make_password(self.cleaned_data.get('password'))
+        data = data_entry(name=name,surname = surname, reg_id = reg_id, password=password)
         data.save()
         return data
 

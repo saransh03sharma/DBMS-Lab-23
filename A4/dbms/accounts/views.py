@@ -19,10 +19,6 @@ class doctor_register(CreateView):
 
     def form_valid(self, form): #form valid check
         user = form.save() #save the form
-        print("hello")
-        print(type(user))
-        self.request.session['user'] = user.EmployeeID
-        self.request.session['type'] = "doctor"
         return redirect('/') #redirect to main index page
     
 class front_desk_register(CreateView):
@@ -31,8 +27,6 @@ class front_desk_register(CreateView):
 
     def form_valid(self, form): #form valid check
         user = form.save() #save the form
-        self.request.session['user'] = user.reg_id
-        self.request.session['type'] = "front_desk"
         return redirect('/') #redirect to main index page
     
 class data_entry_register(CreateView):
@@ -41,8 +35,6 @@ class data_entry_register(CreateView):
 
     def form_valid(self, form): #form valid check
         user = form.save() #save the form
-        self.request.session['user'] = user.reg_id
-        self.request.session['type'] = "data_entry"
         return redirect('/') #redirect to main index page
     
 # class front_register(CreateView):
@@ -206,38 +198,38 @@ def login_request(request):
         username = request.POST['username']
         password = request.POST['password']
         
+        
         try:
-            try:
-                password = int(password)
-            except ValueError:
-                return render(request, '../templates/login.html',#return to the template
-                    context={'form':AuthenticationForm()})
-                
-
-            user = physician.objects.get(EmployeeID = password)
-            if username.upper() == user.name:
+            user = physician.objects.get(EmployeeID = username)
+            if check_password(password, user.password):
                 request.session['user'] = user.EmployeeID
                 request.session['type'] = "doctor"
                 return redirect('/')    
-        except physician.DoesNotExist:
+        except:
             try:
-                user = front_desk.objects.get(reg_id = password)
-                if username.upper() == user.name:
+                
+                user = front_desk.objects.get(reg_id = username)
+                if check_password(password, user.password):
                     request.session['user'] = user.reg_id
                     request.session['type'] = "front_desk"
                     return redirect('/')
     
-            except front_desk.DoesNotExist:
+            except:
                 try:
-                    user = data_entry.objects.get(reg_id = password)
-                    if username.upper() == user.name:
+                    user = data_entry.objects.get(reg_id = username)
+                    if check_password(password, user.password):
                         request.session['user'] = user.reg_id
                         request.session['type'] = "data_entry"
                         return redirect('/')
     
-                except data_entry.DoesNotExist:
-                    
-                    return render(request, '../templates/login.html',#return to the template
+                except:
+                    try:
+                        user = db_admin.objects.get(username = username, password = password)
+                        request.session['user'] = user.username
+                        request.session['type'] = "db_admin"
+                        return redirect('/') 
+                    except:
+                        return render(request, '../templates/login.html',#return to the template
                     context={'form':AuthenticationForm()})
     
         print("No match")
@@ -721,6 +713,14 @@ def index(request): # to return homepage depending upon the logged in user
     elif type == 'front_desk':
         try:
             user = front_desk.objects.get(reg_id = user_id)
+            return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+    
+        except front_desk.DoesNotExist:
+            return render(request, 'index.html', {'user': {}, 'type':"none"})
+    
+    elif type == 'db_admin':
+        try:
+            user = db_admin.objects.get(username = user_id)
             return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
     
         except front_desk.DoesNotExist:

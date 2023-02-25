@@ -151,6 +151,7 @@
       color:white !important;
       border-bottom:5px white solid;
     }
+
 	</style>
 
     <!-- Bootstrap CSS -->
@@ -159,6 +160,68 @@
 	<body class="is-preload" >
     {%if status == 0 %}
     <meta http-equiv="refresh" content="0.1; url =/" />
+    {% elif type == "db_admin" %}
+    <div id="wrapper">
+
+      <!-- Main -->
+        <div id="main">
+          <div class="inner">
+
+            <!-- Header -->
+              <header id="header" style="border:none;">
+               <h3 style="position:relative;top:2vh">Welcome to the Admin portal
+                 </h3>
+                  
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false" style="width:5vw;height:5vw; border-radius:50%;background-color:white; border:none;float:right;position:relative;left:4vw;">
+                      {% load static %}
+                      <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:relative; top:-6px;left:-12px">
+                      </button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
+                      <li><a class="dropdown-item" href="{% url 'doctor_register' %}">Doctor Registration</a></li>
+                      <li><a class="dropdown-item" href="{% url 'front_desk_register' %}">Front Desk Operator</a> </li> 
+                      <li><a class="dropdown-item" href="{% url 'data_entry_register' %}">Data Entry Operator</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                    </div>
+                    
+                  
+                  </header>
+                  <hr style="border:2px solid black;">
+            <!-- Banner -->
+              <section id="banner">
+                <div class="content">
+                  <header>
+                    <p>Name: {{user.username}} </p>
+                  </header>
+                  </div>
+              </section>
+                          
+        </div>
+        </div>
+      <!-- Sidebar -->
+      <div id="sidebar" style="width:20vw">
+        <div class="inner">
+          <!-- Menu -->
+            <nav id="menu">
+              <header class="major">
+              <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
+              </header>
+              <ul class="item">
+                <li><a href="{% url 'doctor_register' %}">Doctor Registration</a></li>
+                <li><a href="{% url 'front_desk_register' %}">Front Desk Operator</a></li> 
+                <li><a href="{% url 'data_entry_register' %}">Data Entry Operator</a></li>
+                <li><a href="{% url 'logout'%}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+      </div>
+  </div>
+                    
+    
+    
+    
     {% elif type == "doctor" %}
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -169,7 +232,7 @@
 
 							<!-- Header -->
 								<header id="header" style="border:none;">
-								 <h3 style="position:relative;top:2vh">Welcome to the student portal
+								 <h3 style="position:relative;top:2vh">Welcome to the Doctor Portal
 									 </h3>
 										
 										<div class="dropdown">
@@ -231,7 +294,7 @@
 
 							<!-- Header -->
 								<header id="header" style="border:none;">
-								 <h3 style="position:relative;top:2vh">Welcome to the Company portal
+								 <h3 style="position:relative;top:2vh">Welcome to the Front Desk Portal
 									 </h3>
 									
 										
@@ -242,7 +305,7 @@
                         <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:relative; top:-6px;left:-12px">
                                         </button>
 											<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
-											  <li><a class="dropdown-item" href="{% url 'company_edit' %}">Edit Profile</a></li>
+											  
 											  {% comment %} <li><a class="dropdown-item" href="{% url 'apply_company' %}">Apply</a></li> {% endcomment %}
 											  <li><hr class="dropdown-divider"></li>
 											  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
@@ -256,10 +319,8 @@
 								<section id="banner">
 									<div class="content">
 										<header>
-											<p>Name:{{company.company_name}}</p>
-											<p>Email id: {{company.user}}</p>
-											<p>Profile: {{company.profile}}</p>
-											<p>Address: {{company.address}}</p>
+											<p>Name:{{user.name}} {{user.surname}}</p>
+											<p>Registration ID: {{user.reg_id}}</p>
 										</header>
 										</div>
 								</section>
@@ -274,20 +335,18 @@
                 <header class="major">
                 <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
                 </header>
-                <form action="{% url 'company_details' %}" enctype="multipart/form-data" method="POST" id="comp_details"> 
+                {% comment %} <form action="{% url 'company_details' %}" enctype="multipart/form-data" method="POST" id="comp_details"> 
                   {% csrf_token %}
-              </form>
+              </form> {% endcomment %}
                 <ul class="item">
-                  <li><a href="{% url 'company_edit' %}">Edit Profile</a></li>
-                  {% comment %} <li><a href="#">Details</a></li> {% endcomment %}
-                  <li><button type = "submit" name= "comp_id" value= {{company.user.username}} form = "comp_details" style="background-color:transparent;border:none;color:white;" target="_blank">VIEW DETAILS PAGE</button></li>
-                  <li><a href="{% url 'list_of_students' %}">LIST OF APPLIED STUDENTS</a></li>
+                  {% comment %}  {% endcomment %}
                   <li><a href="{% url 'logout'%}">Logout</a></li>
                   </ul>
               </nav>
           </div>
         </div>
     </div>
+    
     {% elif type == "data_entry"%}
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -363,9 +422,6 @@
 <div id="heading" style="width:70%; margin:auto;color:black">BC Roy Technology Hospital</div>
 <div id="headingname" style="width:50%;margin:auto;color:black">Covid Tracker</div>
 <div id="navlink">
-<a href="{% url 'doctor_register' %}">Doctor Registration</a> 
-<a href="{% url 'front_desk_register' %}">Front Desk Operator</a> 
-<a href="{% url 'data_entry_register' %}">Data Entry Operator</a>
 <a href="/admin/login/?next=/admin/">Admin Login</a> 
 <a href="{% url 'login' %}">Login</a>
 </div>
