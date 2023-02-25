@@ -1,7 +1,7 @@
 import json
 from django import forms
 from django.db import transaction
-from .models import physician, front_desk, data_entry
+from .models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -13,9 +13,10 @@ from django.utils.translation import gettext_lazy as _
 #     ("Mechanical Engineering","Mechanical Engineering"),
 # )
 
-Profiles_choices =(
-    ("SD","Software Develepment"),
-    ("DA","Data Analytics"),
+patient_status =(
+    ("0","Register"),
+    ("1","Admitted"),
+    ("2","Discharged"),
 )
 
 # Profiles_edit_choices =(
@@ -48,7 +49,6 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        
 
         name = self.cleaned_data.get('name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
         Position = self.cleaned_data.get('Position').upper() #extract email from form
@@ -121,7 +121,14 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
         return data
 
 
-# class StudentEditForm(forms.ModelForm):
+class patient_register(forms.ModelForm):
+    SSN = forms.IntegerField(required=True)
+    name = forms.CharField(max_length = 255,required=True)
+    Address = forms.CharField(max_length = 255,required=True)
+    Phone = forms.CharField(max_length = 255,required=True)
+    InsuranceID = forms.IntegerField(required=True)
+    PCP = forms.IntegerField(required=True)
+    Status = forms.ChoiceField(choices=patient_status)
 #     email = forms.EmailField(required=True)
 #     contact_number = forms.CharField(max_length=12,required=True)
 #     roll_number =forms.CharField(required=True)
@@ -133,15 +140,14 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
 #     cvprof = forms.ChoiceField(choices=Profiles_edit_choices,label="Choose a Profile to Upload CV for(choose No File to Upload, if don't want to upload new CV)",required=True)
 #     cv = forms.FileField(label="Upload CV",required=False)
 
-#     class Meta():
-#         model = Student
-#         fields = ['email','contact_number','first_name','last_name','department','SDprofile','DAprofile','cvprof','cv']
+    class Meta():
+        model = patient
+        fields = ['SSN','name','Address','Phone','InsuranceID','PCP','Status']
 
 
-#     @transaction.atomic  #if an exception occurs changes are not saved
-#     def save(self):
-#         prof = self.cleaned_data.get('cvprof')
-#         return self.cleaned_data.get('contact_number'),self.cleaned_data.get('SDprofile'),self.cleaned_data.get('DAprofile'),prof,self.cleaned_data.get('cv')
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('SSN'),self.cleaned_data.get('name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('InsuranceID'),self.cleaned_data.get('PCP'),self.cleaned_data.get('Status')
 
 # class AlumniSignUpForm(UserCreationForm):
 #     first_name = forms.CharField(required=True) 

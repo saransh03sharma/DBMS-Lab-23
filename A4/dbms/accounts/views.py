@@ -5,7 +5,7 @@ from django.views.generic import CreateView
 
 from django.contrib.auth.forms import AuthenticationForm
 from .models import *
-from .form import DoctorSignUpForm, FrontSignUpForm, DataSignUpForm
+from .form import *
 from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -99,66 +99,22 @@ class data_entry_register(CreateView):
 #         # print(overvie,work_enviro,job_des,other_detail)
 #         return redirect('/')
 
-# class editStudProfile(CreateView):
-#     model = Student
-#     form_class = StudentEditForm
-#     template_name = '../templates/edit_details.html'
-
-#     def get(self,request):
-#         if(self.request.user.is_authenticated):#if request is from an authenticated user
-#             user = User.objects.get(username = (self.request.user))#get the user using the username
-#             student = Student.objects.get(user = user)#get the student object from database by passing user as parameter
-#             values = {#initialise values with the existing data
-#                 'email':user.email,
-#                 'contact_number':user.contact_number,
-#                 'roll_number':student.roll_number,
-#                 'first_name':user.first_name,
-#                 'last_name':user.last_name,
-#                 'department':student.department,
-#                 'SDprofile':student.SDprofile,
-#                 'DAprofile':student.DAprofile,
-#                 'cvprof': "NO",
-#                 'CV_DA': None
-#             }
-#             form = StudentEditForm(values)
-#             form.fields['email'].widget.attrs['readonly']  =True#set the read only fields which cannot be altered
-#             form.fields['roll_number'].widget.attrs['readonly']  =True
-#             form.fields['first_name'].widget.attrs['readonly']  =True
-#             form.fields['last_name'].widget.attrs['readonly']  =True
-#             form.fields['department'].widget.attrs['readonly']  =True
-#             # print(values)
-#             return render(request,'../templates/edit_details.html',{'whereto':'student_edit','form':form})#display the form in the edit_details.html
-#         return redirect('/')
-
-#     def form_valid(self,form):#form valid function
-#         if(self.request.user.is_authenticated):
-#             user = User.objects.get(username = (self.request.user))
-#             student = Student.objects.get(user = user)
-#             contact_number, SDprofile,DAprofile,prof,cv = form.save()#get data from form
-#             user.contact_number=contact_number
-#             student.SDprofile=SDprofile
-#             student.DAprofile=DAprofile
-#             # print(cv)
-#             # print(cv.size)
-#             if(prof=="SD" and cv!=None):
-#                 if(student.CV_SD):
-#                     student.CV_SD.delete()#delete the previously stored file
-#                 student.CV_SD = cv#store the new file
-#             elif(prof=="DA" and cv!=None):
-#                 if(student.CV_DA):
-#                     student.CV_DA.delete()
-#                 student.CV_DA = cv
-#             elif(prof=="DL"):#delete both the CV's
-#                 if(student.CV_SD):
-#                     student.CV_SD.delete()
-#                 if(student.CV_DA):
-#                     student.CV_DA.delete()
-                    
-#                 student.CV_SD = None
-#                 student.CV_DA = None
-#             user.save()
+class editStudProfile(CreateView):
+    model = patient
+    form_class = patient_register
+    template_name = '../templates/edit_details.html'
+    
+    def get(self, request):
+        return render(request,'../templates/edit_details.html',{'whereto':'student_edit','form':patient_register})#display the form in the edit_details.html
+    
+    def form_valid(self,form):#form valid function
+        if 'user' in request.session and 'type' in request.session:#if request is from an authenticated user 
+            SSN, name, Address, Phone, InsuranceID, PCP = form.save()#get data from form
+            patient = patient(name=name,SSN = SSN, Address = Address, PCP = PCP, InsuranceID = InsuranceID,
+                              Phone=Phone)
+            patient.save()
 #             student.save()
-#         return redirect('/')
+        return redirect('/')
 
 # class editCompProfile(CreateView):
 #     model = Company
@@ -246,32 +202,49 @@ class data_entry_register(CreateView):
 
 def login_request(request):
     if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
-        form = AuthenticationForm(data=request.POST)
 
         username = request.POST['username']
         password = request.POST['password']
         
         try:
+            try:
+                password = int(password)
+            except ValueError:
+                return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm()})
+                
+
             user = physician.objects.get(EmployeeID = password)
             if username.upper() == user.name:
-                return render(request, 'index.html', {'user': user, 'type':"doctor", 'status':1})
-    
+                request.session['user'] = user.EmployeeID
+                request.session['type'] = "doctor"
+                return redirect('/')    
         except physician.DoesNotExist:
             try:
                 user = front_desk.objects.get(reg_id = password)
                 if username.upper() == user.name:
-                    return render(request, 'index.html', {'user': user, 'type':"front_desk", 'status':1})
+                    request.session['user'] = user.reg_id
+                    request.session['type'] = "front_desk"
+                    return redirect('/')
     
             except front_desk.DoesNotExist:
                 try:
                     user = data_entry.objects.get(reg_id = password)
                     if username.upper() == user.name:
-                        return render(request, 'index.html', {'user': user, 'type':"data_entry", 'status':1})
+                        request.session['user'] = user.reg_id
+                        request.session['type'] = "data_entry"
+                        return redirect('/')
     
                 except data_entry.DoesNotExist:
-                    return render(request, 'index.html', {'user': {}, 'type':"none"})
+                    
+                    return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm()})
     
-    print("No match")
+        print("No match")
+    elif request.method=='GET':
+        if 'user' in request.session and 'type' in request.session:
+            print(request.session['user'])
+            return redirect('/')
     return render(request, '../templates/login.html',#return to the template
     context={'form':AuthenticationForm()})
 

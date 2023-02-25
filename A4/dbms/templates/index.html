@@ -173,7 +173,7 @@
 									 </h3>
 										
 										<div class="dropdown">
-											<p style="color:black;float:right;position:relative;top:-2.5vh;left:-0.2vw;">{{user.EmployeeID}}</p>
+											{% comment %} <p style="color:black;float:right;position:relative;top:-2.5vh;left:-0.2vw;">{{user.EmployeeID}}</p> {% endcomment %}
 											<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false" style="width:5vw;height:5vw; border-radius:50%;background-color:white; border:none;float:right;position:relative;left:4vw;">
                         {% load static %}
                         <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:relative; top:-6px;left:-12px">
@@ -359,12 +359,12 @@
 
 {% else %}
 {% load static %}
-<div id="mainreg" style="background-image:url('{% static '/a.jpg' %}') ;background-color:#0e1a35; height:100vh;width:99vw;margin:auto;color:white;font-size:1.2em;clip-path: polygon(0 0, 100% 0%, 100% 95%, 0% 100%);background-size:cover">
-<div id="heading" style="width:50%; margin:auto">BC Roy Technology Hospital</div>
-<div id="headingname" style="width:50%;margin:auto">Covid Tracker</div>
+<div id="mainreg" style="background-image:url('{% static '/ab.jpg' %}') ;background-color:#0e1a35; height:100vh;width:99vw;margin:auto;color:white;font-size:1.2em;clip-path: polygon(0 0, 100% 0%, 100% 95%, 0% 100%);background-size:cover">
+<div id="heading" style="width:70%; margin:auto;color:black">BC Roy Technology Hospital</div>
+<div id="headingname" style="width:50%;margin:auto;color:black">Covid Tracker</div>
 <div id="navlink">
 <a href="{% url 'doctor_register' %}">Doctor Registration</a> 
-<a href="{% url 'front_desk_register' %}">Front desk Operator</a> 
+<a href="{% url 'front_desk_register' %}">Front Desk Operator</a> 
 <a href="{% url 'data_entry_register' %}">Data Entry Operator</a>
 <a href="/admin/login/?next=/admin/">Admin Login</a> 
 <a href="{% url 'login' %}">Login</a>

@@ -25,7 +25,7 @@
         <div class="col-md-12 mx-auto">
           <div class="card" style="border:5px solid white;">
             <div class="card-header text-white" style="background-color:#0E1A35">
-              <h2 style="margin-left:23vw">Company Registration</h2>
+              <h2 style="margin-left:23vw">Front-Desk Registration</h2>
             </div>
             <div class="card-body">
               <form action="{% url 'front_desk_register' %}" enctype="multipart/form-data" method="POST">
@@ -39,6 +39,8 @@
                   {% endfor %}
                   {% endfor %}
                   <input type="submit" value="Register" class="btn btn-block btn-primary my-4">
+                  <a href="/" style="color:black; position:relative;left:32vw;font-size:1.5em;">Go
+                    Back</a>
                 </div>
               </form>
             </div>
@@ -46,8 +48,7 @@
         </div>
       </div>
     </div>
-    <a href="/" style="color:black; position:relative;left:32vw;font-size:1.5em;">Go
-      Back</a>
+  
     </div>
   </section>
 </body>

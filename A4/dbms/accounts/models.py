@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 
 class front_desk(models.Model):
@@ -6,6 +5,7 @@ class front_desk(models.Model):
     name = models.CharField(max_length=255)
     surname = models.CharField(max_length=255)
     reg_id = models.IntegerField(primary_key=True)
+    password = models.CharField(max_length=255)
     
     def __str__(self):
         return self.name+ " " + self.surname
@@ -15,6 +15,7 @@ class data_entry(models.Model):
     name = models.CharField(max_length=255)
     surname = models.CharField(max_length=255)
     reg_id = models.IntegerField(primary_key=True)
+    password = models.CharField(max_length=255)
     
     def __str__(self):
         return self.name+ " " + self.surname
@@ -25,15 +26,192 @@ class physician(models.Model):
     name = models.CharField(max_length = 255)
     Position = models.CharField(max_length = 255)
     SSN = models.IntegerField()
+    password = models.CharField(max_length=255)
     
     def __str__(self):
         return self.name
     
     
-   
-    # class Meta:
-    #     unique_together = (('id','department'),)
+class department(models.Model):
     
+    DepartmentID = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length = 255)
+    Head = models.IntegerField()
+    
+    def __str__(self):
+        return self.name
+    
+class affiliated_with(models.Model):
+
+    Physician = models.IntegerField()
+    Department = models.IntegerField()
+    PrimaryAffiliation = models.BooleanField(default=0)
+    
+    class Meta:
+        unique_together = (('Physician','Department'),)
+ 
+    def __str__(self):
+        return self.name
+
+class trained_in(models.Model):
+
+    Physician = models.IntegerField()
+    Treatment = models.IntegerField()
+    CertificationDate = models.DateTimeField()
+    CertificationExpires = models.DateTimeField()
+    
+    class Meta:
+        unique_together = (('Physician','Treatment'),)
+ 
+    def __str__(self):
+        return str(self.Physician) + "--" + str(self.Treatment)
+    
+class procedures(models.Model):
+
+    Code = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length = 255)
+    Cost = models.IntegerField()
+   
+ 
+    def __str__(self):
+        return self.name
+
+class room(models.Model):
+
+    Number = models.IntegerField(primary_key=True)
+    Type = models.CharField(max_length = 255)
+    BlockFloor = models.IntegerField()
+    BlockCode = models.IntegerField()
+    Capacity = models.IntegerField()
+   
+ 
+    def __str__(self):
+        return self.Type + " " + str(self.Number)
+    
+class patient(models.Model):
+
+    PatientID = models.IntegerField(primary_key=True)
+    SSN = models.IntegerField()
+    name = models.CharField(max_length = 255)
+    Address = models.CharField(max_length = 255)
+    Phone = models.CharField(max_length = 255)
+    InsuranceID = models.IntegerField()
+    PCP = models.IntegerField()
+    Status = models.IntegerField()
+   
+ 
+    def __str__(self):
+        return self.name + " " + str(self.SSN)
+    
+class undergoes(models.Model):
+
+    Patient = models.IntegerField()
+    Procedures = models.IntegerField()
+    Stay = models.IntegerField()
+    Date = models.DateTimeField()
+    Physician = models.IntegerField()
+    AssistingNurse = models.IntegerField()
+    
+   
+    class Meta:
+        unique_together = (('Patient','Procedures', 'Stay', 'Date'),)
+ 
+    def __str__(self):
+        return str(self.Patient) + " " + str(self.Procedures) 
+    
+class prescribes(models.Model):
+
+    Physician = models.IntegerField()
+    Patient = models.IntegerField()
+    Medication = models.IntegerField()
+    Date = models.DateTimeField()
+    Appointment = models.IntegerField()
+    Dose = models.CharField(max_length=255)
+ 
+   
+    class Meta:
+        unique_together = (('Physician','Patient', 'Medication', 'Date'),)
+ 
+    def __str__(self):
+        return str(self.Physician) + " " + str(self.Patient) 
+
+class stay(models.Model):
+
+    StayID = models.IntegerField(primary_key=True)
+    Patient = models.IntegerField()
+    Room = models.IntegerField()
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
+
+ 
+    def __str__(self):
+        return self.StayID
+
+class block(models.Model):
+
+    Floor = models.IntegerField()
+    Code = models.IntegerField()
+
+    class Meta:
+        unique_together = (('Floor','Code'),)
+        
+    def __str__(self):
+        return str(self.Floor) + " " + str(self.Code)
+    
+class on_call(models.Model):
+
+    Nurse = models.IntegerField()
+    BlockFloor = models.IntegerField()
+    BlockCode = models.IntegerField()
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
+    
+    class Meta:
+        unique_together = (('Nurse','BlockFloor', 'BlockCode', 'Start', 'End'),)
+ 
+    def __str__(self):
+        return str(self.Nurse) + " " + str(self.Start) + " " + str(self.End) 
+
+
+class medication(models.Model):
+
+    Code = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    Brand = models.CharField(max_length=255)
+    Description = models.CharField(max_length=255)
+    
+ 
+    def __str__(self):
+        return self.Code
+    
+class appointment(models.Model):
+
+    AppointmentID = models.IntegerField(primary_key=True)
+    Patient = models.IntegerField()
+    PrepNurse = models.IntegerField()
+    physician = models.IntegerField()
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
+    ExaminationRoom = models.CharField(max_length=255)
+    
+ 
+    def __str__(self):
+        return self.AppointmentID
+    
+class nurse(models.Model):
+
+    EmployeeID = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    Position = models.CharField(max_length=255)
+    Registered = models.BooleanField(default=0)
+    SSN = models.IntegerField()
+
+    
+    def __str__(self):
+        return self.EmployeeID
+    
+
+
 
 # class User(AbstractUser): #user model defined which would be inherited by other models
 #     is_student=models.BooleanField(default=False) #to track if the user is student
