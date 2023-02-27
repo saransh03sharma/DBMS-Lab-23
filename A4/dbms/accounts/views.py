@@ -834,7 +834,6 @@ class admit_patient(CreateView):
             pat_room = room.objects.get(id = Room)
             pat_room.Capacity -= 1 
             pat_room.save()
-#             student.save()
             return redirect('/')
 
 
