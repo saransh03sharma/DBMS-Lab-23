@@ -8,11 +8,11 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
     integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-  <title>Login</title>
+  <title>Student Registration</title>
   <style>
     body {
       background: #0E1A35;
-      padding-top: 20vh !important;
+      padding-top: 2vh !important;
       padding-bottom: 2vh !important;
 
     }
@@ -20,30 +20,33 @@
 </head>
 
 <body>
+
   <section>
     <div class="container">
       <div class="row" style="width:100vw;position:relative;left:-13vw;">
         <div class="col-md-6 mx-auto">
           <div class="card" style="border:5px solid white;">
-            <div class="card-header text-black" style="background-color:#0E1A35">
-              <h2 style="margin-left:20vw;color:white">Login</h2>
-              <h6 style="color:red;margin-left:12vw;"> Your Registration ID will be your username</h6>
+            <div class="card-header text-white" style="background-color:#0E1A35">
+              <h2 style="margin-left:12vw">Admit Patient Registration </h2>
             </div>
             <div class="card-body">
-              <form action="{% url whereto %}" method="POST" novalidate>
+              
+              <form action="{% url 'patient_admit' %}" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
+                <label for="SSN">SSN:</label>
+                <br>
+                <input type="text" name="my_variable" value={{SSN}} readonly style="width:100%; height:35px;border-radius:3px;padding:5px; background-color:#E9ECEF;border:2px solid #d2d7db;color:#5b5b5b">
                 {% for field in form.visible_fields %}
                 <div class="form-group">
                   {{ field.label_tag }}
                   {% render_field field class="form-control" %}
-                  {% if messages%}
-                  {% for message in messages %}
-                  <span style="color:red">{{ message }}</span>
+                  {% for error in field.errors %}
+                  <span style="color:red">{{ error }}</span>
                   {% endfor %}
-                  {% endif %}
                   {% endfor %}
-                  <br>
-                  <input type="submit" value="Login" class="btn btn-block btn-primary">
+                  <input type="submit" value="Register" class="btn btn-block btn-primary my-4">
+                  <a href="/" style="color:black; position:relative;left:20vw;font-size:1.5em;">Go
+                    Back</a>
                 </div>
               </form>
             </div>
@@ -51,10 +54,10 @@
         </div>
       </div>
     </div>
-    <a href="/" style="color:black; position:relative;left:12vw;font-size:1.5em;background-color:white;padding-left:22vw;padding-right:20.5vw;" >Go
-      Back</a>
+   
     </div>
   </section>
 
 </body>
+
 </html>

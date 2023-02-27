@@ -16,7 +16,7 @@ CREATE TABLE accounts_affiliated_with (
     PrimaryAffiliation TINYINT(1) not null,
     PRIMARY KEY (id, Physician, Department)
 );
-
+-- 
 CREATE TABLE accounts_trained_in (
     id int AUTO_INCREMENT,
     Physician int not null,
@@ -55,14 +55,7 @@ CREATE TABLE  accounts_data_entry (
     password varchar(255) not null
 );
 
-CREATE TABLE accounts_room (
-    Number int not null,
-    Type varchar(255) not null,
-    BlockFloor int not null,
-    BlockCode int not null,
-    Capacity int not null,
-    PRIMARY KEY (Number)
-);
+
 
 CREATE TABLE accounts_patient (
     SSN int primary key,
@@ -81,8 +74,33 @@ CREATE TABLE accounts_undergoes (
     Stay int not null,
     Date DATETIME not null,
     Physician int not null,
-    AssistingNurse int,
     PRIMARY KEY (id, Patient, Procedures, Stay, Date)
+);
+CREATE TABLE accounts_stay (
+    StayID int not null AUTO_INCREMENT,
+    Patient int not null,
+    Room int not null,
+    Start DATETIME not null,
+    End DATETIME not null,
+    PRIMARY KEY (StayID)
+);
+
+CREATE TABLE accounts_room (
+    id int AUTO_INCREMENT,
+    Number int not null,
+    Type varchar(255) not null,
+    Room_name varchar(255) not null,
+    Capacity int not null,
+    PRIMARY KEY (id, Number, Room_name)
+);
+
+CREATE TABLE accounts_admission (
+    AdmissionID int not null AUTO_INCREMENT,
+    Patient int not null,
+    Room int not null,
+    Start DATETIME not null,
+    End DATETIME not null,
+    PRIMARY KEY (AdmissionID)
 );
 
 CREATE TABLE accounts_prescribes (
@@ -95,31 +113,7 @@ CREATE TABLE accounts_prescribes (
     Dose varchar(255) not null,
     PRIMARY KEY (id,Physician, Patient, Medication, Date)
 );
-CREATE TABLE accounts_stay (
-    StayID int not null,
-    Patient int not null,
-    Room int not null,
-    Start DATETIME not null,
-    End DATETIME not null,
-    PRIMARY KEY (StayID)
-);
 
-CREATE TABLE accounts_block (
-    id int AUTO_INCREMENT,
-    Floor int not null,
-    Code int not null,
-    PRIMARY KEY (id,Floor, Code)
-);
-
-CREATE TABLE accounts_on_call (
-    id int AUTO_INCREMENT,
-    Nurse int not null,
-    BlockFloor int not null,
-    BlockCode int not null,
-    Start DATETIME not null,
-    End DATETIME not null,
-    PRIMARY KEY (id, Nurse, BlockFloor, BlockCode, Start, End)
-);
 
 CREATE TABLE accounts_medication (
     Code int not null,
@@ -132,7 +126,6 @@ CREATE TABLE accounts_medication (
 CREATE TABLE accounts_appointment (
     AppointmentID int not null,
     Patient int not null,
-    PrepNurse int,
     Physician int not null,
     Start DATETIME not null,
     End DATETIME not null,
@@ -140,14 +133,9 @@ CREATE TABLE accounts_appointment (
     PRIMARY KEY (AppointmentID)
 );
 
-CREATE TABLE accounts_nurse (
-    EmployeeID int not null,
-    Name varchar(255) not null,
-    Position varchar(255) not null,
-    Registered TINYINT(1) not null,
-    SSN int not null,
-    PRIMARY KEY (EmployeeID)
-);
+
+
+
 
 -- foreign key setting
 ALTER TABLE accounts_department 
@@ -203,41 +191,33 @@ ALTER TABLE accounts_prescribes
 ADD FOREIGN KEY (Appointment) REFERENCES accounts_appointment(AppointmentID);
 
 
-ALTER TABLE accounts_room 
-ADD FOREIGN KEY ( BlockFloor, BlockCode) REFERENCES accounts_block(Floor, Code);
-
-
 ALTER TABLE accounts_stay 
 ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(SSN);
-
 
 ALTER TABLE accounts_stay 
 ADD FOREIGN KEY (Room) REFERENCES Room(Number);
 
 
-ALTER TABLE On_Call 
-ADD FOREIGN KEY (Nurse) REFERENCES accounts_nurse(EmployeeID);
-
-
-ALTER TABLE accounts_on_call 
-ADD FOREIGN KEY (BlockFloor, BlockCode) REFERENCES Block(Floor, Code);
-
 
 ALTER TABLE accounts_appointment 
 ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(SSN);
 
-ALTER TABLE accounts_appointment 
-ADD FOREIGN KEY (PrepNurse) REFERENCES accounts_nurse(EmployeeID);
 
 ALTER TABLE accounts_appointment 
 ADD FOREIGN KEY (Physician) REFERENCES accounts_physician(EmployeeID);
 
+ALTER TABLE accounts_admission
+ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(SSN);
+ALTER TABLE accounts_admission
+ADD FOREIGN KEY (Room) REFERENCES accounts_room(id);
+ALTER TABLE accounts_admission AUTO_INCREMENT=1000;
+
+
+DROP TABLE accounts_admission;
 DROP TABLE accounts_prescribes;
 DROP TABLE accounts_appointment;
 DROP TABLE accounts_front_desk;
-DROP TABLE accounts_block;
 DROP TABLE accounts_medication;
-DROP TABLE accounts_on_call;
 DROP TABLE accounts_data_entry;
 DROP TABLE accounts_room;
 DROP TABLE accounts_undergoes;
@@ -246,7 +226,6 @@ DROP TABLE accounts_procedures;
 DROP TABLE accounts_affiliated_with;
 DROP TABLE accounts_department;
 DROP TABLE accounts_stay;
-DROP TABLE accounts_nurse;
 DROP TABLE accounts_patient;
 DROP TABLE accounts_physician;
 

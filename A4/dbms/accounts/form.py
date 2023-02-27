@@ -5,27 +5,8 @@ from .models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import make_password, check_password
+from django.forms.widgets import DateTimeInput
 
-
-# Dep_choices = (# tuple of (what appears in the backend,what appears in frontend)
-#     ("Computer Science and Engineering","Computer Science and Engineering"),
-#     ("Electronics and Electrical Communications Engineering","Electronics and Electrical Communications Engineering"),
-#     ("Electrical Engineering","Electrical Engineering"),
-#     ("Mechanical Engineering","Mechanical Engineering"),
-# )
-
-patient_status =(
-    ("0","Register"),
-    ("1","Admitted"),
-    ("2","Discharged"),
-)
-
-# Profiles_edit_choices =(
-#     ("NO","No new CV to upload"),
-#     ("SD","Software Develepment"),
-#     ("DA","Data Analytics"),
-#     ("DL","Delete my uploaded CVs"),
-# )
 
 class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
    
@@ -60,7 +41,6 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
         doctor = physician(name=name,Position = Position, EmployeeID = EmployeeID, SSN = SSN, password=password)
         doctor.save()
         return doctor
-
 
 class FrontSignUpForm(forms.ModelForm):#form and formfields defined
    
@@ -127,34 +107,77 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
         data.save()
         return data
 
+class admit_pat(forms.ModelForm):
+    
+   
+    name = forms.CharField(max_length = 255,required=True)
+    Room = forms.ChoiceField(choices=[])
+    Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Room'].choices = self.get_my_choices()
+
+    def get_my_choices(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        all_room=[]
+        rooms = room.objects.all()
+        for x in rooms: 
+            if(x.Capacity>=1):
+                all_room.append((x.id,x.Room_name+" "+str(x.Number)))
+        if all_room == []:
+                all_room.append((-1, "NO ROOM AVAILABLE"))
+        return all_room
+    
+    class Meta():
+        model = patient
+        fields = ['name', "Room", 'Start']
+        
+
+
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('name'),self.cleaned_data.get('Room'),self.cleaned_data.get('Start')
 
 class patient_register(forms.ModelForm):
+    
+        
     SSN = forms.IntegerField(required=True)
     name = forms.CharField(max_length = 255,required=True)
     Address = forms.CharField(max_length = 255,required=True)
     Phone = forms.CharField(max_length = 255,required=True)
     InsuranceID = forms.IntegerField(required=True)
-    PCP = forms.IntegerField(required=True)
-    Status = forms.ChoiceField(choices=patient_status)
-#     email = forms.EmailField(required=True)
-#     contact_number = forms.CharField(max_length=12,required=True)
-#     roll_number =forms.CharField(required=True)
-#     first_name = forms.CharField(required=True) 
-#     last_name = forms.CharField(required=True)
-#     department = forms.CharField(required=True)
-#     SDprofile = forms.BooleanField(initial=True,label="Software Development",required=False)
-#     DAprofile = forms.BooleanField(initial=False,label="Data Analytics",required=False)
-#     cvprof = forms.ChoiceField(choices=Profiles_edit_choices,label="Choose a Profile to Upload CV for(choose No File to Upload, if don't want to upload new CV)",required=True)
-#     cv = forms.FileField(label="Upload CV",required=False)
+    PCP = forms.ChoiceField(choices = [])
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['PCP'].choices = self.get_my_choices()
+
+    def get_my_choices(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        patient_list=[]
+        doct = physician.objects.all()
+        for x in doct: 
+            patient_list.append((x.EmployeeID,x.name))
+        return patient_list
+    
 
     class Meta():
         model = patient
-        fields = ['SSN','name','Address','Phone','InsuranceID','PCP','Status']
+        fields = ['SSN','name','Address','Phone','InsuranceID','PCP']
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('SSN'),self.cleaned_data.get('name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('InsuranceID'),self.cleaned_data.get('PCP'),self.cleaned_data.get('Status')
+        return self.cleaned_data.get('SSN'),self.cleaned_data.get('name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('InsuranceID'),self.cleaned_data.get('PCP'),0
+        
+        # Phone = self.cleaned_data.get('Phone')
+        # if len(Phone)==10 and Phone.isdigit():
+        #     return self.cleaned_data.get('SSN'),self.cleaned_data.get('name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('InsuranceID'),self.cleaned_data.get('PCP'),0
+        # else:   
+            # raise forms.ValidationError(_("Invalid Number Format"),code='invalid_format')
 
 # class AlumniSignUpForm(UserCreationForm):
 #     first_name = forms.CharField(required=True) 
@@ -235,7 +258,6 @@ class patient_register(forms.ModelForm):
 #         company.verify_doc = self.cleaned_data.get('verify_doc')
 #         company.save()
 #         return user
-
 
 # class CompanydescForm(forms.ModelForm):
 #     overview = forms.Textarea(attrs={"cols": "35", "rows": "10"})

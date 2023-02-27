@@ -85,20 +85,22 @@ class procedures(models.Model):
 
 class room(models.Model):
 
-    Number = models.IntegerField(primary_key=True)
+    Number = models.IntegerField()
     Type = models.CharField(max_length = 255)
-    BlockFloor = models.IntegerField()
-    BlockCode = models.IntegerField()
+    Room_name = models.CharField(max_length=255)
     Capacity = models.IntegerField()
    
+   
+    class Meta:
+        unique_together = (('Number','Room_name'),)
  
     def __str__(self):
         return self.Type + " " + str(self.Number)
     
 class patient(models.Model):
 
-    PatientID = models.IntegerField(primary_key=True)
-    SSN = models.IntegerField()
+    
+    SSN = models.IntegerField(primary_key=True)
     name = models.CharField(max_length = 255)
     Address = models.CharField(max_length = 255)
     Phone = models.CharField(max_length = 255)
@@ -117,7 +119,6 @@ class undergoes(models.Model):
     Stay = models.IntegerField()
     Date = models.DateTimeField()
     Physician = models.IntegerField()
-    AssistingNurse = models.IntegerField()
     
    
     class Meta:
@@ -126,6 +127,20 @@ class undergoes(models.Model):
     def __str__(self):
         return str(self.Patient) + " " + str(self.Procedures) 
     
+class admission(models.Model):
+    Admissionid = models.AutoField(primary_key=True)
+    Patient = models.IntegerField()
+    Room = models.IntegerField()
+    Start = models.DateTimeField()
+    End = models.DateTimeField()
+    
+ 
+    def __str__(self):
+        return str(self.Admissionid) + " " + str(self.Patient) 
+    
+
+
+
 class prescribes(models.Model):
 
     Physician = models.IntegerField()
@@ -150,6 +165,7 @@ class stay(models.Model):
     Start = models.DateTimeField()
     End = models.DateTimeField()
 
+    
  
     def __str__(self):
         return self.StayID
@@ -165,19 +181,6 @@ class block(models.Model):
     def __str__(self):
         return str(self.Floor) + " " + str(self.Code)
     
-class on_call(models.Model):
-
-    Nurse = models.IntegerField()
-    BlockFloor = models.IntegerField()
-    BlockCode = models.IntegerField()
-    Start = models.DateTimeField()
-    End = models.DateTimeField()
-    
-    class Meta:
-        unique_together = (('Nurse','BlockFloor', 'BlockCode', 'Start', 'End'),)
- 
-    def __str__(self):
-        return str(self.Nurse) + " " + str(self.Start) + " " + str(self.End) 
 
 
 class medication(models.Model):
@@ -195,7 +198,6 @@ class appointment(models.Model):
 
     AppointmentID = models.IntegerField(primary_key=True)
     Patient = models.IntegerField()
-    PrepNurse = models.IntegerField()
     physician = models.IntegerField()
     Start = models.DateTimeField()
     End = models.DateTimeField()
@@ -205,17 +207,7 @@ class appointment(models.Model):
     def __str__(self):
         return self.AppointmentID
     
-class nurse(models.Model):
 
-    EmployeeID = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    Position = models.CharField(max_length=255)
-    Registered = models.BooleanField(default=0)
-    SSN = models.IntegerField()
-
-    
-    def __str__(self):
-        return self.EmployeeID
     
 
 

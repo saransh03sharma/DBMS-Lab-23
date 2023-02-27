@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from django.urls import reverse_lazy
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -54,7 +56,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    
 ]
+
+SESSION_EXPIRE_SECONDS = 300
+SESSION_TIMEOUT_REDIRECT = '/'
 
 ROOT_URLCONF = 'dbms.urls'
 
@@ -130,9 +137,6 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR)
 STATIC_URL = '/accounts/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-
 
 
 

@@ -2,13 +2,13 @@ from django.contrib.auth import login, logout,authenticate
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.views.generic import CreateView
-
+from django.http import HttpResponse
 from django.contrib.auth.forms import AuthenticationForm
 from .models import *
 from .form import *
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import get_object_or_404
+import datetime
 
 def register(request):
     return render(request, '../templates/register.html')
@@ -36,75 +36,61 @@ class data_entry_register(CreateView):
     def form_valid(self, form): #form valid check
         user = form.save() #save the form
         return redirect('/') #redirect to main index page
-    
-# class front_register(CreateView):
-#     model = User
-#     form_class = AlumniSignUpForm
-#     template_name = '../templates/alumni_register.html'
+  
+# # class company_info(CreateView):
+# #     model = Company
+# #     form_class = CompanydescForm
+# #     template_name = '../templates/company_info.html'
 
-#     def form_valid(self, form):
-#         user = form.save()
-#         login(self.request, user)
-#         return redirect('/')
-    
-# class data_register(CreateView):
-#     form_class = CompanySignUpForm
-#     template_name = '../templates/company_register.html'
+# #     def form_valid(self, form):
+# #         # print(self.request.user)
+# #         company = User.objects.get(username = (self.request.user))
+# #         comp = Company.objects.get(user=company)
+# #         # print(company)
+# #         overvie,work_enviro,job_des,other_detail = form.save()
+# #         e_mess_admin = "Company called <b>" + str(comp.company_name) + "</b> is trying to apply for recruitment process in your college.<br>Please visit the admin portal to see the details about the Company and the verification document uploaded by the Company Admin.<br><br><strong>After successful verification you can make the company status Active, so that company can participate in the placement process.</strong><br><br><br>Best,<br>OPIGS Team<br><br>"
+# #         e_mess_comp = "Thanks <b>" + str(comp.company_name) + "</b> for applying for the recruitment process in our college.<br>We have recieved your data and the Institute administrator has been informed about your application.<br><br><strong>You will not be able to login into the portal until your application is in the verification process.<br>After successful verification from Institute Adminstrator, you will be able to login in to the portal and the students will be able to see your company details and apply for the jobs offered by your company.</strong><br><br>For any further queries, please contact the Institute Administrator.<br><br>Best,<br>OPIGS Team<br><br>"
+# #         send_mail(
+# #             "NEW COMPANY TRYING TO APPLY FOR PLACEMENT PROCESS", #subject
+# #             "", #message
+# #             "opigs.iitkgp@gmail.com", #from_email
+# #             ["iitkgp.placement@gmail.com"], #to_email_list
+# #             fail_silently=True,
+# #             html_message= e_mess_admin
+# #         )
+# #         send_mail(
+# #             "REQUEST FOR RECRUITING RECIEVED", #subject
+# #             "", #message
+# #             "opigs.iitkgp@gmail.com", #from_email
+# #             [company.email], #to_email_list
+# #             fail_silently=True,
+# #             html_message= e_mess_comp
+# #         )
+# #         Company.objects.filter(user = (company)).update(overview= overvie,work_environ= work_enviro,job_desc=job_des,other_details=other_detail)#search for the company whose data has been enetered and then update the details there 
+# #         company.is_active=False #company will be active only after manual verification by the admin
+# #         company.save()
+# #         # print(overvie,work_enviro,job_des,other_detail)
+# #         return redirect('/')
 
-#     def form_valid(self, form):
-#         user = form.save()
-#         login(self.request, user)
-#         return redirect('/accounts/company_info')
 
-# class company_info(CreateView):
-#     model = Company
-#     form_class = CompanydescForm
-#     template_name = '../templates/company_info.html'
 
-#     def form_valid(self, form):
-#         # print(self.request.user)
-#         company = User.objects.get(username = (self.request.user))
-#         comp = Company.objects.get(user=company)
-#         # print(company)
-#         overvie,work_enviro,job_des,other_detail = form.save()
-#         e_mess_admin = "Company called <b>" + str(comp.company_name) + "</b> is trying to apply for recruitment process in your college.<br>Please visit the admin portal to see the details about the Company and the verification document uploaded by the Company Admin.<br><br><strong>After successful verification you can make the company status Active, so that company can participate in the placement process.</strong><br><br><br>Best,<br>OPIGS Team<br><br>"
-#         e_mess_comp = "Thanks <b>" + str(comp.company_name) + "</b> for applying for the recruitment process in our college.<br>We have recieved your data and the Institute administrator has been informed about your application.<br><br><strong>You will not be able to login into the portal until your application is in the verification process.<br>After successful verification from Institute Adminstrator, you will be able to login in to the portal and the students will be able to see your company details and apply for the jobs offered by your company.</strong><br><br>For any further queries, please contact the Institute Administrator.<br><br>Best,<br>OPIGS Team<br><br>"
-#         send_mail(
-#             "NEW COMPANY TRYING TO APPLY FOR PLACEMENT PROCESS", #subject
-#             "", #message
-#             "opigs.iitkgp@gmail.com", #from_email
-#             ["iitkgp.placement@gmail.com"], #to_email_list
-#             fail_silently=True,
-#             html_message= e_mess_admin
-#         )
-#         send_mail(
-#             "REQUEST FOR RECRUITING RECIEVED", #subject
-#             "", #message
-#             "opigs.iitkgp@gmail.com", #from_email
-#             [company.email], #to_email_list
-#             fail_silently=True,
-#             html_message= e_mess_comp
-#         )
-#         Company.objects.filter(user = (company)).update(overview= overvie,work_environ= work_enviro,job_desc=job_des,other_details=other_detail)#search for the company whose data has been enetered and then update the details there 
-#         company.is_active=False #company will be active only after manual verification by the admin
-#         company.save()
-#         # print(overvie,work_enviro,job_des,other_detail)
-#         return redirect('/')
 
-class editStudProfile(CreateView):
+# class patient_reg_help(CreateView):
+
+class patient_reg_help(CreateView):
     model = patient
     form_class = patient_register
     template_name = '../templates/edit_details.html'
     
     def get(self, request):
-        return render(request,'../templates/edit_details.html',{'whereto':'student_edit','form':patient_register})#display the form in the edit_details.html
+        return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register})#display the form in the edit_details.html
     
     def form_valid(self,form):#form valid function
-        if 'user' in request.session and 'type' in request.session:#if request is from an authenticated user 
-            SSN, name, Address, Phone, InsuranceID, PCP = form.save()#get data from form
-            patient = patient(name=name,SSN = SSN, Address = Address, PCP = PCP, InsuranceID = InsuranceID,
-                              Phone=Phone)
-            patient.save()
+        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+            SSN, name, Address, Phone, InsuranceID, PCP, Status = form.save()#get data from form
+            pa = patient(name=name,SSN = SSN, Address = Address, PCP = PCP, InsuranceID = InsuranceID,
+                              Phone=Phone, Status = Status)
+            pa.save()
 #             student.save()
         return redirect('/')
 
@@ -151,7 +137,6 @@ class editStudProfile(CreateView):
 #             company.save()
 #         return redirect('/')
 
-
 # class editAlumProfile(CreateView):
 #     model = Alumni
 #     form_class = AlumniEditForm
@@ -190,9 +175,32 @@ class editStudProfile(CreateView):
 #             user.save()
 #         return redirect('/')
 
+def login_admin(request):
+    if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
+        print("h1h")
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        try:
+            
+            user = db_admin.objects.get(username = username, password = password) 
+            request.session['user'] = user.username
+            request.session['type'] = "db_admin"
+            return redirect('/')
+            
+        except Exception as e:
+            print(e)
+            return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm(), 'whereto':'admin_login'})
+        
+    elif request.method=='GET':
+        if 'user' in request.session and 'type' in request.session:
+            print(request.session['user'])
+            return redirect('/')
+    return render(request, '../templates/login.html',#return to the template
+    context={'form':AuthenticationForm(), 'whereto':'admin_login'})
 
-
-def login_request(request):
+def login_doctor(request):
     if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
 
         username = request.POST['username']
@@ -206,39 +214,66 @@ def login_request(request):
                 request.session['type'] = "doctor"
                 return redirect('/')    
         except:
-            try:
-                
-                user = front_desk.objects.get(reg_id = username)
-                if check_password(password, user.password):
-                    request.session['user'] = user.reg_id
-                    request.session['type'] = "front_desk"
-                    return redirect('/')
+            return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm(),'whereto':'doctor_login'})
     
-            except:
-                try:
-                    user = data_entry.objects.get(reg_id = username)
-                    if check_password(password, user.password):
-                        request.session['user'] = user.reg_id
-                        request.session['type'] = "data_entry"
-                        return redirect('/')
-    
-                except:
-                    try:
-                        user = db_admin.objects.get(username = username, password = password)
-                        request.session['user'] = user.username
-                        request.session['type'] = "db_admin"
-                        return redirect('/') 
-                    except:
-                        return render(request, '../templates/login.html',#return to the template
-                    context={'form':AuthenticationForm()})
-    
-        print("No match")
+        
     elif request.method=='GET':
         if 'user' in request.session and 'type' in request.session:
             print(request.session['user'])
             return redirect('/')
     return render(request, '../templates/login.html',#return to the template
-    context={'form':AuthenticationForm()})
+    context={'form':AuthenticationForm(),'whereto':'doctor_login'})
+
+def login_fr(request):
+    if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
+
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        
+        try:
+            user = front_desk.objects.get(reg_id = username)
+            if check_password(password, user.password):
+                request.session['user'] = user.reg_id
+                request.session['type'] = "front_desk"
+                return redirect('/')    
+        except:
+            return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm(),'whereto':'fr_login'})
+    
+        
+    elif request.method=='GET':
+        if 'user' in request.session and 'type' in request.session:
+            print(request.session['user'])
+            return redirect('/')
+    return render(request, '../templates/login.html',#return to the template
+    context={'form':AuthenticationForm(),'whereto':'fr_login'})
+
+def login_de(request):
+    if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
+
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        
+        try:
+            user = data_entry.objects.get(reg_id = username)
+            if check_password(password, user.password):
+                request.session['user'] = user.reg_id
+                request.session['type'] = "data_entry"
+                return redirect('/')    
+        except:
+            return render(request, '../templates/login.html',#return to the template
+                    context={'form':AuthenticationForm(),'whereto':'de_login'})
+    
+        
+    elif request.method=='GET':
+        if 'user' in request.session and 'type' in request.session:
+            print(request.session['user'])
+            return redirect('/')
+    return render(request, '../templates/login.html',#return to the template
+    context={'form':AuthenticationForm(),'whereto':'de_login'})
 
 def logout_view(request):#logout request
     if 'user' in request.session and 'type' in request.session:
@@ -305,7 +340,6 @@ def remove_alum_pend(alumni_username,student_username):#to remove alumni from pe
     alumni.save()
     student.save()
     return student.list_of_alum_pend, alumni.list_of_stud_pend
-
 
 def add_alum_pend(alumni_user_id,student_user_id):#add to pending list
     alumni_user = User.objects.get(username = (alumni_user_id))
@@ -423,7 +457,6 @@ def list_of_students(request):
                 list_of_short_studs = str_to_lis(comp.list_of_short_students)
                 return render(request,'../templates/list_of_students.html',{'whereto':'list_of_students','list_of_studs':list_of_studs,'list_of_short_studs':list_of_short_studs})
         return redirect('/')
-
 
 def request_feedback(request):#funct to request feedback from alumni
     if(request.method == 'GET'):
@@ -617,7 +650,6 @@ def stud_chat(request):
                     chat= Chat.objects.filter(alum_username = request.user.username)
                     return render(request,'../templates/stud_chat.html',{'whereto':'stud_chat','chat':chat,'alum':plist})
 
-
 def add_stu_to_comp(company_user_id,student_user_id):
     company_user = User.objects.get(username = (company_user_id))
     student_user = User.objects.get(username = (student_user_id))
@@ -636,7 +668,6 @@ def add_stu_to_comp(company_user_id,student_user_id):
     company.save()
     student.save()
     return
-
 
 def apply_company(request):
     if(request.method == 'GET'):
@@ -697,60 +728,190 @@ def company_details(request):
         return redirect('/')
 
 
+def handle_test(request):
+    if(request.method == 'GET'):
+        if 'user' in request.session and 'type' in request.session:
+            print("yes")
+            user = front_desk.objects.get(reg_id = (request.session['user']))
+            pat = patient.objects.all()
+            print(pat)
+            return render(request,'../templates/patient_test.html',{'whereto':'handle_admit','pat':pat})
+        return redirect('/')  
+    elif request.method == 'POST':
+        a = request.POST.get("comp_id")
+        if a is not None:
+            print("yes")
+            user = patient.objects.get(SSN = a)
+            values = {
+                    'name':user.name,
+                }
+            form = admit_pat(values)
+            form.fields['name'].widget.attrs['readonly']  =True
+            print(values)
+            return render(request,'../templates/admit_room.html',{'whereto':'patient_admit','form':form, 'SSN':user.SSN})#display the form in the edit_details.html
+        a = request.POST.get("dis_id")
+        if a is not None:
+            print("hello")
+            user = patient.objects.get(SSN = a)
+            admit = admission.objects.filter(Patient = a).order_by('-Start')
+            first_admit = admit.first()
+            first_admit.End = datetime.datetime.now() 
+            first_admit.save()
+            user.Status=2;
+            pat_room = room.objects.get(id = first_admit.Room)
+            pat_room.Capacity += 1
+            pat_room.save()
+            print(user.Status)
+            user.save()
+            return redirect("/admit_discharge")
+ 
+
+
+
+
+
+
+
+
+
+
+
+def handle_admit(request):
+    if(request.method == 'GET'):
+        if 'user' in request.session and 'type' in request.session:
+            user = front_desk.objects.get(reg_id = (request.session['user']))
+            pat = patient.objects.all()
+            print(pat)
+            return render(request,'../templates/admin_user.html',{'whereto':'handle_admit','pat':pat})
+        return redirect('/')  
+    elif request.method == 'POST':
+        a = request.POST.get("comp_id")
+        if a is not None:
+            print("yes")
+            user = patient.objects.get(SSN = a)
+            values = {
+                    'name':user.name,
+                }
+            form = admit_pat(values)
+            form.fields['name'].widget.attrs['readonly']  =True
+            print(values)
+            return render(request,'../templates/admit_room.html',{'whereto':'patient_admit','form':form, 'SSN':user.SSN})#display the form in the edit_details.html
+        a = request.POST.get("dis_id")
+        if a is not None:
+            print("hello")
+            user = patient.objects.get(SSN = a)
+            admit = admission.objects.filter(Patient = a).order_by('-Start')
+            first_admit = admit.first()
+            first_admit.End = datetime.datetime.now() 
+            first_admit.save()
+            user.Status=2;
+            pat_room = room.objects.get(id = first_admit.Room)
+            pat_room.Capacity += 1
+            pat_room.save()
+            print(user.Status)
+            user.save()
+            return redirect("/admit_discharge")
+ 
+class admit_patient(CreateView):
+    model = undergoes
+    form_class = admit_pat
+    template_name = '../templates/admit_room.html'
+    
+    def get(self,request):
+        return redirect("/admit_discharge")
+    
+    def form_valid(self,form):#form valid function
+        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+            SSN = self.request.POST.get("my_variable")
+            
+            name, Room, Start = form.save()#get data from form
+            print(name, Room, Start)
+            pa = admission(Patient = SSN, Room = Room, Start=Start, End=Start)
+            pa.save()
+            pat = patient.objects.get(SSN = SSN)
+            pat.Status = 1
+            pat.save()
+            pat_room = room.objects.get(id = Room)
+            pat_room.Capacity -= 1 
+            pat_room.save()
+#             student.save()
+            return redirect('/')
+
+
 def index(request): # to return homepage depending upon the logged in user
-    
-    user_id = request.session.get('user')
-    type = request.session.get('type')
-    
-    if type == 'doctor':
-        try:
-            user = physician.objects.get(EmployeeID = user_id)
-            return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
-    
-        except physician.DoesNotExist:
-            return render(request, 'index.html', {'user': {}, 'type':"none"})
-   
-    elif type == 'front_desk':
-        try:
-            user = front_desk.objects.get(reg_id = user_id)
-            return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
-    
-        except front_desk.DoesNotExist:
-            return render(request, 'index.html', {'user': {}, 'type':"none"})
-    
-    elif type == 'db_admin':
-        try:
-            user = db_admin.objects.get(username = user_id)
-            return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
-    
-        except front_desk.DoesNotExist:
-            return render(request, 'index.html', {'user': {}, 'type':"none"})
-   
-    elif type == 'data_entry':
-        try:
-            user = data_entry.objects.get(reg_id = user_id)
-            print(user.name)
-            return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
-    
-        except data_entry.DoesNotExist:
-            return render(request, 'index.html', {'user': {}, 'type':"none"})
-   
-    else:
-        return render(request, 'index.html')
-    # if(request.method == 'GET'):
-        # if(request.user.is_authenticated):
-        #     if(request.user.is_student):
-        #         user = User.objects.get(username = request.user.username)
-        #         student = Student.objects.get(user = user)
-        #         notif = Notification.objects.all().order_by('-Date')
-        #         return render(request,'../templates/index.html',{'student':student,'notif':notif,'status':1})
-        #     elif(request.user.is_company):
-        #         user = User.objects.get(username = request.user.username)
-        #         company = Company.objects.get(user = user)
-        #         return render(request,'../templates/index.html',{'company':company,'status':1})
-        #     elif(request.user.is_alumni):
-        #         user = User.objects.get(username = request.user.username)
-        #         alumni= Alumni.objects.get(user = user)
-        #         list=str_to_lis(alumni.list_of_stud_pend)
-        #         return render(request,'../templates/index.html',{'alumni':alumni,'stud':list,'status':1})
-        #return render(request,"../templates/index.html")    
+    if(request.method == 'POST'):
+        print("hi")
+        if 'user' in request.session and 'type' in request.session:
+            try:
+                print("hello")
+                user = db_admin.objects.get(username = (request.session['user']))
+                id = request.POST.get("front_id")
+                if id is not None:    
+                    front = front_desk.objects.get(reg_id = id)
+                    front.delete()
+                id = request.POST.get("data_id")
+                if id is not None:    
+                    front = data_entry.objects.get(reg_id = id)
+                    front.delete()
+                id = request.POST.get("doct_id")
+                if id is not None:    
+                    front = physician.objects.get(EmployeeID = id)
+                    front.delete()
+                    
+                front = front_desk.objects.all()
+                print(front)
+                data = data_entry.objects.all()
+                print(data)
+                doct = physician.objects.all()
+                print(doct)
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1,'whereto':'index','fronts':front,'datas':data,'docts':doct})
+                
+            except Exception as e:
+                print(e)
+                return redirect('/')  
+    if(request.method == 'GET'):
+        user_id = request.session.get('user')
+        type = request.session.get('type')
+
+        if type == 'doctor':
+            try:
+                user = physician.objects.get(EmployeeID = user_id)
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+
+            except physician.DoesNotExist:
+                return render(request, 'index.html', {'user': {}, 'type':"none"})
+
+        elif type == 'front_desk':
+            try:
+                user = front_desk.objects.get(reg_id = user_id)
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+
+            except front_desk.DoesNotExist:
+                return render(request, 'index.html', {'user': {}, 'type':"none"})
+
+        elif type == 'db_admin':
+            try:
+                user = db_admin.objects.get(username = user_id)
+                front = front_desk.objects.all()
+                print(front)
+                data = data_entry.objects.all()
+                print(data)
+                doct = physician.objects.all()
+                print(doct)
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1,'whereto':'index','fronts':front,'datas':data,'docts':doct})
+                
+
+            except front_desk.DoesNotExist:
+                return render(request, 'index.html', {'user': {}, 'type':"none"})
+
+        elif type == 'data_entry':
+            try:
+                user = data_entry.objects.get(reg_id = user_id)
+                print(user.name)
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+
+            except data_entry.DoesNotExist:
+                return render(request, 'index.html', {'user': {}, 'type':"none"})
+
+        else:
+            return render(request, 'index.html')
