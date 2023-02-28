@@ -9,3 +9,7 @@ whitenoise==6.0.0
 python-decouple==3.6
 django-environ
 django-session-timeout
+mysqlclient
+
+# sudo apt-get install mysql-server
+# sudo apt-get install libmysqlclient-dev
