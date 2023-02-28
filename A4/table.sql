@@ -36,7 +36,7 @@ CREATE TABLE accounts_patient (
     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
     Address varchar(255) not null,
-    Employee_ID int,
+    Insurance_ID int,
     Phone varchar(15) not null,
     Age int not null,
     Blood_Group varchar(8),
@@ -166,7 +166,8 @@ ADD FOREIGN KEY (Admission_ID) REFERENCES accounts_admission(Admission_ID);
 
 
 
-DROP TABLE accounts_patient_test;
+
+DROP TABLE accounts_tested;
 DROP TABLE accounts_health_record;
 DROP TABLE accounts_admission;
 DROP TABLE accounts_prescribes;
@@ -179,4 +180,6 @@ DROP TABLE accounts_patient;
 DROP TABLE accounts_physician;
 DROP TABLE accounts_tests;
 DROP TABLE accounts_treatment;
+DROP TABLE accounts_db_admin;
+
 
