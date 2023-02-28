@@ -96,7 +96,8 @@ CREATE TABLE accounts_appointment (
     Patient_Email varchar(255) not null,
     Physician_Email varchar(255) not null,
     Start DATETIME not null,
-    Appointment_Fee int
+    Appointment_Fee int,
+    is_scheduled int not null
 );
 
 CREATE TABLE accounts_health_record (
