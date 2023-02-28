@@ -146,7 +146,7 @@ class prescribes(models.Model):
 class health_record(models.Model):
 
     Record_ID = models.AutoField(primary_key=True)
-    Patient_Email = models.EmailField()
+    Admission_ID = models.IntegerField()
     Date = models.DateTimeField()
     Vitals = models.TextField()
     Remarks = models.TextField()
@@ -160,7 +160,7 @@ class appointment(models.Model):
     Patient_Email = models.EmailField()
     Physician_Email = models.EmailField()
     Start = models.DateTimeField()
-    AppointmentFee = models.IntegerField()
+    Appointment_Fee = models.IntegerField()
     
  
     def __str__(self):
