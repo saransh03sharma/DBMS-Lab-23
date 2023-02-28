@@ -33,9 +33,9 @@
               
               <form action="{% url 'patient_admit' %}" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
-                <label for="SSN">SSN:</label>
+                <label for="SSN">Email_id:</label>
                 <br>
-                <input type="text" name="my_variable" value={{SSN}} readonly style="width:100%; height:35px;border-radius:3px;padding:5px; background-color:#E9ECEF;border:2px solid #d2d7db;color:#5b5b5b">
+                <input type="text" name="my_variable" value={{Email_id}} readonly style="width:100%; height:35px;border-radius:3px;padding:5px; background-color:#E9ECEF;border:2px solid #d2d7db;color:#5b5b5b">
                 {% for field in form.visible_fields %}
                 <div class="form-group">
                   {{ field.label_tag }}

@@ -14,7 +14,7 @@ urlpatterns=[
      path('patient_register/',views.patient_reg_help.as_view(), name='patient_reg'),
     path('admit_discharge/',views.handle_admit, name='handle_admit'),
     path('admission/',views.admit_patient.as_view(), name='patient_admit'),
-    path('test_result/',views.handle_test, name='handle_test'),
+    #path('test_result/',views.handle_test, name='handle_test'),
     
     
     #  path('company_edit_details/',views.editCompProfile.as_view(), name='company_edit'),

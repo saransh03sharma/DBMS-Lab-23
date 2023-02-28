@@ -255,10 +255,12 @@
                               </form>
                               <div class="card-body" style="display:flex;  justify-content:space-between;" >
                                 <span style="width:20vw" >
-                                  User name: {{front.name}} {{front.surname}} <br>
-                                  User ID: {{front.reg_id}} <br>
+                                  User name: {{front.FirstName}} {{front.LastName}} <br>
+                                  User ID: {{front.EmployeeID}} <br>
+                                  Email ID: {{front.Email}} <br>
+                                  
                                 </span>
-                                <button type="submit" name="front_id" value={{front.reg_id}} form="del_front"
+                                <button type="submit" name="front_id" value={{front.Email}} form="del_front"
                                 class="btn btn-block btn-success ml-5" style="width:20vw; background-color:red; height:6vh;"
                                 onclick="giveAlert(event)">Delete</button>
                               </div>
@@ -293,10 +295,11 @@
                             </form>
                             <div class="card-body" style="display:flex;  justify-content:space-between; " >
                               <span style="width:20vw">
-                                User name: {{data.name}} {{data.surname}} <br>
-                                User ID: {{data.reg_id}} <br>
+                                User name: {{data.FirstName}} {{data.LastName}} <br>
+                                User ID: {{data.EmployeeID}} <br>
+                                Email ID: {{data.Email}} <br>
                               </span>
-                              <button type="submit" name="data_id" value={{data.reg_id}} form="del_data"
+                              <button type="submit" name="data_id" value={{data.Email}} form="del_data"
                               class="btn btn-block btn-success ml-5" style="width:20vw; background-color:red;margin-top:10px; height:6vh;"
                               onclick="giveAlert(event)">Delete</button>
                             </div>
@@ -332,10 +335,10 @@
                           </form>
                           <div class="card-body" style="display:flex;  justify-content:space-between; " >
                             <span style="width:20vw">
-                              User name: {{doct.name}} {{doct.surname}} <br>
-                              User ID: {{doct.EmployeeID}} <br>
+                              User name: {{doct.FirstName}} {{doct.LastName}} <br>
+                              User ID: {{doct.Email_id}} <br>
                             </span>
-                            <button type="submit" name="doct_id" value={{doct.EmployeeID}} form="del_doctor"
+                            <button type="submit" name="doct_id" value={{doct.Email_id}} form="del_doctor"
                             class="btn btn-block btn-success ml-5" style="width:20vw; background-color:red;margin-top:10px; height:6vh;"
                             onclick="giveAlert(event)">Delete</button>
                           </div>
@@ -411,10 +414,11 @@
 								<section id="banner">
 									<div class="content">
 										<header>
-											<p>Name: {{user.name}} {{user.surname}}</p>
+                      <p>Email-id: {{user.Email_id}}</p>
+											<p>Name: {{user.FirstName}} {{user.LastName}}</p>
 											<p>Position: {{user.Position}}</p>
-											<p>EmployeeID: {{user.EmployeeID}}</p>
-											<p>SSN: {{user.SSN}}</p>
+											<p>Employee ID: {{user.EmployeeID}}</p>
+											<p>Position: {{user.Position}}</p>
 										</header>
 										</div>
 								</section>
@@ -475,8 +479,11 @@
 								<section id="banner">
 									<div class="content">
 										<header>
-											<p>Name:{{user.name}} {{user.surname}}</p>
-											<p>Registration ID: {{user.reg_id}}</p>
+											<p>Name:{{user.FirstName}} {{user.LastName}}</p>
+											<p>Registration ID: {{user.EmployeeID}}</p>
+                      <p>Email ID: {{user.Email}}</p>
+                      
+                      
 										</header>
 										</div>
 								</section>
@@ -523,7 +530,7 @@
 									
 										
 										<div class="dropdown">
-											<p style="color:black;float:right;position:relative;top:-2.5vh;left:-0.2vw;">{{user.reg_id}}</p>
+											<p style="color:black;float:right;position:relative;top:-2.5vh;left:-0.2vw;">{{user.EmployeeID}}</p>
 											<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false" style="width:5vw;height:5vw; border-radius:50%;background-color:white; border:none;float:right;position:relative;left:4vw;">
                         {% load static %}
                         <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:absolute; top:0.05vh;right:0.02vw;">
@@ -543,8 +550,11 @@
 								<section id="banner">
 									<div class="content">
 										<header>
-											<p>Name: {{user.name}} {{user.surname}}</p>
-											<p>Registration ID: {{user.reg_id}}</p>
+											<p>Name: {{user.FirstName}} {{user.LastName}}</p>
+											<p>Registration ID: {{user.EmployeeID}}</p>
+                      <p>Email ID: {{user.Email}}</p>
+                      
+                      
                     
 										</header>
 										</div>
@@ -570,7 +580,7 @@
                   {% comment %} <li><a href="{% url 'alumni_edit' %}">Edit Profile</a></li>
                   <li><a href="{% url 'feedback' %}">Approve requests</a></li>
                   <li><a href="{% url 'chats'%}">Chat</a></li> {% endcomment %}
-                  <li><a href="{% url 'handle_test'%}">Test result</a></li>
+
                   <li><a href="{% url 'logout'%}">Logout</a></li>
                   </ul>
               </nav>
