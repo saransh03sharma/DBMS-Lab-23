@@ -34,4 +34,6 @@ urlpatterns=[
      path('fr_login/',views.login_fr, name='fr_login'),
      path('de_login/',views.login_de, name='de_login'),
      path('logout/',views.logout_view, name='logout'),
+     path('doctor_pat_record/', views.doctor_pat_record, name='doctor_pat_record'),
+     path('record_treatment/', views.record_treatment, name='record_treatment'),
 ]

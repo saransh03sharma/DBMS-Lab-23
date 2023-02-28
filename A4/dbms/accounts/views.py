@@ -766,3 +766,44 @@ def index(request): # to return homepage depending upon the logged in user
 
         else:
             return render(request, 'index.html')
+
+def record_treatment(request):
+    pass
+
+def doctor_pat_record(request):
+
+    # if (request.method == 'GET'):
+    #     if 'user' in request.session and 'type' in request.session:
+    #         try:
+    #             user = physician.objects.get(Email_ID = (request.session['user']))
+    #             return render(request, '../templates/doctor_pat_record.html', {'user': user, 'type':type, 'status':1})
+    #         except Exception as e:
+    #             print(e)
+    #             return redirect('/')
+    
+    if (request.method == 'GET'):
+        # return render(request, '../templates/doctor_pat_record.html', {'user': user, 'type':type, 'status':1})
+        if 'user' in request.session and 'type' in request.session:
+            try:
+                user = physician.objects.get(Email_ID = (request.session['user']))
+                print(user.Email_ID)
+                # get details of patients' who have had an appointment with the doctor
+                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID)
+                print(doctor_apts)
+                patients = []  # list of patients
+                for apt in doctor_apts:
+                    pat = patient.objects.get(Email_ID = apt.Patient_Email)
+                    patients.append(pat)
+                print(patients)
+
+                return render(request, '../templates/doctor_pat_record.html', {'user': user, 'type':type, 'status':1, 'patients':patients})
+            except Exception as e:
+                print(e)
+                return redirect('/')
+
+        
+
+
+    
+
+

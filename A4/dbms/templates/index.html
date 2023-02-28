@@ -414,11 +414,11 @@
 								<section id="banner">
 									<div class="content">
 										<header>
+                      <p>Employee ID: {{user.Employee_ID}}</p>
+                      <p>Name: {{user.First_Name}} {{user.Last_Name}}</p>
                       <p>Email-id: {{user.Email_ID}}</p>
-											<p>Name: {{user.First_Name}} {{user.Last_Name}}</p>
 											<p>Position: {{user.Position}}</p>
-											<p>Employee ID: {{user.Employee_ID}}</p>
-											<p>Position: {{user.Position}}</p>
+											<p>Department: {{user.Department}}</p>
 										</header>
 										</div>
 								</section>
@@ -434,9 +434,11 @@
                 <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
                 </header>
                 <ul class="item">
-                  
+                  <li><a href="{%url 'doctor_pat_record'%}">Patients' Records</a></li>
+                  <!-- <li><a href="{%url 'record_treatment' %}">Record Treatment</a></li> -->
                   <li><a href="{% url 'logout'%}">Logout</a></li>
-                  </ul>
+
+                </ul>
               </nav>
           </div>
         </div>
