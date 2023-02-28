@@ -1,175 +1,166 @@
 CREATE TABLE accounts_db_admin (
-    username varchar(255) primary key,
-    password varchar(255) not null
+    Username varchar(255) primary key,
+    Password varchar(512) not null
 );
 
-
-
 CREATE TABLE  accounts_physician (
-    Email_id varchar(255) primary key,
-    EmployeeID int not null,
-    FirstName varchar(255) not null,
-    LastName varchar(255) not null,
+    Email_ID varchar(255) primary key,
+    Employee_ID int UNIQUE not null,
+    First_Name varchar(255) not null,
+    Last_Name varchar(255) not null,
     Department varchar(255) not null,
     Position varchar(255) not null,
-    password varchar(255) not null
+    Password varchar(512) not null
 );
 
 CREATE TABLE  accounts_front_desk (
-    Email varchar(255) primary key,
-    FirstName varchar(255) not null,
-    LastName varchar(255) not null,
-    EmployeeID int not null,
-    password varchar(255) not null
+    Email_ID varchar(255) primary key,
+    First_Name varchar(255) not null,
+    Last_Name varchar(255) not null,
+    Employee_ID int UNIQUE not null,
+    Password varchar(512) not null
 );
 
 CREATE TABLE  accounts_data_entry (
-    Email varchar(255) primary key,
-    FirstName varchar(255) not null,
-    LastName varchar(255) not null,
-    EmployeeID int not null,
-    password varchar(255) not null
+    Email_ID varchar(255) primary key,
+    First_Name varchar(255) not null,
+    Last_Name varchar(255) not null,
+    Employee_ID int UNIQUE not null,
+    Password varchar(512) not null
 );
 
 
 CREATE TABLE accounts_patient (
-    Email_id varchar(255) primary key,
-    SSN int not null,
-    FirstName varchar(255) not null,
-    LastName varchar(255) not null,
+    Email_ID varchar(255) primary key,
+    SSN int UNIQUE not null,
+    First_Name varchar(255) not null,
+    Last_Name varchar(255) not null,
     Address varchar(255) not null,
-    InsuranceID int not null,
-    Phone varchar(255) not null,
+    Employee_ID int,
+    Phone varchar(15) not null,
     Age int not null,
-    BloodGroup varchar(255) not null,
+    Blood_Group varchar(8),
     Status int not null
 );
 
 CREATE TABLE accounts_tests (
-    TestID int AUTO_INCREMENT primary key,
-    TestName varchar(255) not null,
+    Test_ID int AUTO_INCREMENT primary key,
+    Test_Name varchar(255) not null,
     Cost int not null  
 );
 
 
 CREATE TABLE accounts_treatment (
-    TreatmentID int AUTO_INCREMENT primary key,
-    TreatmentName varchar(255) not null,
+    Treatment_ID int AUTO_INCREMENT primary key,
+    Treatment_Name varchar(255) not null,
     Cost int not null
 );
 
 CREATE TABLE accounts_undergoes (
-    UndergoesID int AUTO_INCREMENT,
-    Patient varchar(255) not null,
-    TreatmentID int not null,
-    Physician varchar(255) not null,
-    Date DATETIME not null,
-    PRIMARY KEY (UndergoesID, Patient, TreatmentID, Physician, Date)
+    Undergoes_ID int AUTO_INCREMENT primary key,
+    Patient_Email varchar(255) not null,
+    Treatment_ID int not null,
+    Physician_Email varchar(255) not null,
+    Date DATETIME not null
 );
 
 
 CREATE TABLE accounts_room (
-    id int AUTO_INCREMENT,
-    Number int not null,
+    Room_ID int AUTO_INCREMENT PRIMARY KEY,
     Type varchar(255) not null,
-    Room_name varchar(255) not null,
+    Room_Name varchar(255) not null,
     Capacity int not null,
-    Cost int not null,
-    PRIMARY KEY (id, Number, Room_name)
+    Cost int not null
 );
 
 CREATE TABLE accounts_admission (
-    AdmissionID int not null AUTO_INCREMENT,
-    Patient varchar(255) not null,
-    Room int not null,
+    Admission_ID int not null AUTO_INCREMENT PRIMARY KEY,
+    Patient_Email varchar(255) not null,
+    Room_ID int not null,
     Start DATETIME not null,
     End DATETIME not null,
-    PCP_email varchar(255) not null,
-    Total_Cost int ,
-    PRIMARY KEY (AdmissionID)
+    PCP_Email varchar(255) not null,
+    Total_Cost int
 );
 
 CREATE TABLE accounts_prescribes (
-    PrescribeID int AUTO_INCREMENT,
-    Physician varchar(255) not null,
-    Patient varchar(255) not null,
+    Prescribe_ID int AUTO_INCREMENT PRIMARY KEY,
+    Physician_Email varchar(255) not null,
+    Patient_Email varchar(255) not null,
     Date DATETIME not null,
-    Prescription text not null,
-    PRIMARY KEY (PrescribeID,Physician, Patient, Date)
+    Prescription text not null
 );
 
 CREATE TABLE accounts_appointment (
-    AppointmentID int not null AUTO_INCREMENT,
-    Patient varchar(255) not null,
-    Physician varchar(255) not null,
+    Appointment_ID int not null AUTO_INCREMENT PRIMARY KEY,
+    Patient_Email varchar(255) not null,
+    Physician_Email varchar(255) not null,
     Start DATETIME not null,
-    AppointmentFee int ,
-    PRIMARY KEY (AppointmentID)
+    Appointment_Fee int
 );
-
 
 CREATE TABLE accounts_health_record (
-    RecordID int not null AUTO_INCREMENT,
-    Patient varchar(255) not null,
+    Record_ID int not null AUTO_INCREMENT PRIMARY KEY,
+    Admission_ID int not null,
     Date DATETIME not null,
     Vitals text,
-    Remarks text,
-    PRIMARY KEY (RecordID)
+    Remarks text
 );
 
-CREATE TABLE accounts_patient_test (
-    ID int primary key AUTO_INCREMENT,
-    Patient varchar(255) not null,
-    TestID int not null,
+CREATE TABLE accounts_tested (
+    Tested_ID int primary key not null AUTO_INCREMENT,
+    Patient_Email varchar(255) not null,
+    Test_ID int not null,
     Date DATETIME not null,
-    Test_result text
+    Test_Result text
 );
 
 
 
 -- foreign key setting
 ALTER TABLE accounts_admission 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
+ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 
 
 ALTER TABLE accounts_admission 
-ADD FOREIGN KEY (PCP_email) REFERENCES accounts_physician(Email_id);
+ADD FOREIGN KEY (PCP_Email) REFERENCES accounts_physician(Email_ID);
 
 ALTER TABLE accounts_admission 
-ADD FOREIGN KEY (Room) REFERENCES accounts_room(id);
+ADD FOREIGN KEY (Room_ID) REFERENCES accounts_room(Room_ID);
 
 
 ALTER TABLE accounts_prescribes 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
+ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 
 
 ALTER TABLE accounts_prescribes 
-ADD FOREIGN KEY (Physician) REFERENCES accounts_physician(Email_id);
+ADD FOREIGN KEY (Physician_Email) REFERENCES accounts_physician(Email_ID);
 
 
 ALTER TABLE accounts_appointment 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
+ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 
 
 ALTER TABLE accounts_appointment 
-ADD FOREIGN KEY (Physician) REFERENCES accounts_physician(Email_id);
-
+ADD FOREIGN KEY (Physician_Email) REFERENCES accounts_physician(Email_ID);
 
 ALTER TABLE accounts_health_record 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
+ADD FOREIGN KEY (Addmission_ID) REFERENCES accounts_admission(Admission_ID);
 
+ALTER TABLE accounts_tested 
+ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 
-ALTER TABLE accounts_patient_test 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
-
-ALTER TABLE accounts_undergoes 
-ADD FOREIGN KEY (TreatmentID) REFERENCES accounts_treatment(TreatmentID);
-
-ALTER TABLE accounts_undergoes 
-ADD FOREIGN KEY (Patient) REFERENCES accounts_patient(Email_id);
+ALTER TABLE accounts_tested 
+ADD FOREIGN KEY (Test_ID) REFERENCES accounts_tests(Test_ID);
 
 ALTER TABLE accounts_undergoes 
-ADD FOREIGN KEY (Physician) REFERENCES accounts_physician(Email_id);
+ADD FOREIGN KEY (Treatment_ID) REFERENCES accounts_treatment(Treatment_ID);
+
+ALTER TABLE accounts_undergoes 
+ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
+
+ALTER TABLE accounts_undergoes 
+ADD FOREIGN KEY (Physician_Email) REFERENCES accounts_physician(Email_ID);
 
 
 
