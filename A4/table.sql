@@ -144,8 +144,6 @@ ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 ALTER TABLE accounts_appointment 
 ADD FOREIGN KEY (Physician_Email) REFERENCES accounts_physician(Email_ID);
 
-ALTER TABLE accounts_health_record 
-ADD FOREIGN KEY (Addmission_ID) REFERENCES accounts_admission(Admission_ID);
 
 ALTER TABLE accounts_tested 
 ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
@@ -162,6 +160,8 @@ ADD FOREIGN KEY (Patient_Email) REFERENCES accounts_patient(Email_ID);
 ALTER TABLE accounts_undergoes 
 ADD FOREIGN KEY (Physician_Email) REFERENCES accounts_physician(Email_ID);
 
+ALTER TABLE accounts_health_record 
+ADD FOREIGN KEY (Admission_ID) REFERENCES accounts_admission(Admission_ID);
 
 
 
