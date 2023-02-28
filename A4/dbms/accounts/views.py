@@ -15,6 +15,22 @@ from django.utils.timezone import make_aware
 
 def register(request):
     return render(request, '../templates/register.html')
+
+class patient_reg_help(CreateView):
+    model = patient
+    form_class = patient_register
+    template_name = '../templates/edit_details.html'
+    
+    def get(self, request):
+        return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register})#display the form in the edit_details.html
+    
+    def form_valid(self,form):#form valid function
+        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+            Email_ID, SSN, First_Name,Last_Name, Address, Insurance_ID, Phone, Age,Blood_Group, Status = form.save()#get data from form
+            pa = patient(Email_ID=Email_ID,First_Name=First_Name,Last_Name=Last_Name,SSN = SSN, Address = Address, Age = Age, Insurance_ID = Insurance_ID,Blood_Group=Blood_Group,
+                              Phone=Phone, Status = Status)
+            pa.save()
+        return redirect('/')
     
 class doctor_register(CreateView):
     form_class = DoctorSignUpForm #student form specified
@@ -40,143 +56,6 @@ class data_entry_register(CreateView):
         user = form.save() #save the form
         return redirect('/') #redirect to main index page
   
-# # class company_info(CreateView):
-# #     model = Company
-# #     form_class = CompanydescForm
-# #     template_name = '../templates/company_info.html'
-
-# #     def form_valid(self, form):
-# #         # print(self.request.user)
-# #         company = User.objects.get(username = (self.request.user))
-# #         comp = Company.objects.get(user=company)
-# #         # print(company)
-# #         overvie,work_enviro,job_des,other_detail = form.save()
-# #         e_mess_admin = "Company called <b>" + str(comp.company_name) + "</b> is trying to apply for recruitment process in your college.<br>Please visit the admin portal to see the details about the Company and the verification document uploaded by the Company Admin.<br><br><strong>After successful verification you can make the company status Active, so that company can participate in the placement process.</strong><br><br><br>Best,<br>OPIGS Team<br><br>"
-# #         e_mess_comp = "Thanks <b>" + str(comp.company_name) + "</b> for applying for the recruitment process in our college.<br>We have recieved your data and the Institute administrator has been informed about your application.<br><br><strong>You will not be able to login into the portal until your application is in the verification process.<br>After successful verification from Institute Adminstrator, you will be able to login in to the portal and the students will be able to see your company details and apply for the jobs offered by your company.</strong><br><br>For any further queries, please contact the Institute Administrator.<br><br>Best,<br>OPIGS Team<br><br>"
-# #         send_mail(
-# #             "NEW COMPANY TRYING TO APPLY FOR PLACEMENT PROCESS", #subject
-# #             "", #message
-# #             "opigs.iitkgp@gmail.com", #from_email
-# #             ["iitkgp.placement@gmail.com"], #to_email_list
-# #             fail_silently=True,
-# #             html_message= e_mess_admin
-# #         )
-# #         send_mail(
-# #             "REQUEST FOR RECRUITING RECIEVED", #subject
-# #             "", #message
-# #             "opigs.iitkgp@gmail.com", #from_email
-# #             [company.email], #to_email_list
-# #             fail_silently=True,
-# #             html_message= e_mess_comp
-# #         )
-# #         Company.objects.filter(user = (company)).update(overview= overvie,work_environ= work_enviro,job_desc=job_des,other_details=other_detail)#search for the company whose data has been enetered and then update the details there 
-# #         company.is_active=False #company will be active only after manual verification by the admin
-# #         company.save()
-# #         # print(overvie,work_enviro,job_des,other_detail)
-# #         return redirect('/')
-
-
-
-
-# class patient_reg_help(CreateView):
-
-class patient_reg_help(CreateView):
-    model = patient
-    form_class = patient_register
-    template_name = '../templates/edit_details.html'
-    
-    def get(self, request):
-        return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register})#display the form in the edit_details.html
-    
-    def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
-            Email_id, SSN, FirstName,LastName, Address, InsuranceID, Phone, Age,BloodGroup, Status = form.save()#get data from form
-            pa = patient(Email_id=Email_id,FirstName=FirstName,LastName=LastName,SSN = SSN, Address = Address, Age = Age, InsuranceID = InsuranceID,BloodGroup=BloodGroup,
-                              Phone=Phone, Status = Status)
-            pa.save()
-#             student.save()
-        return redirect('/')
-
-# class editCompProfile(CreateView):
-#     model = Company
-#     form_class = CompanyEditForm
-#     template_name = '../templates/edit_details.html'
-
-#     def get(self,request):
-#         if(self.request.user.is_authenticated):
-#             user = User.objects.get(username = (self.request.user))
-#             company = Company.objects.get(user = user)
-#             values = {
-#                 'email':user.email,
-#                 'contact_number':user.contact_number,
-#                 'company_name' : company.company_name,
-#                 'address' : company.address,
-#                 'profile' : company.profile,
-#                 'overview' : company.overview,
-#                 'work_environ' : company.work_environ,
-#                 'job_desc' : company.job_desc,
-#                 'other_details' : company.other_details
-#             }
-#             form = CompanyEditForm(values)
-#             form.fields['email'].widget.attrs['readonly']  =True
-#             form.fields['company_name'].widget.attrs['readonly']  =True
-#             # print(values)
-#             return render(request,'../templates/edit_details.html',{'whereto':'company_edit','form':form})
-#         return redirect('/')
-
-#     def form_valid(self,form):
-#         if(self.request.user.is_authenticated):
-#             user = User.objects.get(username = (self.request.user))
-#             company = Company.objects.get(user = user)
-#             contact_number, address,profile,overview,work_environ,job_desc,other_details = form.save()
-#             user.contact_number=contact_number
-#             company.profile = profile
-#             company.address = address
-#             company.overview = overview
-#             company.work_environ = work_environ
-#             company.job_desc = job_desc
-#             company.other_details =other_details
-#             user.save()
-#             company.save()
-#         return redirect('/')
-
-# class editAlumProfile(CreateView):
-#     model = Alumni
-#     form_class = AlumniEditForm
-#     template_name = '../templates/edit_details.html'
-
-#     def get(self,request):
-#         if(self.request.user.is_authenticated):
-#             user = User.objects.get(username = (self.request.user))
-#             alumni = Alumni.objects.get(user = user)
-#             values = {
-#                 'email':user.email,
-#                 'contact_number':user.contact_number,
-#                 'roll_number':alumni.roll_number,
-#                 'first_name':user.first_name,
-#                 'last_name':user.last_name,
-#                 'department':alumni.department,
-#                 'year_of_graduation':alumni.year_of_graduation
-#             }
-#             form = AlumniEditForm(values)
-#             form.fields['email'].widget.attrs['readonly']  =True
-#             form.fields['roll_number'].widget.attrs['readonly']  =True
-#             form.fields['first_name'].widget.attrs['readonly']  =True
-#             form.fields['last_name'].widget.attrs['readonly']  =True
-#             form.fields['department'].widget.attrs['readonly']  =True
-#             form.fields['year_of_graduation'].widget.attrs['readonly']  =True
-#             # print(values)
-#             return render(request,'../templates/edit_details.html',{'whereto':'alumni_edit','form':form})
-#         return redirect('/')
-
-#     def form_valid(self,form):
-#         if(self.request.user.is_authenticated):
-#             user = User.objects.get(username = (self.request.user))
-#             alumni = Alumni.objects.get(user = user)
-#             contact_number = form.save()
-#             user.contact_number=contact_number
-#             user.save()
-#         return redirect('/')
 
 def login_admin(request):
     if request.method=='POST':#all requests withing the software are post and requests betwenn user and software is get
@@ -210,9 +89,9 @@ def login_doctor(request):
         password = request.POST['password']
         
         try:
-            user = physician.objects.get(Email_id = username)
+            user = physician.objects.get(Email_ID = username)
             if check_password(password, user.password):
-                request.session['user'] = user.Email_id
+                request.session['user'] = user.Email_ID
                 request.session['type'] = "doctor"
                 return redirect('/')    
         except:
@@ -235,11 +114,11 @@ def login_fr(request):
         
         
         try:
-            user = front_desk.objects.get(Email = username)
+            user = front_desk.objects.get(Email_ID = username)
             print("hh")
             if check_password(password, user.password):
                 print("jj")
-                request.session['user'] = user.Email
+                request.session['user'] = user.Email_ID
                 request.session['type'] = "front_desk"
                 return redirect('/')    
         except:
@@ -262,9 +141,9 @@ def login_de(request):
         
         
         try:
-            user = data_entry.objects.get(Email = username)
+            user = data_entry.objects.get(Email_ID = username)
             if check_password(password, user.password):
-                request.session['user'] = user.Email
+                request.session['user'] = user.Email_ID
                 request.session['type'] = "data_entry"
                 return redirect('/')    
         except:
@@ -736,7 +615,7 @@ def company_details(request):
 def handle_admit(request):
     if(request.method == 'GET'):
         if 'user' in request.session and 'type' in request.session:
-            user = front_desk.objects.get(Email = (request.session['user']))
+            user = front_desk.objects.get(Email_ID = (request.session['user']))
             pat = patient.objects.all()
             print(pat)
             return render(request,'../templates/admin_user.html',{'whereto':'handle_admit','pat':pat})
@@ -745,21 +624,21 @@ def handle_admit(request):
         a = request.POST.get("comp_id")
         if a is not None:
             print("yes")
-            user = patient.objects.get(Email_id = a)
+            user = patient.objects.get(Email_ID = a)
             values = {
-                    'FirstName':user.FirstName,
-                    'LastName':user.LastName,
+                    'First_Name':user.First_Name,
+                    'Last_Name':user.Last_Name,
                 }
             form = admit_pat(values)
-            form.fields['FirstName'].widget.attrs['readonly']  =True
-            form.fields['LastName'].widget.attrs['readonly']  =True
+            form.fields['First_Name'].widget.attrs['readonly']  =True
+            form.fields['Last_Name'].widget.attrs['readonly']  =True
             print(values)
-            return render(request,'../templates/admit_room.html',{'whereto':'patient_admit','form':form, 'Email_id':user.Email_id})#display the form in the edit_details.html
+            return render(request,'../templates/admit_room.html',{'whereto':'patient_admit','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
         a = request.POST.get("dis_id")
         if a is not None:
             print("hello")
-            user = patient.objects.get(Email_id = a)
-            admit = admission.objects.filter(Patient = a).order_by('-Admissionid')
+            user = patient.objects.get(Email_ID = a)
+            admit = admission.objects.filter(Patient_Email = a).order_by('-Start')
             
             first_admit = admit.first()
             naive_datetime = datetime.datetime.now()
@@ -773,7 +652,7 @@ def handle_admit(request):
             print(x)
             
             user.Status=2
-            pat_room = room.objects.get(id = first_admit.Room)
+            pat_room = room.objects.get(Room_ID = first_admit.Room_ID)
             pat_room.Capacity += 1
             first_admit.Total_Cost =  x.days * pat_room.Cost
             
@@ -793,16 +672,16 @@ class admit_patient(CreateView):
     
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
-            Email_id = self.request.POST.get("my_variable")
+            Email_ID = self.request.POST.get("my_variable")
             
-            FirstName,LastName, Room, Start, PCP_email = form.save()#get data from form
-            print(FirstName,LastName, Room, Start)
-            pa = admission(Patient = Email_id, Room = Room, Start=Start, End=Start, PCP_email = PCP_email)
+            First_Name,Last_Name, Room_ID, Start, PCP_Email = form.save()#get data from form
+            print(First_Name,Last_Name, Room_ID, Start)
+            pa = admission(Patient_Email =Email_ID, Room_ID = Room_ID, Start=Start, End=Start, PCP_Email = PCP_Email)
             
-            pat = patient.objects.get(Email_id = Email_id)
+            pat = patient.objects.get(Email_ID =Email_ID)
             pat.Status = 1
             
-            pat_room = room.objects.get(id = Room)
+            pat_room = room.objects.get(Room_ID = Room_ID)
             pat_room.Capacity -= 1 
             pat_room.save()
             pa.save()
@@ -819,15 +698,15 @@ def index(request): # to return homepage depending upon the logged in user
                 user = db_admin.objects.get(username = (request.session['user']))
                 id = request.POST.get("front_id")
                 if id is not None:    
-                    front = front_desk.objects.get(Email = id)
+                    front = front_desk.objects.get(Email_ID = id)
                     front.delete()
                 id = request.POST.get("data_id")
                 if id is not None:    
-                    front = data_entry.objects.get(Email = id)
+                    front = data_entry.objects.get(Email_ID = id)
                     front.delete()
                 id = request.POST.get("doct_id")
                 if id is not None:    
-                    front = physician.objects.get(EmployeeID = id)
+                    front = physician.objects.get(Email_ID = id)
                     front.delete()
                     
                 front = front_desk.objects.all()
@@ -847,7 +726,7 @@ def index(request): # to return homepage depending upon the logged in user
 
         if type == 'doctor':
             try:
-                user = physician.objects.get(Email_id = user_id)
+                user = physician.objects.get(Email_ID = user_id)
                 return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
 
             except physician.DoesNotExist:
@@ -855,7 +734,7 @@ def index(request): # to return homepage depending upon the logged in user
 
         elif type == 'front_desk':
             try:
-                user = front_desk.objects.get(Email = user_id)
+                user = front_desk.objects.get(Email_ID = user_id)
                 return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
 
             except front_desk.DoesNotExist:
@@ -873,12 +752,12 @@ def index(request): # to return homepage depending upon the logged in user
                 return render(request, 'index.html', {'user': user, 'type':type, 'status':1,'whereto':'index','fronts':front,'datas':data,'docts':doct})
                 
 
-            except front_desk.DoesNotExist:
+            except :
                 return render(request, 'index.html', {'user': {}, 'type':"none"})
 
         elif type == 'data_entry':
             try:
-                user = data_entry.objects.get(Email = user_id)
+                user = data_entry.objects.get(Email_ID = user_id)
                 
                 return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
 

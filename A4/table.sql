@@ -4,7 +4,7 @@ CREATE TABLE accounts_db_admin (
 );
 
 CREATE TABLE  accounts_physician (
-    Email_ID varchar(255) primary key,
+   Email_ID varchar(255) primary key,
     Employee_ID int UNIQUE not null,
     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
@@ -14,16 +14,16 @@ CREATE TABLE  accounts_physician (
 );
 
 CREATE TABLE  accounts_front_desk (
-    Email_ID varchar(255) primary key,
-    First_Name varchar(255) not null,
+   Email_ID varchar(255) primary key,
+     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
     Employee_ID int UNIQUE not null,
     Password varchar(512) not null
 );
 
 CREATE TABLE  accounts_data_entry (
-    Email_ID varchar(255) primary key,
-    First_Name varchar(255) not null,
+   Email_ID varchar(255) primary key,
+     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
     Employee_ID int UNIQUE not null,
     Password varchar(512) not null
@@ -31,9 +31,9 @@ CREATE TABLE  accounts_data_entry (
 
 
 CREATE TABLE accounts_patient (
-    Email_ID varchar(255) primary key,
+   Email_ID varchar(255) primary key,
     SSN int UNIQUE not null,
-    First_Name varchar(255) not null,
+     First_Name varchar(255) not null,
     Last_Name varchar(255) not null,
     Address varchar(255) not null,
     Insurance_ID int,

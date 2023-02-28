@@ -10,170 +10,161 @@ class db_admin(models.Model):
 
 class front_desk(models.Model):
     
-    FirstName = models.CharField(max_length=255)
-    LastName = models.CharField(max_length=255)
-    Email = models.EmailField(primary_key=True)
-    EmployeeID = models.IntegerField()
-    password = models.CharField(max_length=255)
+    First_Name = models.CharField(max_length=255)
+    Last_Name = models.CharField(max_length=255)
+    Email_ID = models.EmailField(primary_key=True)
+    Employee_ID = models.IntegerField(unique=True)
+    password = models.CharField(max_length=512)
     
     def __str__(self):
-        return self.Email
+        return self.Email_ID
     
 class data_entry(models.Model):
     
-    FirstName = models.CharField(max_length=255)
-    LastName = models.CharField(max_length=255)
-    Email = models.EmailField(primary_key=True)
-    EmployeeID = models.IntegerField()
-    password = models.CharField(max_length=255)
+    First_Name = models.CharField(max_length=255)
+    Last_Name = models.CharField(max_length=255)
+    Email_ID = models.EmailField(primary_key=True)
+    Employee_ID = models.IntegerField(unique=True)
+    password = models.CharField(max_length=512)
     
     def __str__(self):
-        return self.Email
+        return self.Email_ID
 
 class physician(models.Model):
     
-    Email_id = models.EmailField(primary_key=True)
-    EmployeeID = models.IntegerField()
-    FirstName = models.CharField(max_length = 255)
-    LastName = models.CharField(max_length = 255)
+    Email_ID = models.EmailField(primary_key=True)
+    Employee_ID = models.IntegerField(unique=True)
+    First_Name = models.CharField(max_length = 255)
+    Last_Name = models.CharField(max_length = 255)
     Position = models.CharField(max_length = 255)
     Department = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=512)
     
-    class Meta:
-        unique_together = (('Email_id','EmployeeID'),)
         
     def __str__(self):
-        return self.FirstName+" "+self.LastName
+        return self.First_Name+" "+self.Last_Name
     
-class patient_test(models.Model):
+class tested(models.Model):
 
-    ID = models.AutoField(primary_key=True)
-    Patient = models.EmailField()
-    TestID = models.IntegerField()
+    Tested_ID = models.AutoField(primary_key=True)
+    Patient_Email = models.EmailField()
+    Test_ID = models.IntegerField()
     Date = models.DateTimeField()
     Test_result = models.TextField()
    
  
     def __str__(self):
-        return str(self.ID)+" "+self.Patient
+        return str(self.Tested_ID)+" "+self.Patient_Email
 
 class tests(models.Model):
 
-    TestID = models.AutoField(primary_key=True)
-    TestName = models.CharField(max_length = 255)
+    Test_ID = models.AutoField(primary_key=True)
+    Test_Name = models.CharField(max_length = 255)
     Cost = models.IntegerField()
    
  
     def __str__(self):
-        return str(self.TestID) + " " + self.TestName
+        return str(self.Test_ID) + " " + self.Test_Name
 
 class treatment(models.Model):
 
-    TreatmentID = models.AutoField(primary_key=True)
-    TreatmentName = models.CharField(max_length = 255)
+    Treatment_ID = models.AutoField(primary_key=True)
+    Treatment_Name = models.CharField(max_length = 255)
     Cost = models.IntegerField()
    
  
     def __str__(self):
-        return str(self.TreatmentID) + " " + self.TreatmentName
+        return str(self.Treatment_ID) + " " + self.Treatment_Name
 
 class room(models.Model):
 
-    Number = models.IntegerField()
+    Room_ID = models.AutoField(primary_key=True)
     Type = models.CharField(max_length = 255)
     Room_name = models.CharField(max_length=255)
     Capacity = models.IntegerField()
     Cost = models.IntegerField()
    
-   
-    class Meta:
-        unique_together = (('Number','Room_name'),)
+
  
     def __str__(self):
-        return self.Type + " " + str(self.Number)
+        return str(self.Room_ID) + " " + str(self.Room_name)
     
 class patient(models.Model):
 
-    Email_id = models.CharField(max_length=255, primary_key=True)
-    SSN = models.IntegerField()
-    FirstName = models.CharField(max_length = 255)
-    LastName = models.CharField(max_length = 255)
+    Email_ID = models.EmailField(primary_key=True)
+    SSN = models.IntegerField(unique=True)
+    First_Name = models.CharField(max_length = 255)
+    Last_Name = models.CharField(max_length = 255)
     Address = models.CharField(max_length = 255)
     Phone = models.CharField(max_length = 255)
-    InsuranceID = models.IntegerField()
+    Insurance_ID = models.IntegerField()
     Age = models.IntegerField()
-    BloodGroup = models.CharField(max_length=255)
+    Blood_Group = models.CharField(max_length=255)
     Status = models.IntegerField()
    
  
     def __str__(self):
-        return self.Email_id
+        return self.Email_ID
     
 class undergoes(models.Model):
 
-    UndergoesID = models.AutoField(primary_key=True)
-    Patient = models.EmailField()
-    TreatmentID = models.IntegerField()
+    Undergoes_ID = models.AutoField(primary_key=True)
+    Patient_Email = models.EmailField()
+    Treatment_ID = models.IntegerField()
     Date = models.DateTimeField()
-    Physician = models.EmailField()
+    Physician_Email = models.EmailField()
     
-   
-    class Meta:
-        unique_together = (('Patient','TreatmentID', 'Physician', 'Date'),)
  
     def __str__(self):
-        return str(self.UndergoesID) + " " + str(self.Patient) 
+        return str(self.Undergoes_ID) + " " + str(self.Patient) 
     
 class admission(models.Model):
-    Admissionid = models.AutoField(primary_key=True)
-    Patient = models.EmailField()
-    Room = models.IntegerField()
+    Admission_ID = models.AutoField(primary_key=True)
+    Patient_Email = models.EmailField()
+    Room_ID = models.IntegerField()
     Start = models.DateTimeField()
     End = models.DateTimeField()
-    PCP_email = models.EmailField()
+    PCP_Email = models.EmailField()
     Total_Cost = models.IntegerField()
     
  
     def __str__(self):
-        return str(self.Admissionid) + " " + str(self.Patient)   
+        return str(self.Admission_ID) + " " + str(self.Patient_Email)   
 
 class prescribes(models.Model):
 
-    PrescribeID = models.AutoField(primary_key=True)
-    Physician = models.EmailField()
-    Patient = models.EmailField()
+    Prescribe_ID = models.AutoField(primary_key=True)
+    Physician_Email = models.EmailField()
+    Patient_Email = models.EmailField()
     Date = models.DateTimeField()
     Prescription = models.TextField()
    
-    class Meta:
-        unique_together = (('Physician','Patient', 'Date'),)
  
     def __str__(self):
-        return str(self.PrescribeID) + " " + str(self.Patient) 
+        return str(self.Prescribe_ID) + " " + str(self.Patient_Email) 
 
 class health_record(models.Model):
 
-    RecordID = models.AutoField(primary_key=True)
-    Patient = models.EmailField()
+    Record_ID = models.AutoField(primary_key=True)
+    Patient_Email = models.EmailField()
     Date = models.DateTimeField()
     Vitals = models.TextField()
     Remarks = models.TextField()
  
     def __str__(self):
-        return str(self.RecordID) + " " + self.Patient
+        return str(self.Record_ID) + " " + self.Patient_Email
     
 class appointment(models.Model):
 
-    AppointmentID = models.AutoField(primary_key=True)
-    Patient = models.EmailField()
-    Physician = models.EmailField()
+    Appointment_ID = models.AutoField(primary_key=True)
+    Patient_Email = models.EmailField()
+    Physician_Email = models.EmailField()
     Start = models.DateTimeField()
     AppointmentFee = models.IntegerField()
     
  
     def __str__(self):
-        return str(self.AppointmentID)+" "+self.Patient
+        return str(self.Appointment_ID)+" "+self.Patient_Email
     
 
     
