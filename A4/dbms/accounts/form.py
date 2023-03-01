@@ -44,27 +44,29 @@ POSITION_CHOICES = [
 
 class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     
-    Email_ID = forms.CharField(required=True)
+    Email_ID = forms.EmailField()
     Employee_ID = forms.IntegerField(required=True)
     First_Name =forms.CharField(required=True,label="First Name")
     Last_Name =forms.CharField(required=True,label="Last Name")
     Position =forms.ChoiceField(choices= POSITION_CHOICES, required=True)
     Department = forms.ChoiceField(choices=depart,required=True)
-    password = forms.CharField(required=True, widget=forms.PasswordInput)
+    confirm = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
+    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Confirm Password")
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = physician
         # Order of Fields in the Form
-        fields = ['Email_ID','Employee_ID','First_Name','Last_Name','Position','Department', 'password']
+        fields = ['Email_ID','Employee_ID','First_Name','Last_Name','Position','Department', 'confirm', 'password']
     
-    def clean_strings(self,*args,**kwargs):
-        Email_ID =  self.cleaned_data.get('Email_ID')
-        First_Name = self.cleaned_data.get('First_Name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
-        Last_Name = self.cleaned_data.get('Last_Name').upper()
-        Position = self.cleaned_data.get('Position').upper() #extract email from form
-        Employee_ID = self.cleaned_data.get('Employee_ID')
-        Department = self.cleaned_data.get('Department')
-        # print(email)
+    def clean_password(self,*args,**kwargs):
+        password = make_password(self.cleaned_data.get('password'))
+        confirm = self.cleaned_data.get('confirm')
+        print(self.cleaned_data.get('confirm') , self.cleaned_data.get('password'))
+        if confirm != self.cleaned_data.get('password'):
+            raise forms.ValidationError(_("Password Mismatch"),code='mismatch_password')
+        else:
+            return password
+
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
@@ -75,8 +77,8 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
         Position = self.cleaned_data.get('Position').upper() #extract email from form
         Employee_ID = self.cleaned_data.get('Employee_ID')
         Department = self.cleaned_data.get('Department')
-        password = make_password(self.cleaned_data.get('password'))
-        
+        password = self.cleaned_data.get('password')
+       
         doctor = physician(Email_ID=Email_ID, First_Name=First_Name,Last_Name = Last_Name,Position = Position, Employee_ID = Employee_ID, Department = Department, password=password)
         doctor.save()
         return doctor
@@ -87,22 +89,23 @@ class FrontSignUpForm(forms.ModelForm):#form and formfields defined
     First_Name =forms.CharField(required=True, label="First Name")
     Last_Name =forms.CharField(required=True, label="Last Name")
     Employee_ID = forms.IntegerField(required=True)
-    password = forms.CharField(required=True, widget=forms.PasswordInput)
+    confirm = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
+    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Confirm Password")
     
 
-    class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
+    class Meta():#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = front_desk
         # Order of Fields in the Form
-        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID', 'password']
+        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID','confirm','password']
     
-    def clean_strings(self,*args,**kwargs):
-        
-        First_Name = self.cleaned_data.get('First_Name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
-        Last_Name = self.cleaned_data.get('Last_Name').upper() #extract email from form
-        Employee_ID = self.cleaned_data.get('Employee_ID')
-        Email_ID = self.cleaned_data.get('Email_ID')
-        
-        # print(email)
+    def clean_password(self,*args,**kwargs):
+        password = make_password(self.cleaned_data.get('password'))
+        confirm = self.cleaned_data.get('confirm')
+        print(self.cleaned_data.get('confirm') , self.cleaned_data.get('password'))
+        if confirm != self.cleaned_data.get('password'):
+            raise forms.ValidationError(_("Password Mismatch"),code='mismatch_password')
+        else:
+            return password
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
@@ -112,7 +115,7 @@ class FrontSignUpForm(forms.ModelForm):#form and formfields defined
         Last_Name = self.cleaned_data.get('Last_Name').upper() #extract email from form
         Employee_ID = self.cleaned_data.get('Employee_ID')
         Email_ID = self.cleaned_data.get('Email_ID')
-        password = make_password(self.cleaned_data.get('password'))
+        password = self.cleaned_data.get('password')
         front = front_desk(First_Name=First_Name,Last_Name = Last_Name, Employee_ID = Employee_ID, password=password, Email_ID = Email_ID)
         front.save()
         return front
@@ -124,22 +127,21 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
     Last_Name =forms.CharField(required=True, label="Last Name")
     Employee_ID = forms.IntegerField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
+    confirm = forms.CharField(required=True, widget=forms.PasswordInput,label='Confirm Password')
     
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = front_desk
         # Order of Fields in the Form
-        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID', 'password']
+        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID', 'password','confirm']
     
-    def clean_strings(self,*args,**kwargs):
-        
-        First_Name = self.cleaned_data.get('First_Name').upper()#get the data from form which would be stored in self.cleaned and store it in upper case
-        Last_Name = self.cleaned_data.get('Last_Name').upper() #extract email from form
-        Employee_ID = self.cleaned_data.get('Employee_ID')
-        Email_ID = self.cleaned_data.get('Email_ID')
-        
-        # print(email)
-
+    def clean_password(self,*args,**kwargs):
+        password = make_password(self.cleaned_data.get('password'))
+        confirm = (self.cleaned_data.get('confirm'))
+        if not check_password(confirm,password):
+            raise forms.ValidationError(_("Password Mismatch"),code='mismatch_password')
+        else:
+            return password
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
@@ -148,7 +150,7 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
         Last_Name = self.cleaned_data.get('Last_Name').upper() #extract email from form
         Employee_ID = self.cleaned_data.get('Employee_ID')
         Email_ID = self.cleaned_data.get('Email_ID')
-        password = make_password(self.cleaned_data.get('password'))
+        password = self.cleaned_data.get('password')
         data = data_entry(First_Name=First_Name,Last_Name = Last_Name, Employee_ID = Employee_ID, password=password, Email_ID = Email_ID)
         data.save()
         return data
@@ -199,7 +201,7 @@ class admit_pat(forms.ModelForm):
 
 class patient_register(forms.ModelForm):
     
-    Email_ID = forms.CharField(max_length=255,required=True)   
+    Email_ID = forms.EmailField()   
     SSN = forms.IntegerField(required=True)
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
@@ -223,117 +225,3 @@ class patient_register(forms.ModelForm):
         #     return self.cleaned_data.get('SSN'),self.cleaned_data.get('First_Name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('Insurance_ID'),self.cleaned_data.get('PCP'),0
         # else:   
             # raise forms.ValidationError(_("Invalid Number Format"),code='invalid_format')
-
-# class AlumniSignUpForm(UserCreationForm):
-#     first_name = forms.CharField(required=True) 
-#     last_name = forms.CharField(required=True)
-#     department = forms.ChoiceField(choices=Dep_choices)
-#     roll_number =forms.CharField(required=True)
-#     year_of_graduation = forms.IntegerField(required=True,min_value=1951,max_value=2021)
-
-#     class Meta(UserCreationForm.Meta):
-#         model = User
-#         fields = ['email','contact_number','roll_number','first_name','last_name','department','year_of_graduation']
-    
-#     @transaction.atomic#if an exception occurs changes are not saved
-#     def save(self):
-#         user = super().save(commit=False)#before saving save the details
-#         user.is_alumni = True
-#         user.first_name = self.cleaned_data.get('first_name')
-#         user.last_name = self.cleaned_data.get('last_name')
-#         user.contact_number=self.cleaned_data.get('contact_number')
-#         user.email = self.cleaned_data.get('email')
-#         user.username = user.email
-#         user.save()
-#         alumni = Alumni.objects.create(user=user)#instance created
-#         alumni.department=self.cleaned_data.get('department')
-#         alumni.roll_number=self.cleaned_data.get('roll_number').upper()
-#         alumni.year_of_graduation=int(self.cleaned_data.get('year_of_graduation'))
-#         alumni.save()
-#         return user
-
-# class AlumniEditForm(forms.ModelForm):
-#     email = forms.EmailField(required=True)
-#     contact_number = forms.CharField(max_length=12,required=True)
-#     roll_number =forms.CharField(required=True)
-#     first_name = forms.CharField(required=True) 
-#     last_name = forms.CharField(required=True)
-#     department = forms.CharField(required=True)
-#     year_of_graduation = forms.IntegerField(required=True,min_value=1951,max_value=2021)
-
-#     class Meta():
-#         model = Alumni
-#         fields = ['email','contact_number','first_name','last_name','department','year_of_graduation']
-
-#     @transaction.atomic  #if an exception occurs changes are not saved
-#     def save(self):
-#         return self.cleaned_data.get('contact_number')
-
-# class CompanySignUpForm(UserCreationForm):
-#     email = forms.EmailField(label="Email (Email will be your username for Logging in the portal)")
-#     contact_number = forms.CharField(max_length=12)
-#     # first_name = forms.CharField(required=True) 
-#     # last_name = forms.CharField(required=True)
-#     profile = forms.CharField(required=True)
-#     company_name =forms.CharField(required=True)
-#     address = forms.CharField(required=True)
-#     profile = forms.ChoiceField(choices=Profiles_choices)
-#     # overview = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     # work_environ = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     # job_desc = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     # other_details = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     verify_doc = forms.FileField(label="Upload your Verification Documents(Single PDF)",required=False)
-
-#     class Meta(UserCreationForm.Meta):
-#         model = User
-#         fields = ['email','contact_number','company_name','address','profile'] 
-    
-#     @transaction.atomic#if an exception occurs changes are not saved
-#     def save(self):
-#         user = super().save(commit=False)#before saving save the details
-#         user.is_company = True
-#         user.contact_number=self.cleaned_data.get('contact_number')
-#         user.email = self.cleaned_data.get('email')
-#         user.username = user.email
-#         user.save()
-#         company = Company.objects.create(user=user)#instance created
-#         company.profile=self.cleaned_data.get('profile')
-#         company.company_name=self.cleaned_data.get('company_name')
-#         company.address=self.cleaned_data.get('address')
-#         company.verify_doc = self.cleaned_data.get('verify_doc')
-#         company.save()
-#         return user
-
-# class CompanydescForm(forms.ModelForm):
-#     overview = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     work_environ = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-#     job_desc = forms.Textarea(attrs={"cols": "35", "rows": "10","required": False})
-#     other_details = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-
-#     class Meta:
-#         model = Company
-#         fields = ['overview','work_environ','job_desc','other_details']
-
-
-#     @transaction.atomic#if an exception occurs changes are not saved
-#     def save(self):
-#         return self.cleaned_data.get('overview'),self.cleaned_data.get('work_environ'),self.cleaned_data.get('job_desc'),self.cleaned_data.get('other_details')
-
-# class CompanyEditForm(forms.ModelForm):
-    # email = forms.EmailField(required=True)
-    # contact_number = forms.CharField(max_length=12,required=True)
-    # company_name =forms.CharField(required=True)
-    # address = forms.CharField(required=True)
-    # profile = forms.ChoiceField(choices=Profiles_choices)
-    # overview = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-    # work_environ = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-    # job_desc = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-    # other_details = forms.Textarea(attrs={"cols": "35", "rows": "10"})
-
-    # class Meta():
-    #     model = Company
-    #     fields = ['email','contact_number','company_name','address','profile','overview','work_environ','job_desc','other_details']
-
-    # @transaction.atomic  #if an exception occurs changes are not saved
-    # def save(self):
-    #     return self.cleaned_data.get('contact_number'),self.cleaned_data.get('address'),self.cleaned_data.get('profile'),self.cleaned_data.get('overview'),self.cleaned_data.get('work_environ'),self.cleaned_data.get('job_desc'),self.cleaned_data.get('other_details')

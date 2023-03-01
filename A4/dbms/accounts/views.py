@@ -680,9 +680,7 @@ def handle_admit(request):
             if a is not None:
                 try:
                     user = patient.objects.get(Email_ID = a)
-                    
                     admit = admission.objects.filter(Patient_Email = a).order_by("-Admission_ID")
-                    
                     print(user)
                     print(type(admit))
                     return render(request,'../templates/company_details.html',{'user':user, 'admit':admit})
