@@ -22,7 +22,7 @@ urlpatterns=[
     #  path('request_feedback/',views.request_feedback, name='request_feedback'),
     #  path('feedback/',views.feedback, name='feedback'),
     
-    #  path('company_details/',views.company_details, name='company_details'),
+     path('company_details/',views.company_details, name='company_details'),
     #  path('stud_chat/',views.stud_chat, name='stud_chat'),
     #  path('chats/',views.chats, name='chats'),
     #  path('list_of_students/',views.list_of_students, name='list_of_students'),

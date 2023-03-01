@@ -18,6 +18,29 @@ BLOOD_GROUP_CHOICES = [
     ('AB-', 'AB-'),
 ]
 
+depart = [
+        ('cardiology', 'Cardiology'),
+        ('dermatology', 'Dermatology'),
+        ('endocrinology', 'Endocrinology'),
+        ('gastroenterology', 'Gastroenterology'),
+        ('neurology', 'Neurology'),
+        ('oncology', 'Oncology'),
+        ('ophthalmology', 'Ophthalmology'),
+        ('orthopedics', 'Orthopedics'),
+        ('pediatrician', 'Pediatrician'),
+        ('psychiatry', 'Psychiatry'),
+        ('pulmonology', 'Pulmonology'),
+        ('radiology', 'Radiology'),
+        ('urology', 'Urology'),
+    ]
+
+POSITION_CHOICES = [
+        ('Head', 'Department Head'),
+        ('Attending Physician', 'Attending Physician'),
+        ('Consultant', 'Consultant'),
+        ('Resident Physician', 'Resident Physician'),
+        ('Physician Assistant', 'Physician Assistant')
+    ]
 
 class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     
@@ -25,8 +48,8 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     Employee_ID = forms.IntegerField(required=True)
     First_Name =forms.CharField(required=True,label="First Name")
     Last_Name =forms.CharField(required=True,label="Last Name")
-    Position =forms.CharField(required=True)
-    Department = forms.CharField(required=True)
+    Position =forms.ChoiceField(choices= POSITION_CHOICES, required=True)
+    Department = forms.ChoiceField(choices=depart,required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
