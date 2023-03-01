@@ -619,10 +619,6 @@ def handle_admit(request):
             user = front_desk.objects.get(Email_ID = (request.session['user']))
             if user is not None:
                 pat = patient.objects.all()
-                # print(pat)
-                # adm = admission.objects.all()
-                # for x in adm:
-                #     print(x.Patient_Email,x.Room_ID,x.Start,x.End,x.PCP_Email,x.Total_Cost)
                 return render(request,'../templates/admin_user.html',{'whereto':'handle_admit','pat':pat})
         return redirect('/')  
     elif request.method == 'POST':
