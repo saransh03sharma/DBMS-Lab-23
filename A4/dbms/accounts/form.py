@@ -159,20 +159,21 @@ class admit_pat(forms.ModelForm):
     Last_Name = forms.CharField(max_length = 255,required=True)
     Room = forms.ChoiceField(choices=[])
     Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
-    PCP_Email = forms.ChoiceField(choices=[])
+    PCP_Name = forms.ChoiceField(choices=[])
     
     def get_pcp(self):
         # Retrieve the choices from the database or some other source
         # and return them as a list of tuples in the format (value, label)
         patient_list=[]
         doct = physician.objects.all()
-        for x in doct: 
-            patient_list.append((x.Email_ID,x.First_Name))
+        for x in doct:
+            print(x.Email_ID) 
+            patient_list.append((x.Email_ID,x.First_Name+" "+x.Last_Name))
         return patient_list
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Room'].choices = self.get_my_choices()
-        self.fields['PCP_Email'].choices = self.get_pcp()
+        self.fields['PCP_Name'].choices = self.get_pcp()
 
     def get_my_choices(self):
         # Retrieve the choices from the database or some other source
@@ -188,13 +189,13 @@ class admit_pat(forms.ModelForm):
     
     class Meta():
         model = patient
-        fields = ['First_Name','Last_Name', "Room", 'Start', "PCP_Email"]
+        fields = ['First_Name','Last_Name', "Room", 'Start', "PCP_Name"]
         
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Room'),self.cleaned_data.get('Start'), self.cleaned_data.get("PCP_Email")
+        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Room'),self.cleaned_data.get('Start'), self.cleaned_data.get("PCP_Name")
 
 class patient_register(forms.ModelForm):
     
