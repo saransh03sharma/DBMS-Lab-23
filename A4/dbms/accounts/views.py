@@ -553,10 +553,10 @@ def show_upcoming_appts(request):
                 doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date)
                 # doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = make_aware(datetime.datetime.now()))
                 print(doctor_apts)
-                patients = []
+                patients = set()
                 for apt in doctor_apts:
                     pat = patient.objects.get(Email_ID = apt.Patient_Email)
-                    patients.append(pat)
+                    patients.add(pat)
 
                 print(patients)
 

@@ -148,7 +148,16 @@
                 <td>{{patient.Email_ID}}</td>
                 <td>{{patient.First_Name}} {{patient.Last_Name}}</td> 
                 <td>{{patient.Age}}</td>
-                <td>{{patient.Status}}</td>
+                <!-- <td>{{patient.Status}}</td> -->
+                {% if patient.Status == 1%}
+                <!-- <div class="card-body" style="padding:5px"> -->
+                    <td>Currently Admitted</td>
+                <!-- </div> -->
+                {% else%}
+                <!-- <div class="card-body" style="padding:5px"> -->
+                    <td>Currently Not Admitted</td>
+                </div>
+                {% endif %}
                 <td>
                   <button type="submit" name="pat_email_health" value={{patient.Email_ID}} form="apply_comp"
                   class="btn btn-reserve">Show Health Record</button></td>

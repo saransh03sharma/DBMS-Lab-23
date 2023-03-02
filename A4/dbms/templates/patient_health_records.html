@@ -1,0 +1,232 @@
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+        integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <title>Patient Info</title>
+    <style>
+        body {
+            background-color: #0E1A35;
+            padding: 5vh;
+        }
+    </style>
+</head>
+
+{% block body %}
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mt-2 mx-auto">
+                    <div class="card" style="border:5px solid white;">
+                        <div class="card-header px-3 py-3 mt-3 mx-auto text-center"
+                            style="background-color:#0E1A35;color:white;width:30vw;">
+                            <h1 class="display-4">{{user.First_Name}} {{user.Last_Name}}</h1>
+                        </div>
+                        <div class="card-body" style="width:80vw;display:grid;grid-template-columns: 30vw 20vw 20vw;grid-gap: 2vw;row-gap: 0.5vh;">
+                            <div class="card mt-3" style="width:30vw" >
+                                <div class="card-header">
+                                    <h3 class="display-5">Email-ID: </h3>
+                                </div>
+                                <div class="card-body" style="padding:5px"  >
+                                    {{user.Email_ID}}
+                                </div>
+                            </div>
+                            <div class="card mt-3" style="width:20vw">
+                                <div class="card-header">
+                                    <h3 class="display-5">Phone Number: </h3>
+                                </div>
+                                <div class="card-body" style="padding:5px">
+                                    {{user.Phone}}
+                                </div>
+                            </div>
+                            <div class="card mt-3" style="width:20vw">
+                                <div class="card-header">
+                                    <h3 class="display-5">Age: </h3>
+                                </div>
+                                <div class="card-body" style="padding:5px">
+                                    {{user.Age}}
+                                </div>
+                            </div>
+                            <div class="card mt-3" style="width:30vw">
+                                <div class="card-header">
+                                    <h3 class="display-5">Address: </h3>
+                                </div>
+                                <div class="card-body" style="padding:5px">
+                                    {{user.Address}}
+                                </div>
+                            </div>
+                            <div class="card mt-3" style="width:20vw">
+                                <div class="card-header">
+                                    <h3 class="display-5">Blood Group: </h3>
+                                </div>
+                                <div class="card-body" style="padding:5px">
+                                    {{user.Blood_Group}}
+                                </div>
+                            </div>
+                            <div class="card mt-3" style="width:20vw">
+                                <div class="card-header">
+                                    <h3 class="display-5">Status: </h3>
+                                </div>
+                                
+                                {% if user.Status == 1%}
+                                <div class="card-body" style="padding:5px">
+                                    Currently Admitted
+                                </div>
+                                {% else%}
+                                <div class="card-body" style="padding:5px">
+                                    Currently Not Admitted
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                            
+
+<style>
+   
+    .h1 {
+      font-size: 3em;
+      font-weight: 300;
+      line-height: 1em;
+      text-align: center;
+      padding: 3rem;
+      color: #4dc3fa;
+    }
+  
+    h3 {
+      font-size: 1em;
+      font-weight: 300;
+      text-align: center;
+      display: block;
+      line-height: 1em;
+      padding-bottom: 2em;
+      color: #fb667a;
+    }
+  
+    .container th h1{
+      font-weight: bold;
+      font-size: 1em;
+      text-align: center;
+      padding: 0rem;
+      color: white;
+    }
+  
+    .display-5{
+        padding-bottom:0px;
+        color:white;
+        background-color:#0E1A35;
+    }
+    .card-header{
+        background-color:#0E1A35;
+    }
+    .container td {
+      font-weight: normal;
+      font-size: 1em;
+      -webkit-box-shadow: 0 2px 2px -2px #0e1119;
+      -moz-box-shadow: 0 2px 2px -2px #0e1119;
+      box-shadow: 0 2px 2px -2px #0e1119;
+    }
+  
+    .container {
+      text-align: center;
+      overflow: hidden;
+      width: 100%;
+      margin: 0 auto;
+      display: table;
+      padding: 3rem 0 8em 0;
+    }
+  
+    .container td,
+    .container th {
+      padding-bottom: 2%;
+      padding-top: 2%;
+      padding-left: 2%;
+    }
+  
+    /* Background-color of the odd rows */
+    .container tr:nth-child(odd) {
+      background-color: #323c50;
+    }
+  
+    /* Background-color of the even rows */
+    .container tr:nth-child(even) {
+      background-color: #2c3446;
+    }
+  
+    .container th {
+      background-color: #1f2739;
+    }
+  
+     .container td{
+      color: rgb(226, 223, 223);
+    }
+
+    .page-title{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  
+    @media (max-width: 800px) {
+      .container td:nth-child(4),
+      .container th:nth-child(4) {
+        display: none;
+      }
+    }
+  </style>
+
+<div class="container mt-4">
+    <h1 class="text-center page-title"><strong>Admission Records</strong></h1>
+    <table class="table " id="example">
+        <thead>
+            <tr>
+                <th><h1 class="h1">Sr.No</h1></th>
+                <th><h1 class="h1">Patient Admission_ID</h1></th>
+                <th><h1 class="h1">Start Date</h1></th> 
+                <th><h1 class="h1">End Date</h1></th>
+                <th><h1 class="h1">Cost</h1></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in admit %}
+            {%if a.Start != a.End%}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{a.Admission_ID}}</td>
+                <td>{{a.Start}}</td>
+                <td>{{a.End}}</td>
+                <td>Rs. {{a.Total_Cost}}</td>
+            </tr>
+            {%else%}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{a.Admission_ID}}</td>
+                <td>{{a.Start}}</td>
+                <td>Still Admitted</td>
+                <td>-</td>
+            </tr>
+
+            {%endif%}
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+
+
+                            <a href="/"
+                                style="color:black; position:relative;left:0;font-size:1.5em;">Go Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    {% endblock %}
+</html>
