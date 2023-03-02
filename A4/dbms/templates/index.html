@@ -468,8 +468,6 @@
 											<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
 											  
 											  <li><a class="dropdown-item" href="{% url 'patient_reg'%}">Register Patient</a></li>
-											  <li><a class="dropdown-item" href="{% url 'handle_admit'%}">Admit/Discharge</a></li>
-											  <li><a class="dropdown-item" href="{% url 'schedule_appoint'%}">Schedule a Appointment</a></li>
                         <li><hr class="dropdown-divider"></li>
 											  <li><a class="dropdown-item" href="{% url 'handle_admit'%}">Admit\Discharge</a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -656,12 +654,12 @@
 									
 										
 										<div class="dropdown">
-											<p style="color:black;float:right;position:relative;top:-2.5vh;left:-0.2vw;">{{user.Employee_ID}}</p>
 											<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false" style="width:5vw;height:5vw; border-radius:50%;background-color:white; border:none;float:right;position:relative;left:4vw;">
                         {% load static %}
                         <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:absolute; top:0.05vh;right:0.02vw;">
                         </button>
 											<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
+											  <li><a class="dropdown-item" href="{% url 'patient_data_entry' %}">Update Patient Info</a></li>
 											  <li><hr class="dropdown-divider"></li>
 											  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
 											</ul>
@@ -693,7 +691,7 @@
                 <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
                 </header>
                 <ul class="item">
-                  <li><a href="{% url 'patient_data_entry' %}">Test Result</a></li>
+                  <li><a href="{% url 'patient_data_entry' %}">Update Patient Info</a></li>
 
                   <li><a href="{% url 'logout'%}">Logout</a></li>
                   </ul>
