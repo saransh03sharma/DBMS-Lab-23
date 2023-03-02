@@ -273,6 +273,60 @@ class admit_patient(CreateView):
                         pat.save()
         return redirect('/')
 
+def scheduler(request):
+    if(request.method == 'POST'):
+        user = front_desk.objects.get(Email_ID = (request.session['user']))
+        if user is not None:
+            a = request.POST.get("checker")
+            if a is not None:
+                pat = patient.objects.get(Email_ID = a)
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                fee = request.POST.get("Appointment_Fee")
+                emergency = request.POST.get("Emergency")
+                values = {
+                    'Physician_Email': doc,
+                    'Start': date,
+                    'Appointment_Fee': fee,
+                    'Emergency': emergency,
+                }
+                print(values)
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                # print(date)
+                appoints = []
+                for i in range(10,20,1):
+                    appoint = appointment.objects.filter(Physician_Email = doc, Start = (date+datetime.timedelta(hours=i)))
+                    # print(date+datetime.timedelta(hours=i))
+                    # print("hell")
+                    if (emergency or (appoint is not None and len(appoint) == 0)):
+                        time = str("{0:02d}:00 - {1:02d}:00".format(i, i+1))
+                        # print(time)
+                        appoints.append({
+                            'id' : i,
+                            'time' : time
+                        })
+                # print(len(appoints))
+                form = schedule_app(values)
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+            a = request.POST.get("slot_id")
+            if a is not None:
+                a = int(a)
+                pat = request.POST.get("Patient_Email")
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                fee = request.POST.get("Appointment_Fee")
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                check_appoint = appointment.objects.get(Physician_Email = doc, Start = (date+datetime.timedelta(hours=a)))
+                if check_appoint is not None:
+                    print("Appointment already exists!")
+                    print("Deleting the appointment")
+                    check_appoint.delete()
+                appoint = appointment(Patient_Email = pat, Physician_Email = doc, Start = (date+datetime.timedelta(hours=a)),Appointment_Fee = fee)
+                appoint.save()
+            return redirect('/schedule_appointment')
+    return redirect('/')
 
 def schedule_appoint(request):
     if(request.method == 'GET'):
@@ -294,50 +348,6 @@ def schedule_appoint(request):
                 if pat is not None:
                     return render(request,'../templates/scheduler.html',{'whereto':'scheduler','form':schedule_app,'user':user,'pat':pat})
         return redirect('/')
-
-def scheduler(request):
-    if(request.method == 'POST'):
-        user = front_desk.objects.get(Email_ID = (request.session['user']))
-        if user is not None:
-            a = request.POST.get("checker")
-            if a is not None:
-                pat = patient.objects.get(Email_ID = a)
-                doc = request.POST.get("Physician_Email")
-                date = request.POST.get("Start")
-                values = {
-                    'Physician_Email': doc,
-                    'Start': date,
-                }
-                date = datetime.datetime.strptime(date, '%Y-%m-%d')
-                date = make_aware(date)
-                # print(date)
-                appoints = []
-                for i in range(10,20,1):
-                    appoint = appointment.objects.filter(Physician_Email = doc, Start = (date+datetime.timedelta(hours=i)))
-                    # print(date+datetime.timedelta(hours=i))
-                    # print("hell")
-                    if appoint is not None and len(appoint) == 0:
-                        time = str("{0:02d}:00 - {1:02d}:00".format(i, i+1))
-                        # print(time)
-                        appoints.append({
-                            'id' : i,
-                            'time' : time
-                        })
-                # print(len(appoints))
-                form = schedule_app(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
-            a = request.POST.get("slot_id")
-            if a is not None:
-                a = int(a)
-                pat = request.POST.get("Patient_Email")
-                doc = request.POST.get("Physician_Email")
-                date = request.POST.get("Start")
-                date = datetime.datetime.strptime(date, '%Y-%m-%d')
-                date = make_aware(date)
-                appoint = appointment(Patient_Email = pat, Physician_Email = doc, Start = (date+datetime.timedelta(hours=a)))
-                appoint.save()
-            return redirect('/schedule_appointment')
-    return redirect('/')
 
 def index(request): # to return homepage depending upon the logged in user
     if(request.method == 'POST'):
