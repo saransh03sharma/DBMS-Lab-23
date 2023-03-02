@@ -395,7 +395,8 @@ def index(request): # to return homepage depending upon the logged in user
         elif type == 'front_desk':
             try:
                 user = front_desk.objects.get(Email_ID = user_id)
-                return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+                rooms = room.objects.all()
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1, 'rooms':rooms})
 
             except front_desk.DoesNotExist:
                 return render(request, 'index.html', {'user': {}, 'type':"none"})
@@ -562,6 +563,78 @@ def show_upcoming_appts(request):
 
                 return render(request, '../templates/doctor_apts.html', {'user': user, 'whereto': 'show_upcoming_appts', 'appointments': doctor_apts, 'patients': patients})
 
-
-
-
+    
+def patient_data_entry(request):
+    print("hJJJJ")
+    if(request.method == 'GET'):
+        if 'user' in request.session and 'type' in request.session:
+            user = data_entry.objects.get(Email_ID = (request.session['user']))
+            if user is not None:
+                pat = patient.objects.all()
+                return render(request,'../templates/pat_list.html',{'whereto':'patient_data_entry','pat':pat,'user':user})
+        
+        return redirect('/')  
+    elif request.method == 'POST':
+        user = data_entry.objects.get(Email_ID = (request.session['user']))
+        if user is not None:
+            a = request.POST.get("completion")
+            print(a)
+            if a is not None:            
+                try:
+                    user = patient.objects.get(Email_ID = a)          
+                    values = {
+                            'First_Name':user.First_Name,
+                            'Last_Name':user.Last_Name,
+                        }
+                    form = patient_test(values)
+                    form.fields['First_Name'].widget.attrs['readonly']  =True
+                    form.fields['Last_Name'].widget.attrs['readonly']  =True
+                    print(values)
+                    return render(request,'../templates/admit_room.html',{'whereto':'patient_test','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
+                except patient.DoesNotExist:
+                    return redirect('/patient_test')
+            a = request.POST.get("schedule")
+            if a is not None:            
+                try:
+                    user = patient.objects.get(Email_ID = a)          
+                    values = {
+                            'First_Name':user.First_Name,
+                            'Last_Name':user.Last_Name,
+                        }
+                    form = admit_pat(values)
+                    form.fields['First_Name'].widget.attrs['readonly']  =True
+                    form.fields['Last_Name'].widget.attrs['readonly']  =True
+                    print(values)
+                    return render(request,'../templates/admit_room.html',{'whereto':'patient_treatment','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
+                except patient.DoesNotExist:
+                    return redirect('/patient_test')
+            a = request.POST.get("prescribe")
+            if a is not None:            
+                try:
+                    user = patient.objects.get(Email_ID = a)          
+                    values = {
+                            'First_Name':user.First_Name,
+                            'Last_Name':user.Last_Name,
+                        }
+                    form = admit_pat(values)
+                    form.fields['First_Name'].widget.attrs['readonly']  =True
+                    form.fields['Last_Name'].widget.attrs['readonly']  =True
+                    print(values)
+                    return render(request,'../templates/admit_room.html',{'whereto':'patient_operation','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
+                except patient.DoesNotExist:
+                    return redirect('/patient_test')
+        return redirect("/")
+ 
+class test_patient(CreateView):
+    model = tested
+    form_class = patient_test
+    template_name = '../templates/edit_details.html'
+    
+    def get(self, request):
+        return redirect("/patient_test")
+    
+    def form_valid(self,form):#form valid function
+        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+            
+            print("hi")
+        return redirect('/')

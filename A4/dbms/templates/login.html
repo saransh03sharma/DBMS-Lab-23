@@ -14,7 +14,15 @@
       background: #0E1A35;
       padding-top: 20vh !important;
       padding-bottom: 2vh !important;
-
+    }
+    
+    .go_back{
+      cursor:pointer;
+      transform: rotate(-30deg);
+      width:80px;
+      margin:auto;
+      border-radius:5px;
+      float:left;
     }
   </style>
 </head>
@@ -26,8 +34,11 @@
         <div class="col-md-6 mx-auto">
           <div class="card" style="border:5px solid white;">
             <div class="card-header text-black" style="background-color:#0E1A35">
+              {% load static %}
+              <a href="/"><img src="{% static '/back.png' %}" class="go_back"></button></a>
+             
               <h2 style="margin-left:20vw;color:white">Login</h2>
-              <h6 style="color:red;margin-left:12vw;"> Your Registration ID will be your username</h6>
+              <h6 style="color:red;margin-left:12vw;"> Your Registration Email ID will be your username</h6>
             </div>
             <div class="card-body">
               <form action="{% url whereto %}" method="POST" novalidate>
@@ -44,15 +55,17 @@
                   {% endfor %}
                   <br>
                   <input type="submit" value="Login" class="btn btn-block btn-primary">
+                  
                 </div>
               </form>
             </div>
           </div>
         </div>
+        
       </div>
+    
     </div>
-    <a href="/" style="color:black; position:relative;left:12vw;font-size:1.5em;background-color:white;padding-left:22vw;padding-right:20.5vw;" >Go
-      Back</a>
+    
     </div>
   </section>
 

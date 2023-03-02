@@ -272,3 +272,38 @@ class schedule_app(forms.ModelForm):
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
         return self.cleaned_data.get('Physician_Email'),self.cleaned_data.get('Start'),self.cleaned_data.get('Appointment_Fee'),self.cleaned_data.get('Emergency')
+
+class patient_test(forms.ModelForm):
+
+    First_Name = forms.CharField(max_length = 255,required=True)
+    Last_Name = forms.CharField(max_length = 255,required=True)
+    Test_ID = forms.ChoiceField(choices=[], label="Choose a Test")
+    Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    Test_Result = forms.CharField(widget=forms.Textarea)
+    
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Test_ID'].choices = self.get_test()
+
+
+    def get_test(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        all_test=[]
+        test = tests.objects.all()
+        for x in test: 
+            all_test.append((x.Test_ID,x.Test_Name))
+        if all_test == []:
+                all_test.append((-1, "NO TESTS AVAILABLE"))
+        return all_test
+    
+    class Meta():
+        model = patient
+        fields = ['First_Name','Last_Name', "Test_ID", 'Date', "Test_Result"]
+        
+
+
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Test_ID'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result")

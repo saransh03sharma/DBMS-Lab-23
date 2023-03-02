@@ -14,23 +14,40 @@
             background-color: #0E1A35;
             padding: 5vh;
         }
+        .display-4{
+            font-size:20px !important;
+            font-weight:bold;
+        }
+        .go_back{
+            cursor:pointer;
+            transform: rotate(-30deg);
+            width:80px;
+            margin-left:50px;
+            border-radius:5px;
+            float:left;
+            margin-top:20px;
+          }
     </style>
 </head>
 
 {% block body %}
     <section>
         <div class="container">
+            
             <div class="row">
                 <div class="col-md-12 mt-2 mx-auto">
                     <div class="card" style="border:5px solid white;">
+                        {% load static %}
+                             <a href="/"><img src="{% static '/back.png' %}" class="go_back"></button></a>
+                           
                         <div class="card-header px-3 py-3 mt-3 mx-auto text-center"
-                            style="background-color:#0E1A35;color:white;width:30vw;">
-                            <h1 class="display-4">{{user.First_Name}} {{user.Last_Name}}</h1>
+                            style="background-color:#0E1A35;color:white;width:30vw;position:relative;top:-70px">
+                             <h1 class="display-4">Patient Name {{user.First_Name}} {{user.Last_Name}}</h1>
                         </div>
                         <div class="card-body" style="width:80vw;display:grid;grid-template-columns: 30vw 20vw 20vw;grid-gap: 2vw;row-gap: 0.5vh;">
                             <div class="card mt-3" style="width:30vw" >
                                 <div class="card-header">
-                                    <h3 class="display-5">Email-ID: </h3>
+                                    <h3 class="display-5">Email-ID </h3>
                                 </div>
                                 <div class="card-body" style="padding:5px"  >
                                     {{user.Email_ID}}
@@ -38,7 +55,7 @@
                             </div>
                             <div class="card mt-3" style="width:20vw">
                                 <div class="card-header">
-                                    <h3 class="display-5">Phone Number: </h3>
+                                    <h3 class="display-5">Phone Number </h3>
                                 </div>
                                 <div class="card-body" style="padding:5px">
                                     {{user.Phone}}
@@ -46,7 +63,7 @@
                             </div>
                             <div class="card mt-3" style="width:20vw">
                                 <div class="card-header">
-                                    <h3 class="display-5">Age: </h3>
+                                    <h3 class="display-5">Age </h3>
                                 </div>
                                 <div class="card-body" style="padding:5px">
                                     {{user.Age}}
@@ -54,7 +71,7 @@
                             </div>
                             <div class="card mt-3" style="width:30vw">
                                 <div class="card-header">
-                                    <h3 class="display-5">Address: </h3>
+                                    <h3 class="display-5">Address </h3>
                                 </div>
                                 <div class="card-body" style="padding:5px">
                                     {{user.Address}}
@@ -62,7 +79,7 @@
                             </div>
                             <div class="card mt-3" style="width:20vw">
                                 <div class="card-header">
-                                    <h3 class="display-5">Blood Group: </h3>
+                                    <h3 class="display-5">Blood Group </h3>
                                 </div>
                                 <div class="card-body" style="padding:5px">
                                     {{user.Blood_Group}}
@@ -70,7 +87,7 @@
                             </div>
                             <div class="card mt-3" style="width:20vw">
                                 <div class="card-header">
-                                    <h3 class="display-5">Status: </h3>
+                                    <h3 class="display-5">Status </h3>
                                 </div>
                                 
                                 {% if user.Status == 1%}
@@ -120,6 +137,7 @@
         padding-bottom:0px;
         color:white;
         background-color:#0E1A35;
+        fonr-size:1.2em;
     }
     .card-header{
         background-color:#0E1A35;
@@ -179,6 +197,7 @@
   </style>
 
 <div class="container mt-4">
+    
     <h1 class="text-center page-title"><strong>Admission Records</strong></h1>
     <table class="table " id="example">
         <thead>
@@ -218,9 +237,7 @@
 
 
 
-                            <a href="/"
-                                style="color:black; position:relative;left:0;font-size:1.5em;">Go Back</a>
-                        </div>
+                     </div>
                     </div>
                 </div>
             </div>
