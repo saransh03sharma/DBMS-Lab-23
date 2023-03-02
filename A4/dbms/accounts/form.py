@@ -5,7 +5,7 @@ from .models import *
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.hashers import make_password, check_password
-from django.forms.widgets import DateTimeInput
+from django.forms.widgets import DateTimeInput,DateInput
 
 BLOOD_GROUP_CHOICES = [
     ('A+', 'A+'),
@@ -50,8 +50,7 @@ class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     Last_Name =forms.CharField(required=True,label="Last Name")
     Position =forms.ChoiceField(choices= POSITION_CHOICES, required=True)
     Department = forms.ChoiceField(choices=depart,required=True)
-    confirm = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
-    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Confirm Password")
+    password = forms.CharField(required=True, widget=forms.PasswordInput)
 
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = physician
@@ -251,3 +250,28 @@ class prescribe_form(forms.ModelForm):
     def save(self):
         return self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
         
+
+class schedule_app(forms.ModelForm):
+    Physician_Email = forms.ChoiceField(choices=[],label="Physician Name")
+    Start = forms.DateField(widget=DateInput(attrs={'type': 'date'}),label="Appointment Date")
+
+
+    def get_pcp(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        patient_list=[]
+        doct = physician.objects.all()
+        for x in doct:
+            patient_list.append((x.Email_ID,x.First_Name+" "+x.Last_Name))
+        return patient_list
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Physician_Email'].choices = self.get_pcp()
+
+    class Meta():
+        model = appointment
+        fields = ['Physician_Email','Start']
+    
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('Physician_Email'),self.cleaned_data.get('Start')
