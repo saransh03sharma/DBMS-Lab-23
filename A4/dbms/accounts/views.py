@@ -297,9 +297,10 @@ def scheduler(request):
                 appoints = []
                 for i in range(10,20,1):
                     appoint = appointment.objects.filter(Physician_Email = doc, Start = (date+datetime.timedelta(hours=i)))
+                    treat = undergoes.objects.filter(Physician_Email=doc, Date = (date+datetime.timedelta(hours=i)))
                     # print(date+datetime.timedelta(hours=i))
                     # print("hell")
-                    if (emergency or (appoint is not None and len(appoint) == 0)):
+                    if (emergency or ((appoint is None or len(appoint) == 0) and (treat is None or len(treat) == 0))):
                         time = str("{0:02d}:00 - {1:02d}:00".format(i, i+1))
                         # print(time)
                         appoints.append({
@@ -316,10 +317,12 @@ def scheduler(request):
                 doc = request.POST.get("Physician_Email")
                 date = request.POST.get("Start")
                 fee = request.POST.get("Appointment_Fee")
+                print(pat,doc,date,fee,a)
                 date = datetime.datetime.strptime(date, '%Y-%m-%d')
-                date = make_aware(date)
-                check_appoint = appointment.objects.get(Physician_Email = doc, Start = (date+datetime.timedelta(hours=a)))
-                if check_appoint is not None:
+                aware_date = make_aware(date)
+                aware_date = aware_date + datetime.timedelta(hours=a)
+                check_appoint = appointment.objects.filter(Physician_Email = doc, Start = aware_date)
+                if check_appoint is not None and len(check_appoint) > 0:
                     print("Appointment already exists!")
                     print("Deleting the appointment")
                     check_appoint.delete()
@@ -565,7 +568,6 @@ def show_upcoming_appts(request):
 
     
 def patient_data_entry(request):
-    print("hJJJJ")
     if(request.method == 'GET'):
         if 'user' in request.session and 'type' in request.session:
             user = data_entry.objects.get(Email_ID = (request.session['user']))
@@ -593,21 +595,16 @@ def patient_data_entry(request):
                     return render(request,'../templates/admit_room.html',{'whereto':'patient_test','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
                 except patient.DoesNotExist:
                     return redirect('/patient_test')
-            a = request.POST.get("schedule")
-            if a is not None:            
-                try:
-                    user = patient.objects.get(Email_ID = a)          
-                    values = {
-                            'First_Name':user.First_Name,
-                            'Last_Name':user.Last_Name,
-                        }
-                    form = admit_pat(values)
-                    form.fields['First_Name'].widget.attrs['readonly']  =True
-                    form.fields['Last_Name'].widget.attrs['readonly']  =True
-                    print(values)
-                    return render(request,'../templates/admit_room.html',{'whereto':'patient_treatment','form':form, 'Email_ID':user.Email_ID})#display the form in the edit_details.html
-                except patient.DoesNotExist:
-                    return redirect('/patient_test')
+            a = request.POST.get("schedule_test")
+            if a is not None:
+                pat = patient.objects.get(Email_ID = a)
+                if pat is not None:
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test','pat':pat,'user':user,'form':schedule_test})                
+            a = request.POST.get("schedule_treatment")
+            if a is not None:
+                pat = patient.objects.get(Email_ID = a)
+                if pat is not None:
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment','pat':pat,'user':user,'form':schedule_treatment})                
             a = request.POST.get("prescribe")
             if a is not None:            
                 try:
@@ -638,3 +635,103 @@ class test_patient(CreateView):
             
             print("hi")
         return redirect('/')
+
+
+def scheduler_test(request):
+    if(request.method == 'POST'):
+        user = data_entry.objects.get(Email_ID = (request.session['user']))
+        if user is not None:
+            a = request.POST.get("checker")
+            if a is not None:
+                pat = patient.objects.get(Email_ID = a)
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                test_id = int(request.POST.get("Test_ID"))
+                if test_id<0:
+                    return redirect('/patient_data_entry')
+                values = {
+                    'Physician_Email':doc,
+                    'Start':date,
+                    'Test_ID':test_id,
+                }
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                # print(date)
+                appoints = []
+                for i in range(10,20,1):
+                    appoint = tested.objects.filter(Test_ID = test_id, Date = (date+datetime.timedelta(hours=i)))
+                    # print(date+datetime.timedelta(hours=i))
+                    # print("hell")
+                    if (appoint is None or len(appoint) < 5):
+                        time = str("{0:02d}:00 - {1:02d}:00".format(i, i+1))
+                        appoints.append({
+                            'id' : i,
+                            'time' : time
+                        })
+                print(len(appoints))
+                form = schedule_test(values)
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+            a = request.POST.get("slot_id")
+            if a is not None:
+                a = int(a)
+                pat = request.POST.get("Patient_Email")
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                test_id = int(request.POST.get("Test_ID"))
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                date = date+datetime.timedelta(hours=a)
+                test = tested(Patient_Email = pat, Date = date, Test_ID = test_id)
+                test.save()
+        return redirect("/patient_data_entry")
+    return redirect("/")
+
+def scheduler_treatment(request):
+    if(request.method == 'POST'):
+        user = data_entry.objects.get(Email_ID = (request.session['user']))
+        if user is not None:
+            a = request.POST.get("checker")
+            if a is not None:
+                pat = patient.objects.get(Email_ID = a)
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                treatment_id = int(request.POST.get("Treatment_ID"))
+                if treatment_id < 0:
+                    return redirect('/patient_data_entry')
+                values = {
+                    'Physician_Email':doc,
+                    'Start':date,
+                    'Treatment_ID':treatment_id,
+                }
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                # print(date)
+                appoints = []
+                for i in range(10,20,1):
+                    treat = undergoes.objects.filter(Physician_Email=doc, Date = (date+datetime.timedelta(hours=i)))
+                    appoint = appointment.objects.filter(Physician_Email=doc, Start = (date+datetime.timedelta(hours=i)))
+                    # print(date+datetime.timedelta(hours=i))
+                    # print("hell")
+                    if ((appoint is None or len(appoint) == 0) and (treat is None or len(treat) == 0)):
+                        time = str("{0:02d}:00 - {1:02d}:00".format(i, i+1))
+                        appoints.append({
+                            'id' : i,
+                            'time' : time
+                        })
+                print(len(appoints))
+                form = schedule_treatment(values)
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+            a = request.POST.get("slot_id")
+            if a is not None:
+                a = int(a)
+                pat = request.POST.get("Patient_Email")
+                doc = request.POST.get("Physician_Email")
+                date = request.POST.get("Start")
+                treatment_id = request.POST.get("Treatment_ID")
+                date = datetime.datetime.strptime(date, '%Y-%m-%d')
+                date = make_aware(date)
+                date = date+datetime.timedelta(hours=a)
+                treat = undergoes(Patient_Email = pat, Physician_Email = doc, Date = date, Treatment_ID = treatment_id)
+                treat.save()
+        return redirect("/patient_data_entry")
+    return redirect("/")

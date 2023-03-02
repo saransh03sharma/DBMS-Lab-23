@@ -137,7 +137,8 @@
                   <th><h1>Patient Email</h1></th>
                   <th><h1>Name</h1></th>
                   <th><h1>Age</h1></th> 
-                  <th><h1>Schedule</h1></th>
+                  <th><h1>Schedule Test</h1></th>
+                  <th><h1>Schedule Treatment</h1></th>
                   <th><h1>Completion</h1></th>
                   <th><h1>Prescription</h1></th>  
               </tr>
@@ -154,13 +155,16 @@
                   <td>{{patient.Age}}</td>
                  
                       
-                      <td><button type="submit" name="schedule" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-reserve ml-5" style="width:10vw"
-                        >Schedule</button></td>
+                      <td><button type="submit" name="schedule_test" value={{patient.Email_ID}} form="apply_comp"
+                        class="btn btn-block btn-reserve ml-5"
+                        >Schedule Test</button></td>
+                      <td><button type="submit" name="schedule_treatment" value={{patient.Email_ID}} form="apply_comp"
+                        class="btn btn-block btn-reserve ml-5"
+                        >Schedule Treatment</button></td>
                       <td><button type="submit" name="completion" value={{patient.Email_ID}} form="apply_comp"
-                          class="btn btn-block btn-reserve ml-5 " style="width:10vw" >Completion</button></td>
+                          class="btn btn-block btn-reserve ml-5 " >Completion</button></td>
                       <td><button type="submit" name="prescribe" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-reserve ml-5" style="width:10vw"
+                        class="btn btn-block btn-reserve ml-5"
                         >Prescription</button></td>
                  
               </tr>

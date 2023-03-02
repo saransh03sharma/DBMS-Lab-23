@@ -255,7 +255,7 @@ class schedule_app(forms.ModelForm):
         patient_list=[]
         doct = physician.objects.all()
         for x in doct:
-            patient_list.append((x.Email_ID,x.First_Name+" "+x.Last_Name))
+            patient_list.append((x.Email_ID,"DR. " + x.First_Name+" "+x.Last_Name))
         return patient_list
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -294,7 +294,7 @@ class patient_test(forms.ModelForm):
         test = tests.objects.all()
         for x in test: 
             all_test.append((x.Test_ID,x.Test_Name))
-        if all_test == []:
+        if len(all_test)==0:
                 all_test.append((-1, "NO TESTS AVAILABLE"))
         return all_test
     
@@ -307,3 +307,88 @@ class patient_test(forms.ModelForm):
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
         return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Test_ID'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result")
+
+
+
+
+class schedule_test(forms.ModelForm):
+    Physician_Email = forms.ChoiceField(choices=[],label="Prescribing Physician")
+    Test_ID = forms.ChoiceField(choices=[], label="Choose a Test")
+    Start = forms.DateField(widget=DateInput(attrs={'type': 'date', 'min': '2022-05-20'}),label="Appointment Date", required=True)
+    
+
+    def get_pcp(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        patient_list=[]
+        doct = physician.objects.all()
+        for x in doct:
+            patient_list.append((x.Email_ID,"DR. " + x.First_Name+" "+x.Last_Name))
+        return patient_list
+    def get_test(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        all_test=[]
+        test = tests.objects.all()
+        for x in test: 
+            all_test.append((x.Test_ID,x.Test_Name))
+        if len(all_test)==0:
+                all_test.append((-1, "NO TESTS AVAILABLE"))
+        return all_test
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Physician_Email'].choices = self.get_pcp()
+        self.fields['Test_ID'].choices = self.get_test()
+        date = datetime.datetime.now(tz=datetime.timezone.utc)
+        date = date + datetime.timedelta(days=1)
+        date = date.strftime("%Y-%m-%d")
+        self.fields['Start'].widget.attrs['min'] = date
+
+    class Meta():
+        model = appointment
+        fields = ['Physician_Email','Test_ID','Start']
+    
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('Physician_Email'),self.cleaned_data.get('Test_ID'),self.cleaned_data.get('Start')
+
+class schedule_treatment(forms.ModelForm):
+    Physician_Email = forms.ChoiceField(choices=[],label="Treating Physician")
+    Treatment_ID = forms.ChoiceField(choices=[], label="Choose a Treatment")
+    Start = forms.DateField(widget=DateInput(attrs={'type': 'date', 'min': '2022-05-20'}),label="Appointment Date", required=True)
+    
+
+    def get_pcp(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        patient_list=[]
+        doct = physician.objects.all()
+        for x in doct:
+            patient_list.append((x.Email_ID,"DR. " + x.First_Name+" "+x.Last_Name))
+        return patient_list
+    def get_treatment(self):
+        # Retrieve the choices from the database or some other source
+        # and return them as a list of tuples in the format (value, label)
+        all_treatment=[]
+        treat = treatment.objects.all()
+        for x in treat: 
+            all_treatment.append((x.Treatment_ID,x.Treatment_Name))
+        if len(all_treatment)==0:
+                all_treatment.append((-1, "NO TREATMENTS AVAILABLE"))
+        return all_treatment
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Physician_Email'].choices = self.get_pcp()
+        self.fields['Treatment_ID'].choices = self.get_treatment()
+        date = datetime.datetime.now(tz=datetime.timezone.utc)
+        date = date + datetime.timedelta(days=1)
+        date = date.strftime("%Y-%m-%d")
+        self.fields['Start'].widget.attrs['min'] = date
+
+    class Meta():
+        model = appointment
+        fields = ['Physician_Email','Treatment_ID','Start']
+    
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('Physician_Email'),self.cleaned_data.get('Treatment_ID'),self.cleaned_data.get('Start')
