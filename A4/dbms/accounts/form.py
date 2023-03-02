@@ -44,7 +44,7 @@ POSITION_CHOICES = [
 
 class DoctorSignUpForm(forms.ModelForm):#form and formfields defined
     
-    Email_ID = forms.CharField(required=True)
+    Email_ID = models.EmailField()
     Employee_ID = forms.IntegerField(required=True)
     First_Name =forms.CharField(required=True,label="First Name")
     Last_Name =forms.CharField(required=True,label="Last Name")
@@ -158,7 +158,7 @@ class admit_pat(forms.ModelForm):
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
     Room = forms.ChoiceField(choices=[])
-    Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}), required=True)
     PCP_Name = forms.ChoiceField(choices=[])
     
     def get_pcp(self):
@@ -199,7 +199,7 @@ class admit_pat(forms.ModelForm):
 
 class patient_register(forms.ModelForm):
     
-    Email_ID = forms.CharField(max_length=255,required=True)   
+    Email_ID = forms.EmailField() 
     SSN = forms.IntegerField(required=True)
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
@@ -337,3 +337,33 @@ class patient_register(forms.ModelForm):
     # @transaction.atomic  #if an exception occurs changes are not saved
     # def save(self):
     #     return self.cleaned_data.get('contact_number'),self.cleaned_data.get('address'),self.cleaned_data.get('profile'),self.cleaned_data.get('overview'),self.cleaned_data.get('work_environ'),self.cleaned_data.get('job_desc'),self.cleaned_data.get('other_details')
+
+
+class prescribe_form(forms.ModelForm):
+    
+    First_Name = forms.CharField(max_length = 255,required=True)
+    Last_Name = forms.CharField(max_length = 255,required=True)
+    # Patient_Email = forms.EmailField() 
+    # Patient_SSN = forms.IntegerField(required=True)
+    # Address = forms.CharField(max_length = 255,required=True)
+    # Phone = forms.CharField(max_length = 255,required=True)
+    # Insurance_ID = forms.IntegerField(required=True)
+    Age = forms.IntegerField(required=True)
+    Blood_Group = forms.ChoiceField(choices = BLOOD_GROUP_CHOICES, label="Blood Group")
+    # Physician_Name = forms.CharField(max_length = 255,required=True)
+    Prescribe_Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}), required=True)
+    Prescription = forms.Textarea(attrs={"cols": "35", "rows": "10"})
+    
+    class Meta():
+        model = prescribes
+        fields = ['First_Name','Last_Name','Age', 'Blood_Group','Prescribe_Date','Prescription']
+
+    @transaction.atomic  #if an exception occurs changes are not saved
+    def save(self):
+        return self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
+        
+        # Phone = self.cleaned_data.get('Phone')
+        # if len(Phone)==10 and Phone.isdigit():
+        #     return self.cleaned_data.get('SSN'),self.cleaned_data.get('First_Name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Phone'),self.cleaned_data.get('Insurance_ID'),self.cleaned_data.get('PCP'),0
+        # else:   
+            # raise forms.ValidationError(_("Invalid Number Format"),code='invalid_format')

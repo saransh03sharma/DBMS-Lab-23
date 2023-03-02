@@ -15,7 +15,8 @@ urlpatterns=[
      path('admit_discharge/',views.handle_admit, name='handle_admit'),
      path('schedule_appointment/',views.schedule_appoint, name='schedule_appoint'),
      path('admission/',views.admit_patient.as_view(), name='patient_admit'),
-    
+     
+     path('prescribe_medication/', views.doctor_prescribe.as_view(), name='prescribe_medic'),
      path('',views.index, name='index'),
      path('admin_login/',views.login_admin, name='admin_login'),
      path('doctor_login/',views.login_doctor, name='doctor_login'),
