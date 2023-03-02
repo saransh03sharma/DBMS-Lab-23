@@ -212,7 +212,7 @@ class patient_register(forms.ModelForm):
     Last_Name = forms.CharField(max_length = 255,required=True)
     Address = forms.CharField(max_length = 255,required=True)
     Phone = forms.CharField(max_length = 255,required=True)
-    Insurance_ID = forms.IntegerField(required=True)
+    Insurance_ID = forms.IntegerField()
     Age = forms.IntegerField(required=True)
     Blood_Group = forms.ChoiceField(choices = BLOOD_GROUP_CHOICES, label="Blood Group")
     

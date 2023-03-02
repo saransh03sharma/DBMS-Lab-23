@@ -99,6 +99,7 @@ class patient(models.Model):
     Phone = models.CharField(max_length = 255)
     Insurance_ID = models.IntegerField()
     Age = models.IntegerField()
+    Gender = models.CharField(max_length=255)
     Blood_Group = models.CharField(max_length=255)
     Status = models.IntegerField()
    
@@ -113,7 +114,7 @@ class undergoes(models.Model):
     Treatment_ID = models.IntegerField()
     Date = models.DateTimeField()
     Physician_Email = models.EmailField()
-    
+    Remarks = models.TextField()
  
     def __str__(self):
         return str(self.Undergoes_ID) + " " + str(self.Patient) 

@@ -40,6 +40,7 @@ CREATE TABLE accounts_patient (
     Phone varchar(15) not null,
     Age int not null,
     Blood_Group varchar(8),
+    Gender varchar(255) not null,
     Status int not null
 );
 
@@ -61,7 +62,8 @@ CREATE TABLE accounts_undergoes (
     Patient_Email varchar(255) not null,
     Treatment_ID int not null,
     Physician_Email varchar(255) not null,
-    Date DATETIME not null
+    Date DATETIME not null,
+    Remarks text
 );
 
 
