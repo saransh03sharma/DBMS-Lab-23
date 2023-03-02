@@ -116,9 +116,9 @@ def login_fr(request):
         
         try:
             user = front_desk.objects.get(Email_ID = username)
-            print("hh")
+            # print("hh")
             if check_password(password, user.password):
-                print("jj")
+                # print("jj")
                 request.session['user'] = user.Email_ID
                 request.session['type'] = "front_desk"
                 return redirect('/')    
@@ -341,10 +341,10 @@ def scheduler(request):
 
 def index(request): # to return homepage depending upon the logged in user
     if(request.method == 'POST'):
-        print("hi")
+        # print("hi")
         if 'user' in request.session and 'type' in request.session:
             try:
-                print("hello")
+                # print("hello")
                 user = db_admin.objects.get(username = (request.session['user']))
                 id = request.POST.get("front_id")
                 if id is not None:    
