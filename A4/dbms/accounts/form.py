@@ -126,22 +126,24 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
     First_Name =forms.CharField(required=True, label="First Name")
     Last_Name =forms.CharField(required=True, label="Last Name")
     Employee_ID = forms.IntegerField(required=True)
-    password = forms.CharField(required=True, widget=forms.PasswordInput)
-    confirm = forms.CharField(required=True, widget=forms.PasswordInput,label='Confirm Password')
+    confirm = forms.CharField(required=True, widget=forms.PasswordInput, label="Password")
+    password = forms.CharField(required=True, widget=forms.PasswordInput, label="Confirm Password")
     
 
-    class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
-        model = front_desk
+    class Meta():#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
+        model = data_entry
         # Order of Fields in the Form
-        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID', 'password','confirm']
+        fields = ['Email_ID','First_Name', 'Last_Name', 'Employee_ID','confirm','password']
     
     def clean_password(self,*args,**kwargs):
         password = make_password(self.cleaned_data.get('password'))
-        confirm = (self.cleaned_data.get('confirm'))
-        if not check_password(confirm,password):
+        confirm = self.cleaned_data.get('confirm')
+        print(self.cleaned_data.get('confirm') , self.cleaned_data.get('password'))
+        if confirm != self.cleaned_data.get('password'):
             raise forms.ValidationError(_("Password Mismatch"),code='mismatch_password')
         else:
             return password
+
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
@@ -151,9 +153,9 @@ class DataSignUpForm(forms.ModelForm):#form and formfields defined
         Employee_ID = self.cleaned_data.get('Employee_ID')
         Email_ID = self.cleaned_data.get('Email_ID')
         password = self.cleaned_data.get('password')
-        data = data_entry(First_Name=First_Name,Last_Name = Last_Name, Employee_ID = Employee_ID, password=password, Email_ID = Email_ID)
-        data.save()
-        return data
+        front = data_entry(First_Name=First_Name,Last_Name = Last_Name, Employee_ID = Employee_ID, password=password, Email_ID = Email_ID)
+        front.save()
+        return front
 
 class admit_pat(forms.ModelForm):
     
