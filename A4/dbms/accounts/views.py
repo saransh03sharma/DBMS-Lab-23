@@ -378,6 +378,7 @@ def index(request): # to return homepage depending upon the logged in user
                 data = data_entry.objects.all()
                 print(data)
                 doct = physician.objects.all()
+                
                 print(doct)
                 return render(request, 'index.html', {'user': user, 'type':type, 'status':1,'whereto':'index','fronts':front,'datas':data,'docts':doct})
                 
@@ -391,7 +392,31 @@ def index(request): # to return homepage depending upon the logged in user
         if type == 'doctor':
             try:
                 user = physician.objects.get(Email_ID = user_id)
-                return render(request, 'index.html', {'user': user, 'type':type, 'status':1})
+                if user is not None:
+                    #  get count of all past appointments of the doctor
+                    aware_date = make_aware(datetime.datetime.now())
+                    past_appoint = appointment.objects.filter(Physician_Email = user.Email_ID, Start__lt = aware_date)
+                    past_appoint_count = len(past_appoint)
+
+                    # get count of the no of patients who have visited the doctor
+                    past_patients = set()
+                    for appoint in past_appoint:
+                        past_patients.add(appoint.Patient_Email)
+
+                    past_patients_count = len(past_patients)
+
+                    # get count of the no of patients operated by the doctor in the past
+                    past_patients_operated = []
+                    operations = undergoes.objects.filter(Physician_Email = user.Email_ID, Date__lt = aware_date)
+                    for oprn in operations:
+                        past_patients_operated.append(oprn.Patient_Email)
+
+                    no_of_ops = len(past_patients_operated)
+
+
+
+
+                return render(request, 'index.html', {'user': user, 'type':type, 'status':1, 'past_appoint_count':past_appoint_count, 'past_patients_count':past_patients_count, 'no_of_ops':no_of_ops})
 
             except physician.DoesNotExist:
                 return render(request, 'index.html', {'user': {}, 'type':"none"})
