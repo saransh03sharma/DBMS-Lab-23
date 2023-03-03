@@ -325,6 +325,18 @@ def scheduler(request):
                 if check_appoint is not None and len(check_appoint) > 0:
                     print("Appointment already exists!")
                     print("Deleting the appointment")
+                    check_appoint = check_appoint[0]
+                    temp_pat = patient.objects.get(Email_ID = check_appoint.Patient_Email)
+                    temp_doc = physician.objects.get(Email_ID = check_appoint.Physician_Email)
+                    e_mess_comp = "Hello <b>" + temp_pat.First_Name + " " + temp_pat.Last_Name + "</b>,<br><br>Your appointment with <b>DR. " + temp_doc.First_Name + " " + temp_doc.Last_Name + "</b> on <b>" + str(check_appoint.Start) + "</b> has been cancelled due to a Emergency Appointment request.<br>We are sorry for the incovinience caused. Please contact the Front Desk operators to reschedule your appointment.<br><br><br>Regards,<br>Hospital Team"
+                    send_mail(
+                        "Appointment Cancelled due to Emergency", #subject
+                        "", #message
+                        "opigs.iitkgp@gmail.com", #from_email
+                        [check_appoint.Patient_Email], #to_email_list
+                        fail_silently=True,
+                        html_message= e_mess_comp
+                    )
                     check_appoint.delete()
                 appoint = appointment(Patient_Email = pat, Physician_Email = doc, Start = (date+datetime.timedelta(hours=a)),Appointment_Fee = fee)
                 appoint.save()
