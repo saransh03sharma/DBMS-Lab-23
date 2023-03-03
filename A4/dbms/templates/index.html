@@ -220,8 +220,8 @@
                       </button>
                     <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
                       <li><a class="dropdown-item" href="{% url 'doctor_register' %}">Doctor Registration</a></li>
-                      <li><a class="dropdown-item" href="{% url 'front_desk_register' %}">Front Desk Operator</a> </li> 
-                      <li><a class="dropdown-item" href="{% url 'data_entry_register' %}">Data Entry Operator</a></li>
+                      <li><a class="dropdown-item" href="{% url 'front_desk_register' %}">Front Desk Operator Registration</a> </li> 
+                      <li><a class="dropdown-item" href="{% url 'data_entry_register' %}">Data Entry Operator Registration</a></li>
                       <li><hr class="dropdown-divider"></li>
                       <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                     </ul>
@@ -368,8 +368,8 @@
               </header>
               <ul class="item">
                 <li><a href="{% url 'doctor_register' %}">Doctor Registration</a></li>
-                <li><a href="{% url 'front_desk_register' %}">Front Desk Operator</a></li> 
-                <li><a href="{% url 'data_entry_register' %}">Data Entry Operator</a></li>
+                <li><a href="{% url 'front_desk_register' %}">Front Desk Operator Registration</a></li> 
+                <li><a href="{% url 'data_entry_register' %}">Data Entry Operator Registration</a></li>
                 <li><a href="{% url 'logout'%}">Logout</a></li>
                 </ul>
             </nav>
@@ -703,7 +703,7 @@
 {% else %}
 {% load static %}
 <div id="mainreg" style="background-image:url('{% static '/a.jpg' %}') ;background-color:#0e1a35; height:100vh;width:99vw;margin:auto;color:white;font-size:1.2em;clip-path: polygon(0 0, 100% 0%, 100% 95%, 0% 100%);background-size:cover">
-<div id="heading" style="width:80%; margin:auto;color:black;font-weight:bold">All Indian Institute of Medical Science, Delhi</div>
+<div id="heading" style="width:80%; margin:auto;color:rgb(1, 28, 103);font-weight:bold">All India Institute of Medical Sciences, Delhi</div>
 <div id="headingname" style="width:50%;margin:auto;color:black;font-weight:bold">Covid Tracker</div>
 <div id="navlink">
 <a href="/admin/login/?next=/admin/">Admin Portal</a> 
