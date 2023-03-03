@@ -1,10 +1,10 @@
-{% extends 'doctor_navbar.html' %}
+{% extends 'data_entry_navbar.html' %}
   {% load static %}
   {% block title %} Hospital Management System {% endblock %}
   {% block css %}
   <style>
     body {
-      background-color: #1f2739;
+      background-color: #0E1A35;
     }
   </style>
   {% endblock %}
@@ -83,7 +83,7 @@
     }
   
     .container th {
-      background-color: #1f2739;
+      background-color: #0E1A35;
     }
     patient_test
     .container tr:hover {
@@ -125,11 +125,24 @@
     h1{
       color:white !important;
     }
+    .go_back{
+      cursor:pointer;
+      width:65px;
+      margin:auto;
+      border-radius:5px;
+      float:left;
+      position:relative;
+      left:6vw;
+      top:3vh;
+    }
+
   </style>
 
   <section>
+    <a href="/patient_data_entry"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
+  
     <div class="container mt-4">
-      <h1 class="text-center page-title" style="color:white"><strong>Records of Patients</strong></h1>
+      <h1 class="text-center page-title" style="color:white"><strong>Records of {{Email_ID}}</strong></h1>
       <table class="table table-hover" id="example">
           <thead>
               <tr>

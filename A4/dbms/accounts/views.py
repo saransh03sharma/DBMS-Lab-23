@@ -211,7 +211,8 @@ def handle_admit(request):
                     user.Status=2
                     pat_room = room.objects.get(Room_ID = first_admit.Room_ID)
                     pat_room.Capacity += 1
-                    first_admit.Total_Cost =  (x.hours/24) * pat_room.Cost
+                    # print(pat_room.Cost)
+                    first_admit.Total_Cost =  (x.seconds/(60*24*60)) * pat_room.Cost
                     
                     user.save()
                     first_admit.save()
@@ -297,7 +298,7 @@ def scheduler(request):
                             'time' : time
                         })
                 form = schedule_app(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule an Appointment", 'url':"/schedule_appointment"})
             a = request.POST.get("slot_id")
             if a is not None:
                 a = int(a)
@@ -338,7 +339,7 @@ def schedule_appoint(request):
             if user is not None:
                 pat = patient.objects.all()
                 # print(pat)
-                return render(request,'../templates/schedule_appoint.html',{'whereto':'schedule_appoint','pat':pat,'user':user})
+                return render(request,'../templates/schedule_appoint.html',{'whereto':'schedule_appoint','pat':pat,'user':user,'heading':"Schedule a Appointement", 'url':"/schedule_appointment"})
         return redirect('/') 
     elif request.method == 'POST':
         user = front_desk.objects.get(Email_ID = (request.session['user']))
@@ -349,7 +350,7 @@ def schedule_appoint(request):
                 # print(pat)
                 # form = schedule_appoint()
                 if pat is not None:
-                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler','form':schedule_app,'user':user,'pat':pat})
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler','form':schedule_app,'user':user,'pat':pat,'heading':"Schedule an Appointment", 'url':"/schedule_appointment"})
         return redirect('/')
 
 def index(request): # to return homepage depending upon the logged in user
@@ -584,12 +585,12 @@ def patient_data_entry(request):
             if a is not None:
                 pat = patient.objects.get(Email_ID = a)
                 if pat is not None:
-                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test','pat':pat,'user':user,'form':schedule_test})                
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test','pat':pat,'user':user,'form':schedule_test,'heading':"Schedule a Test", 'url':"/patient_data_entry"})                
             a = request.POST.get("schedule_treatment")
             if a is not None:
                 pat = patient.objects.get(Email_ID = a)
                 if pat is not None:
-                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment','pat':pat,'user':user,'form':schedule_treatment})                
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment','pat':pat,'user':user,'form':schedule_treatment,'heading':"Schedule a Treatment", 'url':"/patient_data_entry"})                
             a = request.POST.get("prescribe")
             if a is not None:            
                 try:
@@ -855,7 +856,7 @@ def scheduler_test(request):
                         })
                 
                 form = schedule_test(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule a Test", 'url':"/schedule_appointment"})
             a = request.POST.get("slot_id")
             if a is not None:
                 a = int(a)

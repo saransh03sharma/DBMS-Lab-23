@@ -5,7 +5,7 @@
   {% block css %}
   <style>
     body {
-      background-color: #1f2739;
+      background-color: #0E1A35;
     }
   </style>
   {% endblock %}
@@ -93,7 +93,7 @@
     }
   
     .container th {
-      background-color: #1f2739;
+      background-color: #0E1A35;
     }
     
     .container tr:hover {
@@ -130,6 +130,13 @@
         display: none;
       }
     }
+    .go_back{
+      cursor:pointer;
+      width:65px;
+      margin:auto;
+      border-radius:5px;
+      float:left;
+    }
   </style>
 
   <section>
@@ -138,7 +145,10 @@
           <div class="col-md-6 mx-auto">
             <div class="card" style="border:5px solid white;">
               <div class="card-header text-white" style="background-color:#0E1A35">
-                <h2 class="text-center"> Schedule Appointment</h2>
+                {% load static %}
+              <a href="{{url}}"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
+              
+                <h2 class="text-center">{{heading}}</h2>
               </div>
               <div class="card-body text-start my-1">
                 
