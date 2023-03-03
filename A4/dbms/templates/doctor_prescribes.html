@@ -16,16 +16,27 @@
       padding-bottom: 2vh !important;
 
     }
+
+    .go_back{
+      cursor:pointer;
+      width:65px;
+      margin:auto;
+      border-radius:5px;
+      float:left;
+      
   </style>
 </head>
 <body>
   <section>
     <div class="container">
-      <div class="row" style="width:100vw;position:relative;left:-13vw;">
+      <div class="row" style="width:100vw ; position:relative;left:-13vw;">
         <div class="col-md-6 mx-auto">
           <div class="card" style="border:5px solid white;">
             <div class="card-header text-white" style="background-color:#0E1A35">
-              <h2 style="margin-left:12vw">Prescribe Medication</h2>
+              {% load static %}
+              <a href="/doctor_pat_record"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
+              
+              <h2 style="margin-left:12vw;position: relative; top:2vh;">Prescribe Medication</h2>
             </div>
             <div class="card-body">
               <form action="{% url whereto %}" method="POST">
@@ -40,7 +51,7 @@
                   {% endfor %}
                   <input name="patient_id" type="hidden" value={{pat.Email_ID}}>
                   <input type="submit" value="Prescribe" class="btn btn-block btn-primary my-4">
-                  <a href="/doctor_pat_record" style="color:black; position:relative;left:20vw;font-size:1.5em;"> Go Back</a>
+                  <!-- <a href="/doctor_pat_record" style="color:black; position:relative;left:20vw;font-size:1.5em;"> Go Back</a> -->
                 </div>
               </form>
             </div>
