@@ -193,7 +193,7 @@
 
             <!-- Header -->
               <header id="header" style="border:none;">
-               <h3 style="position:relative;top:2vh">Welcome to the Admin portal
+               <h3 style="position:relative;top:5vh;left:-2vw;font-size:1.5em;color:#0E1A35">Welcome to the Admin portal
                  </h3>
                  
                 <script>
@@ -364,7 +364,7 @@
           <!-- Menu -->
             <nav id="menu">
               <header class="major">
-              <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
+              <h2 style="border:none;font-size:1.5em;padding-left:2vw;">AIIMS, Delhi</h2>
               </header>
               <ul class="item">
                 <li><a href="{% url 'doctor_register' %}">Doctor Registration</a></li>
@@ -390,7 +390,7 @@
 
 							<!-- Header -->
 								<header id="header" style="border:none;">
-								 <h3 style="position:relative;top:2vh">Welcome to the Doctor Portal
+								 <h3 style="position:relative;top:5vh;left:-2vw;font-size:1.5em;color:#0E1A35">Welcome to the Doctor Portal
 									 </h3>
 										
 										<div class="dropdown">
@@ -432,7 +432,7 @@
             <!-- Menu -->
               <nav id="menu">
                 <header class="major">
-                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
+                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">AIIMS, Delhi</h2>
                 </header>
                 <ul class="item">
                   <li><a href="{%url 'show_upcoming_appts'%}">Upcoming Appointments</a></li>
@@ -457,7 +457,7 @@
 
 							<!-- Header -->
 								<header id="header" style="border:none;">
-								 <h3 style="position:relative;top:4vh;font-size:1.5em;">Welcome to the Front Desk Portal
+								 <h3 style="position:relative;top:5vh;left:-2vw;font-size:1.5em;color:#0E1A35">Welcome to the Front Desk Portal
 									 </h3>
 									
 										
@@ -625,7 +625,7 @@
             <!-- Menu -->
               <nav id="menu">
                 <header class="major">
-                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
+                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">AIIMS, Delhi</h2>
                 </header>
                  
                 <ul class="item">
@@ -649,7 +649,7 @@
 
 							<!-- Header -->
 								<header id="header" style="border:none;">
-								 <h3 style="position:relative;top:2vh" >Welcome to the Data Entry Portal
+								 <h3 style="position:relative;top:5vh;left:-2vw;font-size:1.5em;color:#0E1A35">Welcome to the Data Entry Portal
 									 </h3>
 									
 										
@@ -688,7 +688,7 @@
             <!-- Menu -->
               <nav id="menu">
                 <header class="major">
-                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">IIT Kharagpur</h2>
+                <h2 style="border:none;font-size:1.5em;padding-left:2vw;">AIIMS, Delhi</h2>
                 </header>
                 <ul class="item">
                   <li><a href="{% url 'patient_data_entry' %}">Update Patient Info</a></li>
@@ -702,9 +702,9 @@
 
 {% else %}
 {% load static %}
-<div id="mainreg" style="background-image:url('{% static '/ab.jpg' %}') ;background-color:#0e1a35; height:100vh;width:99vw;margin:auto;color:white;font-size:1.2em;clip-path: polygon(0 0, 100% 0%, 100% 95%, 0% 100%);background-size:cover">
-<div id="heading" style="width:70%; margin:auto;color:black">BC Roy Technology Hospital</div>
-<div id="headingname" style="width:50%;margin:auto;color:black">Covid Tracker</div>
+<div id="mainreg" style="background-image:url('{% static '/a.jpg' %}') ;background-color:#0e1a35; height:100vh;width:99vw;margin:auto;color:white;font-size:1.2em;clip-path: polygon(0 0, 100% 0%, 100% 95%, 0% 100%);background-size:cover">
+<div id="heading" style="width:80%; margin:auto;color:black;font-weight:bold">All Indian Institute of Medical Science, Delhi</div>
+<div id="headingname" style="width:50%;margin:auto;color:black;font-weight:bold">Covid Tracker</div>
 <div id="navlink">
 <a href="/admin/login/?next=/admin/">Admin Portal</a> 
 <a href="{% url 'admin_login' %}">Admin Login</a>
