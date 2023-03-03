@@ -537,7 +537,7 @@ def show_upcoming_appts(request):
                 date = datetime.datetime.date(make_aware(datetime.datetime.now()))
                 # print(date)
                 # aware_datetime = datetime.datetime
-                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date)
+                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date).order_by('-Start')
                 # doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = make_aware(datetime.datetime.now()))
                 print(doctor_apts)
                 patients = set()
