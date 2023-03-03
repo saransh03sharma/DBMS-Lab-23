@@ -58,31 +58,13 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Profile</a>
-              </li>
-              &nbsp;&nbsp;&nbsp;
-             
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           
+             &nbsp;&nbsp;&nbsp;
               <li class="nav-item display-msg-header">
-                <div style="font-weight:600; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;" class="nav-link active">Welcome: {{user.First_Name}}</div>
+                <div style="font-weight:600; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;" class="nav-link active">Welcome: {{user.First_Name}} {{user.Last_Name}}</div>
               </li>
-              {% comment %} <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false" style="width:5vw;height:5vw; border-radius:50%;background-color:white; border:none;float:right;position:relative;left:4vw;">
-                  {% load static %}
-                  <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:relative; top:-6px;left:-12px">
-                  </button>
-                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
-                  <li><a class="dropdown-item" href="{% url 'doctor_register' %}">Doctor Registration</a></li>
-                  <li><a class="dropdown-item" href="{% url 'front_desk_register' %}">Front Desk Operator</a> </li> 
-                  <li><a class="dropdown-item" href="{% url 'data_entry_register' %}">Data Entry Operator</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                </ul>
-                </div>
-           {% endcomment %}
-           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'logout'%}">Logout</a>
+              <li class="nav-item" style="position:absolute; right:5vw">
+            <a class="nav-link active" aria-current="page" href="{% url 'logout'%}" >Logout</a>
           </li>
           </ul>
           </div>

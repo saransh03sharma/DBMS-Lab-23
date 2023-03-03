@@ -1,0 +1,281 @@
+{% extends 'doctor_navbar.html' %}
+  {% load static %}
+  {% load widget_tweaks %}
+  {% block title %} Hospital Management System {% endblock %}
+  {% block css %}
+  <style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
+  {% endblock %}
+  {% block body %}
+
+<style>
+    .btn-issue{
+        background-color: rgb(1, 144, 1);
+    }
+
+    .btn-reserve{
+        background-color: rgb(0, 153, 255)
+    }
+    .form-control5 {
+      display: block;
+      width: 100%;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #212529;
+      background-color: #fff;
+      background-clip: padding-box;
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      }
+    h1 {
+      font-size: 3em;
+      font-weight: 300;
+      line-height: 1em;
+      text-align: center;
+      padding: 3rem;
+      color: #4dc3fa;
+    }
+  
+    h3 {
+      font-size: 1em;
+      font-weight: 300;
+      text-align: center;
+      display: block;
+      line-height: 1em;
+      padding-bottom: 2em;
+      color: #fb667a;
+    }
+  
+    .container th h1{
+      font-weight: bold;
+      font-size: 1em;
+      text-align: center;
+      padding: 0rem;
+    }
+  
+    .container td {
+      font-weight: normal;
+      font-size: 1em;
+      -webkit-box-shadow: 0 2px 2px -2px #0e1119;
+      -moz-box-shadow: 0 2px 2px -2px #0e1119;
+      box-shadow: 0 2px 2px -2px #0e1119;
+    }
+  
+    .container {
+      text-align: center;
+      overflow: hidden;
+      width: 100%;
+      margin: 0 auto;
+      display: table;
+      padding: 3rem 0 8em 0;
+    }
+      .container td,
+      .container th {
+      padding-bottom: 2%;
+      padding-top: 2%;
+      padding-left: 2%;
+    }
+  
+    /* Background-color of the odd rows */
+    .container tr:nth-child(odd) {
+      background-color: #323c50;
+    }
+  
+    /* Background-color of the even rows */
+    .container tr:nth-child(even) {
+      background-color: #2c3446;
+    }
+  
+    .container th {
+      background-color: #1f2739;
+    }
+    
+    .container tr:hover {
+      background-color: #464a52;
+      -webkit-box-shadow: 0 6px 6px -6px #0e1119;
+      -moz-box-shadow: 0 6px 6px -6px #0e1119;
+      box-shadow: 0 6px 6px -6px #0e1119;
+    }
+  
+    .container td:hover {
+      /* background-color: #8ac8bf; */
+      /* color: #185875; */
+      font-weight: bold;
+  
+      /* box-shadow: #78afa7 -1px 1px, #78afa7 -2px 2px, #78afa7 -3px 3px,
+      #78afa7 -4px 4px, #78afa7 -5px 5px, #78afa7 -6px 6px;
+      transform: translate3d(6px, -6px, 0); */
+      
+      transition-delay: 0s;
+      transition-duration: 0.4s;
+      transition-property: all;
+      transition-timing-function: line;
+    }
+  
+    .container td{
+      color: rgb(226, 223, 223);
+    }
+    .page-title{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    @media (max-width: 800px) {
+      .container td:nth-child(4),
+      .container th:nth-child(4) {
+        display: none;
+      }
+    }
+  </style>
+
+  <section>
+    <div class="container">
+        <div class="row text-center">
+          <div class="col-md-6 mx-auto">
+            <div class="card" style="border:5px solid white;">
+              <div class="card-header text-white" style="background-color:#0E1A35">
+                <h2 class="text-center">Insert Test/Treatment Result</h2>
+              </div>
+              <div class="card-body text-start my-1">
+                
+                <form action="{% url whereto %}" enctype="multipart/form-data" method="POST">
+                  {% csrf_token %}
+                  <label for="SSN">Patient Name:</label>
+                  <br>
+                  <input type="text" name="my_variable" value='{{pat.First_Name}} {{pat.Last_Name}}' readonly style="width:100%; height:35px;border-radius:3px;padding:5px; background-color:#E9ECEF;border:2px solid #d2d7db;color:#5b5b5b">
+                  <label for="SSN">Patient Email:</label>
+                  <br>
+                  <input type="text" name="email" value={{pat.Email_ID}} readonly style="width:100%; height:35px;border-radius:3px;padding:5px; background-color:#E9ECEF;border:2px solid #d2d7db;color:#5b5b5b">
+                  {% for field in form.visible_fields %}
+                  <div class="form-group text-start my-1" id="check_test">
+                    {{ field.label_tag }}
+                    {% render_field field class="form-control5" %}
+                    {% for error in field.errors %}
+                    <span style="color:red">{{ error }}</span>
+                    {% endfor %}
+                    {% endfor %}
+                    <button type="submit" value={{pat.Email_ID}} name="checker" class="btn btn-block btn-primary my-4 text-center">View Tests/Treatments</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% if slots %}
+      <br><br>
+      <h2 style="color:white; margin-top: 8vh"> Scheduled Tests </h2>
+      <table class="table table-hover" id="example" >
+        <thead>
+            <tr>
+                <th><h1>Sr. No.</h1></th>
+                <th><h1>Test ID</h1></th>
+                <th><h1>Date</h1></th>
+                <th><h1>Test Name</h1></th>
+                <th><h1>Test Result</h1></th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot in slots %}
+            <tr>
+              <form action="{% url whereto %}" enctype="multipart/form-data" method="POST" id="apply_comp">
+                {% csrf_token %}
+              </form>
+                <input type="hidden" form="apply_comp" name="Test_ID" value={{slot.Test_ID}}>
+                <input type="hidden" form="apply_comp" name="Patient_Email" value={{pat.Email_ID}}>
+                <input type="hidden" form="apply_comp" name="type" value="test">
+                <td>{{ forloop.counter }}</td>
+                <td>{{slot.id}}</td>
+                <td>{{slot.Date}}</td>
+                <td>{{slot.Test_Name}}</td>
+                <td><button type="submit" name="slot_id" value={{slot.id}} form="apply_comp"
+                class="btn btn-block btn-reserve ml-5">Enter Test Result</button>
+                </td>    
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% comment %} {% else %}
+    <br><br>
+      <h2 style="color:white; margin-top: 8vh"> Scheduled Tests </h2>
+      <table class="table table-hover" id="example" >
+        <thead>
+            <tr>
+                <th><h1>Sr. No.</h1></th>
+                <th><h1>Test ID</h1></th>
+                <th><h1>Date</h1></th>
+                <th><h1>Test Name</h1></th>
+                <th><h1>Test Result</h1></th>
+                
+            </tr>
+        </thead>
+    </table> {% endcomment %}
+    {% endif %}
+
+    {% if undergoes %}
+      <br><br>
+      <h2 style="color:white; margin-top: 8vh;"> Scheduled Treatments </h2>
+      <table class="table table-hover" id="example">
+        <thead>
+            <tr>
+                <th><h1>Sr. No.</h1></th>
+                <th><h1>Treatment ID</h1></th>
+                <th><h1>Date</h1></th>
+                <th><h1>Treatment Name</h1></th>
+                <th><h1>Treatment Remarks</h1></th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for slot in undergoes %}
+            <tr>
+              <form action="{% url whereto %}" enctype="multipart/form-data" method="POST" id="apply_comp">
+                {% csrf_token %}
+              </form>
+                <input type="hidden" form="apply_comp" name="Treatment_ID" value={{slot.Treatment_ID}}>
+                <input type="hidden" form="apply_comp" name="Patient_Email" value={{pat.Email_ID}}>
+                <input type="hidden" form="apply_comp" name="type" value="treatment">
+                <td>{{ forloop.counter }}</td>
+                <td>{{slot.id}}</td>
+                <td>{{slot.Date}}</td>
+                <td>{{slot.Treatment_Name}}</td>
+                    <td><button type="submit" name="slot_id" value={{slot.id}} form="apply_comp"
+                      class="btn btn-block btn-reserve ml-5">Enter Remarks</button>
+                    </td>    
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% comment %} {% else %}
+    <br><br>
+      <h2 style="color:white; margin-top: 8vh;"> Scheduled Treatments </h2>
+      <table class="table table-hover" id="example">
+        <thead>
+            <tr>
+                <th><h1>Sr. No.</h1></th>
+                <th><h1>Treatment ID</h1></th>
+                <th><h1>Date</h1></th>
+                <th><h1>Treatment Name</h1></th>
+                <th><h1>Treatment Remarks</h1></th>
+                
+            </tr>
+        </thead>
+    </table> {% endcomment %}
+    {% endif %}
+     
+  </section>
+  {% block scripts %}
+  <script>
+    function confirm_it(event){
+      if (!window.confirm("Are you sure you want to schedule this appointment?")) {
+        event.preventDefault();
+      }
+    }
+  </script>
+
+  {% endblock %}
+  {% endblock %}

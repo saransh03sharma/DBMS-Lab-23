@@ -18,8 +18,7 @@
     
     .go_back{
       cursor:pointer;
-      transform: rotate(-30deg);
-      width:80px;
+      width:65px;
       margin:auto;
       border-radius:5px;
       float:left;
@@ -35,10 +34,10 @@
           <div class="card" style="border:5px solid white;">
             <div class="card-header text-black" style="background-color:#0E1A35">
               {% load static %}
-              <a href="/"><img src="{% static '/back.png' %}" class="go_back"></button></a>
+              <a href="/"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
              
               <h2 style="margin-left:20vw;color:white">Login</h2>
-              <h6 style="color:red;margin-left:12vw;"> Your Registration Email ID will be your username</h6>
+              <h6 style="color:rgb(255, 196, 0);margin-left:12vw;"> Your Registration Email ID will be your username</h6>
             </div>
             <div class="card-body">
               <form action="{% url whereto %}" method="POST" novalidate>

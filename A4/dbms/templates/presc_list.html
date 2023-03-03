@@ -133,42 +133,21 @@
       <table class="table table-hover" id="example">
           <thead>
               <tr>
-                  <th><h1>Sr.No</h1></th>
-                  <th><h1>Patient Email</h1></th>
-                  <th><h1>Name</h1></th>
-                  <th><h1>Age</h1></th> 
-                  <th><h1>Schedule Test</h1></th>
-                  <th><h1>Schedule Treatment</h1></th>
-                  <th><h1>Completion</h1></th>
+                  
+                  <th><h1>Prescription ID</h1></th>
+                  <th><h1>Physician</h1></th>
+                  <th><h1>Date</h1></th> 
                   <th><h1>Prescription</h1></th>  
-                  <th><h1>Health Record</h1></th>  
               </tr>
           </thead>
           <tbody>
-              {% for patient in pat %}
+              {% for patient in presc %}
               <tr>
-                <form action="{% url whereto %}" enctype="multipart/form-data" method="POST" id="apply_comp">
-                  {% csrf_token %}
-                </form>
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{patient.Email_ID}}</td>
-                  <td>{{patient.First_Name}} {{patient.Last_Name}}</td>
-                  <td>{{patient.Age}}</td>
-                      
-                      <td><button type="submit" name="schedule_test" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-reserve ml-5"
-                        >Schedule Test</button></td>
-                      <td><button type="submit" name="schedule_treatment" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-reserve ml-5"
-                        >Schedule Treatment</button></td>
-                      <td><button type="submit" name="completion" value={{patient.Email_ID}} form="apply_comp"
-                          class="btn btn-block btn-reserve ml-5 " >Completion</button></td>
-                      <td><button type="submit" name="prescribe" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-reserve ml-5"
-                        >Prescription</button></td>
-                        <td><button type="submit" name="health" value={{patient.Email_ID}} form="apply_comp"
-                          class="btn btn-block btn-reserve ml-5"
-                          >Health Record</button></td>
+                
+                  <td>{{patient.id}}</td>
+                  <td>{{patient.Physician_Name}}</td>
+                  <td>{{patient.Date}}</td>
+                  <td>{{patient.Prescription}}</td>
                  
               </tr>
               {% endfor %}
