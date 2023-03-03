@@ -1,95 +1,27 @@
-{% load widget_tweaks %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-        integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <title>Patient Info</title>
-    <style>
-        body {
-            background-color: #0E1A35;
-            padding: 5vh;
-        }
-    </style>
-</head>
-
+{% extends 'doctor_navbar.html' %}
+{% load static %}
+{% block title %} Hospital Management System {% endblock %}
+{% block css %}
+<style>
+  body {
+    background-color: #1f2739;
+  }
+</style>
+{% endblock %}
 {% block body %}
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 mt-2 mx-auto">
-                    <div class="card" style="border:5px solid white;">
-                        <div class="card-header px-3 py-3 mt-3 mx-auto text-center"
-                            style="background-color:#0E1A35;color:white;width:30vw;">
-                            <h1 class="display-4">{{user.First_Name}} {{user.Last_Name}}</h1>
-                        </div>
-                        <div class="card-body" style="width:80vw;display:grid;grid-template-columns: 30vw 20vw 20vw;grid-gap: 2vw;row-gap: 0.5vh;">
-                            <div class="card mt-3" style="width:30vw" >
-                                <div class="card-header">
-                                    <h3 class="display-5">Email-ID: </h3>
-                                </div>
-                                <div class="card-body" style="padding:5px"  >
-                                    {{user.Email_ID}}
-                                </div>
-                            </div>
-                            <div class="card mt-3" style="width:20vw">
-                                <div class="card-header">
-                                    <h3 class="display-5">Phone Number: </h3>
-                                </div>
-                                <div class="card-body" style="padding:5px">
-                                    {{user.Phone}}
-                                </div>
-                            </div>
-                            <div class="card mt-3" style="width:20vw">
-                                <div class="card-header">
-                                    <h3 class="display-5">Age: </h3>
-                                </div>
-                                <div class="card-body" style="padding:5px">
-                                    {{user.Age}}
-                                </div>
-                            </div>
-                            <div class="card mt-3" style="width:30vw">
-                                <div class="card-header">
-                                    <h3 class="display-5">Address: </h3>
-                                </div>
-                                <div class="card-body" style="padding:5px">
-                                    {{user.Address}}
-                                </div>
-                            </div>
-                            <div class="card mt-3" style="width:20vw">
-                                <div class="card-header">
-                                    <h3 class="display-5">Blood Group: </h3>
-                                </div>
-                                <div class="card-body" style="padding:5px">
-                                    {{user.Blood_Group}}
-                                </div>
-                            </div>
-                            <div class="card mt-3" style="width:20vw">
-                                <div class="card-header">
-                                    <h3 class="display-5">Status: </h3>
-                                </div>
-                                
-                                {% if user.Status == 1%}
-                                <div class="card-body" style="padding:5px">
-                                    Currently Admitted
-                                </div>
-                                {% else%}
-                                <div class="card-body" style="padding:5px">
-                                    Currently Not Admitted
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                            
 
 <style>
-   
-    .h1 {
+    .btn-issue{
+        background-color: rgb(1, 144, 1);
+    }
+
+    .btn-reserve{
+        background-color: rgb(0, 153, 255)
+    }
+</style>
+
+<style>
+    h1 {
       font-size: 3em;
       font-weight: 300;
       line-height: 1em;
@@ -113,17 +45,9 @@
       font-size: 1em;
       text-align: center;
       padding: 0rem;
-      color: white;
+      color: #185875;
     }
   
-    .display-5{
-        padding-bottom:0px;
-        color:white;
-        background-color:#0E1A35;
-    }
-    .card-header{
-        background-color:#0E1A35;
-    }
     .container td {
       font-weight: normal;
       font-size: 1em;
@@ -162,11 +86,35 @@
       background-color: #1f2739;
     }
   
-     .container td{
+    .container tr:hover {
+      background-color: #464a52;
+      -webkit-box-shadow: 0 6px 6px -6px #0e1119;
+      -moz-box-shadow: 0 6px 6px -6px #0e1119;
+      box-shadow: 0 6px 6px -6px #0e1119;
+    }
+  
+    .container td:hover {
+      /* background-color: #8ac8bf; */
+      /* color: #185875; */
+      font-weight: bold;
+  
+      /* box-shadow: #78afa7 -1px 1px, #78afa7 -2px 2px, #78afa7 -3px 3px,
+        #78afa7 -4px 4px, #78afa7 -5px 5px, #78afa7 -6px 6px;
+      transform: translate3d(6px, -6px, 0); */
+  
+      transition-delay: 0s;
+      transition-duration: 0.4s;
+      transition-property: all;
+      transition-timing-function: line;
+    }
+  
+    .container td{
       color: rgb(226, 223, 223);
     }
 
     .page-title{
+      margin-top: 5vh;
+      margin-bottom: -3vh;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
   
@@ -176,55 +124,242 @@
         display: none;
       }
     }
+
+    .patient_details{
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        margin-top: 5vh;
+        margin-bottom: -5vh;
+        border: solid rgb(64, 122, 207) 2px;
+        background: rgb(64, 122, 207);
+        border-radius: 20px;
+    }
+    .patient_details .row{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+
   </style>
 
+<div class="container patient_details">
+    <h1 class="page-title">Patient Details</h1>
+    <div class="row">
+        <div class="col1">
+            Patient Name: {{pat.First_Name}} {{pat.Last_Name}}
+        </div>
+        <div class="col2">
+            Email ID: {{pat.Email_ID}}
+        </div>
+        <div class="col1">
+            Contact: {{pat.Contact}}
+        </div>
+        <div class="col2">
+            Age: {{pat.Age}}
+        </div>
+        <div class="col1">
+            Gender: {{pat.Gender}}
+        </div>
+        <div class="col2">
+            Blood Group: {{pat.Blood_Group}}
+        </div>
+    </div>
+</div>
+
+<!-- <div class="col-md-9">
+        <div class="profile-tab">
+          <div class="tab-pane">
+            <div class="row">
+              <div class="col-md-6">
+                <style text_align="left">
+                </style>
+                <label>Patient Name:</label>
+              </div>
+              <div class="col-md-6">
+                <style text_align="left">
+                </style>
+                {{pat.First_Name}} {{pat.Last_Name}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>Patient Email ID:</label>
+              </div>
+              <div class="col-md-6">
+                {{pat.Email_ID}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>Patient Contact:</label>
+              </div>
+              <div class="col-md-6">
+                {{pat.Phone}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label>Age:</label>
+              </div>
+              <div class="col-md-6">
+                {{pat.Age}}
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <label>Gender:</label>
+                </div>
+                <div class="col-md-6">
+                  {{pat.Gender}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <label>Blood Group:</label>
+                </div>
+                <div class="col-md-6">
+                  {{pat.Blood_Group}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <label>Admit Status:</label>
+                </div>
+                <div class="col-md-6">
+                    {% if patient.Status == 1%}
+                        <td>Admitted</td>
+                    {% else%}
+                        <td>Not Admitted</td>
+                    {% endif %}
+                </div>
+            </div>
+
+          </div>
+        </div>
+    </div> -->
 <div class="container mt-4">
-    <h1 class="text-center page-title"><strong>Admission Records</strong></h1>
-    <table class="table " id="example">
+
+    <h1 class="text-center page-title"><strong>Previous Health Records</strong></h1>
+    <table class="table table-hover" id="example">
         <thead>
             <tr>
                 <th><h1 class="h1">Sr.No</h1></th>
-                <th><h1 class="h1">Patient Admission_ID</h1></th>
-                <th><h1 class="h1">Start Date</h1></th> 
-                <th><h1 class="h1">End Date</h1></th>
-                <th><h1 class="h1">Cost</h1></th>
+                <th><h1 class="h1">Health Record ID</h1></th>
+                <th><h1 class="h1">Admission ID</h1></th> 
+                <th><h1 class="h1">Date</h1></th>
+                <th><h1 class="h1">Vitals</h1></th>
+                <th><h1 class="h1">Remarks</h1></th>
 
             </tr>
         </thead>
         <tbody>
-            {% for a in admit %}
-            {%if a.Start != a.End%}
+            {% for rec in records %}
             <tr>
                 <td>{{forloop.counter}}.</td>
-                <td>{{a.Admission_ID}}</td>
-                <td>{{a.Start}}</td>
-                <td>{{a.End}}</td>
-                <td>Rs. {{a.Total_Cost}}</td>
-            </tr>
-            {%else%}
-            <tr>
-                <td>{{forloop.counter}}.</td>
-                <td>{{a.Admission_ID}}</td>
-                <td>{{a.Start}}</td>
-                <td>Still Admitted</td>
-                <td>-</td>
-            </tr>
+                <td>{{rec.Record_ID}}</td>
+                <td>{{rec.Admission_ID}}</td>
+                <td>{{rec.Date}}</td>
+                <!-- <td>{{rec.Vitals}}</td> -->
+                <!-- <td>{{rec.Remarks}}</td> -->
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{forloop.counter}}">
+                        View Vitals
+                      </button>
+                      
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Vitals</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <p>
 
-            {%endif%}
+                                  {{rec.Vitals}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example2Modal{{forloop.counter}}">
+                        View Remarks
+                      </button>
+                      
+                    <!-- Modal -->
+                    <div class="modal fade" id="example2Modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Remarks</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <p>
+                                {{rec.Remarks}}
+                            </p>
+                                
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-    </div>
 
+    <h1 class="text-center page-title"><strong>Previous Prescriptions</strong></h1>
+    <table class="table table-hover" id="example2">
+        <thead>
+            <tr>
+                <th><h1>Sr.No</h1></th>
+                <th><h1>Prescription ID</h1></th>
+                <th><h1>Date</h1></th> 
+                <th><h1>Prescription</h1></th>
+                <!-- <th><h1 class="h1">Cost</h1></th> -->
 
-
+            </tr>
+        </thead>
+        <tbody>
+            {% for pres in prescriptions %}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{pres.Prescribe_ID}}</td>
+                <td>{{pres.Date}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example3Modal{{forloop.counter}}">
+                        View Prescription
+                      </button>
+                      
+                    <!-- Modal -->
+                    <div class="modal fade" id="example3Modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Prescription</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </section>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <p>
 
-    {% endblock %}
-</html>
+                                  {{pres.Prescription}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+                <!-- <td>Rs. {{a.Total_Cost}}</td> -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+{% endblock %}

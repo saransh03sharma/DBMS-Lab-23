@@ -235,17 +235,18 @@ class prescribe_form(forms.ModelForm):
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
     Age = forms.IntegerField(required=True)
+    Gender = forms.CharField(max_length = 255,required=True)
     Blood_Group = forms.ChoiceField(choices = BLOOD_GROUP_CHOICES, label="Blood Group")
     Prescribe_Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}), required=True)
     Prescription = forms.Textarea(attrs={"cols": "35", "rows": "10"})
     
     class Meta():
         model = prescribes
-        fields = ['First_Name','Last_Name','Age', 'Blood_Group','Prescribe_Date','Prescription']
+        fields = ['First_Name','Last_Name','Age', 'Gender', 'Blood_Group','Prescribe_Date','Prescription']
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
+        return self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Age'),self.cleaned_data.get('Gender'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
         
 
 class schedule_app(forms.ModelForm):

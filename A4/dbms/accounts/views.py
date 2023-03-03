@@ -471,12 +471,14 @@ def doctor_pat_record(request):
                         'First_Name': pat.First_Name,
                         'Last_Name': pat.Last_Name,
                         'Age': pat.Age,
+                        'Gender': pat.Gender,
                         'Blood_Group': pat.Blood_Group
                     }
                     form = prescribe_form(values)
                     form.fields['First_Name'].widget.attrs['readonly']  =True
                     form.fields['Last_Name'].widget.attrs['readonly']  =True
                     form.fields['Age'].widget.attrs['readonly']  =True
+                    form.fields['Gender'].widget.attrs['readonly']  =True
                     form.fields['Blood_Group'].widget.attrs['readonly']  =True
                     return render(request, '../templates/doctor_prescribes.html', {'user': user, 'whereto': 'prescribe_medic', 'form': form, 'pat':pat})
                 
@@ -484,19 +486,26 @@ def doctor_pat_record(request):
                 if b is not None:
                     pat = patient.objects.get(Email_ID = b)
                     # filter health records of the patient based on the email id using the admission table'
-                    pat_admits = admission.objects.filter(Patient_Email = pat.Email_ID)
-                    
+                    # pat_admits = admission.objects.filter(Patient_Email = pat.Email_ID)
+                    # print("Hello")
+                    # print(pat_admits)
+                    # print("Hello")
 
-                    # get the health records of the patient for each admission
-                    pat_health = []
+                    # get all the prescriptions of the patient which have been prescribed by the doctor
+                    curr_date = make_aware(datetime.datetime.now())
+                    pat_presriptions = prescribes.objects.filter(Patient_Email = pat.Email_ID, Physician_Email = user.Email_ID, Date__lte = curr_date)
+                    print(pat_presriptions)
+                    
+                    # get all the health records of the patient who have been admitted to the hospital and have PCP as the doctor
+                    pat_health_records = []
+                    pat_admits = admission.objects.filter(Patient_Email = pat.Email_ID, PCP_Email = user.Email_ID)
                     for admit in pat_admits:
-                        health = health_record.objects.filter(Admission_ID = admit.Admission_ID)
-                        for h in health:
-                            pat_health.append(h)
+                        temp = health_record.objects.filter(Admission_ID = admit.Admission_ID)
+                        for t in temp:
+                            pat_health_records.append(t)
 
-                    
 
-                    print(pat_health)
+                    return render(request, '../templates/patient_health_records.html', {'user': user, 'whereto': 'doctor_pat_record', 'pat':pat, 'prescriptions':pat_presriptions, 'records': pat_health_records})
                 
         return redirect('/')
         
@@ -512,8 +521,8 @@ class doctor_prescribe(CreateView):
         if 'user' in self.request.session and 'type' in self.request.session:
             user = physician.objects.get(Email_ID = (self.request.session['user']))
             print(user.Email_ID)
-            First_Name,Last_Name,Age, Blood_Group,Prescribe_Date,Prescription = form.save()
-            print(First_Name,Last_Name,Age, Blood_Group,Prescribe_Date,Prescription,self.request.POST.get('patient_id'))
+            First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription = form.save()
+            print(First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription,self.request.POST.get('patient_id'))
             pres = prescribes(Physician_Email = user.Email_ID, Patient_Email = self.request.POST.get('patient_id'), Date=Prescribe_Date, Prescription=Prescription)
             pres.save()
             return redirect('doctor_pat_record')
@@ -907,3 +916,30 @@ def scheduler_treatment(request):
                 treat.save()
         return redirect("/patient_data_entry")
     return redirect("/")
+def show_upcoming_appts(request):
+    if (request.method == 'GET'):
+        if 'user' in request.session and 'type' in request.session:
+
+            user = physician.objects.get(Email_ID = (request.session['user']))
+            
+            if user is not None:
+                
+                # get all doctor appointments starting from current day's appointment
+                date = datetime.datetime.date(make_aware(datetime.datetime.now()))
+                # print(date)
+                # aware_datetime = datetime.datetime
+                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date)
+                # doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = make_aware(datetime.datetime.now()))
+                print(doctor_apts)
+                patients = set()
+                for apt in doctor_apts:
+                    pat = patient.objects.get(Email_ID = apt.Patient_Email)
+                    patients.add(pat)
+
+                print(patients)
+
+                return render(request, '../templates/doctor_apts.html', {'user': user, 'whereto': 'show_upcoming_appts', 'appointments': doctor_apts, 'patients': patients})
+
+
+
+

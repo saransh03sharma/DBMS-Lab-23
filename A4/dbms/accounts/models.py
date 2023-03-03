@@ -153,7 +153,7 @@ class health_record(models.Model):
     Remarks = models.TextField()
  
     def __str__(self):
-        return str(self.Record_ID) 
+        return str(self.Record_ID) + " " + str(self.Admission_ID)
     
 class appointment(models.Model):
 

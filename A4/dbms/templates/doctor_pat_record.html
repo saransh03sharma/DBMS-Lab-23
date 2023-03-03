@@ -133,6 +133,7 @@
                 <th><h1>Patient Email</h1></th>
                 <th><h1>Name</h1></th>
                 <th><h1>Age</h1></th> 
+                <th><h1>Gender</h1></th>
                 <th><h1>Admit Status</h1></th>
                 <th><h1>Detailed Health Record</h1></th>
                 <th><h1>Prescribe Medication</h1></th>  
@@ -148,15 +149,16 @@
                 <td>{{patient.Email_ID}}</td>
                 <td>{{patient.First_Name}} {{patient.Last_Name}}</td> 
                 <td>{{patient.Age}}</td>
+                <td>{{patient.Gender}}</td>
                 <!-- <td>{{patient.Status}}</td> -->
                 {% if patient.Status == 1%}
                 <!-- <div class="card-body" style="padding:5px"> -->
-                    <td>Currently Admitted</td>
+                    <td>Admitted</td>
                 <!-- </div> -->
                 {% else%}
                 <!-- <div class="card-body" style="padding:5px"> -->
-                    <td>Currently Not Admitted</td>
-                </div>
+                    <td>Not Admitted</td>
+                <!-- </div> -->
                 {% endif %}
                 <td>
                   <button type="submit" name="pat_email_health" value={{patient.Email_ID}} form="apply_comp"

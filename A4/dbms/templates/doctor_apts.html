@@ -135,6 +135,7 @@
                 <th><h1>Patient Email</h1></th>
                 <th><h1>Patient Contact</h1></th>
                 <th><h1>Age</h1></th> 
+                <th><h1>Gender</h1></th>
                 <th><h1>Admit Status</h1></th>
                 <th><h1>Scheduled At</h1></th>
                 <!-- <th><h1>Detailed Health Record</h1></th> -->
@@ -155,15 +156,16 @@
                 <td>{{apt.Patient_Email}}</td>
                 <td>{{patient.Phone}}</td>
                 <td>{{patient.Age}}</td>
+                <td>{{patient.Gender}}</td>
                 <!-- <td>{{patient.Status}}</td> -->
                 <!-- <td>{{apt.Date}}</td> -->
                 {% if patient.Status == 1%}
                 <!-- <div class="card-body" style="padding:5px"> -->
-                    <td>Currently Admitted</td>
+                    <td>Admitted</td>
                 <!-- </div> -->
                 {% else%}
                 <!-- <div class="card-body" style="padding:5px"> -->
-                    <td>Currently Not Admitted</td>
+                    <td>Not Admitted</td>
                 </div>
                 {% endif %}
                 <td>{{apt.Start}}</td>
