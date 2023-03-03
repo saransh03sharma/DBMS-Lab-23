@@ -480,16 +480,11 @@ def doctor_pat_record(request):
                 b = request.POST.get('pat_email_health')
                 if b is not None:
                     pat = patient.objects.get(Email_ID = b)
-                    # filter health records of the patient based on the email id using the admission table'
-                    # pat_admits = admission.objects.filter(Patient_Email = pat.Email_ID)
-                    # print("Hello")
-                    # print(pat_admits)
-                    # print("Hello")
 
                     # get all the prescriptions of the patient which have been prescribed by the doctor
                     curr_date = make_aware(datetime.datetime.now())
                     pat_presriptions = prescribes.objects.filter(Patient_Email = pat.Email_ID, Physician_Email = user.Email_ID, Date__lte = curr_date)
-                    print(pat_presriptions)
+                    # print(pat_presriptions)
                     
                     # get all the health records of the patient who have been admitted to the hospital and have PCP as the doctor
                     pat_health_records = []
@@ -499,9 +494,22 @@ def doctor_pat_record(request):
                         for t in temp:
                             pat_health_records.append(t)
 
-
                     return render(request, '../templates/patient_health_records.html', {'user': user, 'whereto': 'doctor_pat_record', 'pat':pat, 'prescriptions':pat_presriptions, 'records': pat_health_records})
                 
+                a = request.POST.get('pat_test_result')
+                if a is not None:
+                    pat = patient.objects.get(Email_ID = a)
+                    pat_tests = tested.objects.filter(Patient_Email = pat.Email_ID).order_by('-Date')
+                    records = []
+                    for test in pat_tests:
+                        record = {}
+                        record['Test_ID'] = test.Test_ID
+                        record['Test_Name'] = tests.objects.get(Test_ID = test.Test_ID).Test_Name
+                        record['Date'] = test.Date
+                        record['Test_result'] = test.Test_result
+                        record['Test_Image'] = test.Test_Image
+                        records.append(record)
+                    return render(request, '../templates/patient_test_results.html', {'user': user, 'whereto': 'doctor_pat_record', 'pat':pat, 'records':records})
         return redirect('/')
         
 class doctor_prescribe(CreateView):
@@ -768,7 +776,7 @@ class test_update(CreateView):
             tested_pat = tested.objects.get(Tested_ID = Tested_ID)
             tested_pat.Test_result = Test_Result
             tested_pat.Test_Image = Test_Image.read()
-            # tested_pat.save()
+            tested_pat.save()
             
           
         return redirect('/patient_data_entry')

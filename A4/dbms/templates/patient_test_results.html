@@ -1,0 +1,343 @@
+{% extends 'doctor_navbar.html' %}
+{% load static %}
+{% load my_filters %}
+{% block title %} Hospital Management System {% endblock %}
+{% block css %}
+<style>
+  body {
+    background-color: #1f2739;
+  }
+</style>
+{% endblock %}
+{% block body %}
+
+<style>
+    .btn-issue{
+        background-color: rgb(1, 144, 1);
+    }
+
+    .btn-reserve{
+        background-color: rgb(0, 153, 255)
+    }
+</style>
+
+<style>
+    h1 {
+      font-size: 3em;
+      font-weight: 300;
+      line-height: 1em;
+      text-align: center;
+      padding: 3rem;
+      color: #4dc3fa;
+    }
+  
+    h3 {
+      font-size: 1em;
+      font-weight: 300;
+      text-align: center;
+      display: block;
+      line-height: 1em;
+      padding-bottom: 2em;
+      color: #fb667a;
+    }
+  
+    .container th h1{
+      font-weight: bold;
+      font-size: 1em;
+      text-align: center;
+      padding: 0rem;
+      color: #185875;
+    }
+  
+    .container td {
+      font-weight: normal;
+      font-size: 1em;
+      -webkit-box-shadow: 0 2px 2px -2px #0e1119;
+      -moz-box-shadow: 0 2px 2px -2px #0e1119;
+      box-shadow: 0 2px 2px -2px #0e1119;
+    }
+  
+    .container {
+      text-align: center;
+      overflow: hidden;
+      width: 100%;
+      margin: 0 auto;
+      display: table;
+      padding: 3rem 0 8em 0;
+    }
+  
+    .container td,
+    .container th {
+      padding-bottom: 2%;
+      padding-top: 2%;
+      padding-left: 2%;
+    }
+  
+    /* Background-color of the odd rows */
+    .container tr:nth-child(odd) {
+      background-color: #323c50;
+    }
+  
+    /* Background-color of the even rows */
+    .container tr:nth-child(even) {
+      background-color: #2c3446;
+    }
+  
+    .container th {
+      background-color: #1f2739;
+    }
+  
+    .container tr:hover {
+      background-color: #464a52;
+      -webkit-box-shadow: 0 6px 6px -6px #0e1119;
+      -moz-box-shadow: 0 6px 6px -6px #0e1119;
+      box-shadow: 0 6px 6px -6px #0e1119;
+    }
+  
+    .container td:hover {
+      /* background-color: #8ac8bf; */
+      /* color: #185875; */
+      font-weight: bold;
+  
+      /* box-shadow: #78afa7 -1px 1px, #78afa7 -2px 2px, #78afa7 -3px 3px,
+        #78afa7 -4px 4px, #78afa7 -5px 5px, #78afa7 -6px 6px;
+      transform: translate3d(6px, -6px, 0); */
+  
+      transition-delay: 0s;
+      transition-duration: 0.4s;
+      transition-property: all;
+      transition-timing-function: line;
+    }
+  
+    .container td{
+      color: rgb(226, 223, 223);
+    }
+
+    .page-title{
+      margin-top: 5vh;
+      margin-bottom: -3vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  
+    @media (max-width: 800px) {
+      .container td:nth-child(4),
+      .container th:nth-child(4) {
+        display: none;
+      }
+    }
+
+    .patient_details{
+        display: flex;
+        flex-direction: column;
+        margin-top: 5vh;
+        margin-bottom: -5vh;
+        border: solid rgb(64, 122, 207) 2px;
+        background: rgb(64, 122, 207);
+        border-radius: 20px;
+        height: 40vh;
+        width: 80vw;
+        margin-left: 10vw;
+    }
+    .patient_details .page-title{
+        font-size: 4vh;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        margin-top: -3vh;
+    }
+    .patient_details .row{
+        width: 100%;
+        height: 60%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        position: relative;
+    }
+    .patient_details .row .col1{
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        /* Print the col1 at the left end of row */
+        position: absolute;
+        left: 0;
+        margin-left: 10vw;
+    }
+    .patient_details .row .col2{
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        /* Print the col1 at the left end of row */
+        position: absolute;
+        right: 0;
+        margin-right: -1vw;
+        width: 45%;
+        text-align: left;
+    }
+
+  </style>
+
+<div class="patient_details">
+    <h1 class="page-title">Patient Details</h1>
+    <div class="row">
+        <div>
+          <span class="col1">
+              Patient Name: {{pat.First_Name}} {{pat.Last_Name}}
+          </span>
+          <span class="col2">
+              Email ID: {{pat.Email_ID}}
+          </span>
+        </div>
+        <div>
+          <span class="col1">
+              Contact: {{pat.Phone}}
+          </span>
+          <span class="col2">
+              Age: {{pat.Age}}
+          </span>
+        </div>
+        <div>
+          <span class="col1">
+              Gender: {{pat.Gender}}
+          </span>
+          <span class="col2">
+              Blood Group: {{pat.Blood_Group}}
+          </span>
+        </div>
+        <div>
+          <span class="col1">
+              Admit Status: {% if pat.Status == 1%}
+                Admitted
+              {% else%}
+                Not Admitted
+              {% endif %}
+          </span>
+          <span class="col2">
+              Insurance Number: {% if pat.Insurance_ID %}
+                {{pat.Insurance_ID}}
+              {% else %}
+                Not Available
+              {% endif %}
+          </span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+
+    <h1 class="text-center page-title"><strong>Previous Test Results</strong></h1>
+    <table class="table table-hover" id="example">
+        <thead>
+            <tr>
+                <th><h1 class="h1">Sr.No</h1></th>
+                <th><h1 class="h1">Test ID</h1></th>
+                <th><h1 class="h1">Test Name</h1></th>
+                <th><h1 class="h1">Test Date</h1></th>
+                <th><h1 class="h1">Test Results</h1></th>
+                <th><h1 class="h1">Test Image</h1></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in records %}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{rec.Test_ID}}</td>
+                <td>{{rec.Test_Name}}</td>
+                <td>{{rec.Date}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{forloop.counter}}">
+                        View Test Results
+                      </button>
+                      
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Test Result</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <p>
+
+                                  {{rec.Test_result}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example2Modal{{forloop.counter}}">
+                        View Image
+                      </button>
+                      
+                    <div class="modal fade" id="example2Modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Test Image</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <img src="data:image;base64,{{ rec.Test_Image | base64encode }}" width="100%" alt="Test Image">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- <h1 class="text-center page-title"><strong>Previous Prescriptions</strong></h1>
+    <table class="table table-hover" id="example2">
+        <thead>
+            <tr>
+                <th><h1>Sr.No</h1></th>
+                <th><h1>Prescription ID</h1></th>
+                <th><h1>Date</h1></th> 
+                <th><h1>Prescription</h1></th>
+                <!-- <th><h1 class="h1">Cost</h1></th> -->
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for pres in prescriptions %}
+            <tr>
+                <td>{{forloop.counter}}.</td>
+                <td>{{pres.Prescribe_ID}}</td>
+                <td>{{pres.Date}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example3Modal{{forloop.counter}}">
+                        View Prescription
+                      </button>
+                      
+                    <!-- Modal -->
+                    <div class="modal fade" id="example3Modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Prescription</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              <p>
+
+                                  {{pres.Prescription}}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </td>
+                <!-- <td>Rs. {{a.Total_Cost}}</td> -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table> -->
+
+    </div>
+{% endblock %}
