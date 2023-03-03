@@ -431,14 +431,8 @@ def index(request): # to return homepage depending upon the logged in user
         else:
             return render(request, 'index.html')
 
-def record_treatment(request):
-    pass
-
 def doctor_pat_record(request):
-
-    
     if (request.method == 'GET'):
-        # return render(request, '../templates/doctor_pat_record.html', {'user': user, 'type':type, 'status':1})
         if 'user' in request.session and 'type' in request.session:
             # try:
             user = physician.objects.get(Email_ID = (request.session['user']))
@@ -916,30 +910,5 @@ def scheduler_treatment(request):
                 treat.save()
         return redirect("/patient_data_entry")
     return redirect("/")
-def show_upcoming_appts(request):
-    if (request.method == 'GET'):
-        if 'user' in request.session and 'type' in request.session:
-
-            user = physician.objects.get(Email_ID = (request.session['user']))
-            
-            if user is not None:
-                
-                # get all doctor appointments starting from current day's appointment
-                date = datetime.datetime.date(make_aware(datetime.datetime.now()))
-                # print(date)
-                # aware_datetime = datetime.datetime
-                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date)
-                # doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = make_aware(datetime.datetime.now()))
-                print(doctor_apts)
-                patients = set()
-                for apt in doctor_apts:
-                    pat = patient.objects.get(Email_ID = apt.Patient_Email)
-                    patients.add(pat)
-
-                print(patients)
-
-                return render(request, '../templates/doctor_apts.html', {'user': user, 'whereto': 'show_upcoming_appts', 'appointments': doctor_apts, 'patients': patients})
-
-
 
 

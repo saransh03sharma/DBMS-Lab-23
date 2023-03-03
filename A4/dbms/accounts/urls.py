@@ -28,7 +28,6 @@ urlpatterns=[
      path('de_login/',views.login_de, name='de_login'),
      path('logout/',views.logout_view, name='logout'),
      path('doctor_pat_record/', views.doctor_pat_record, name='doctor_pat_record'),
-     path('record_treatment/', views.record_treatment, name='record_treatment'),
      path('upcoming_appointments/', views.show_upcoming_appts, name='show_upcoming_appts'),
      path('patient_data_entry/',views.patient_data_entry, name='patient_data_entry'),
      path('patient_test/',views.patient_test, name='patient_test'),

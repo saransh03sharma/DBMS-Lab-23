@@ -134,12 +134,50 @@
         border: solid rgb(64, 122, 207) 2px;
         background: rgb(64, 122, 207);
         border-radius: 20px;
+        height: 40vh;
+        position: relative;
+    }
+    .patient_details .page-title{
+        font-size: 3.4rem;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        padding: 1rem;
+        border-bottom: solid rgb(64, 122, 207) 2px;
+        margin-top: -4vh;
     }
     .patient_details .row{
+        width: inherit;
+        height: 100%;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
         align-items: center;
+        position: relative;
+    }
+    .patient_details .row .col1{
+        padding: 1rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        border-right: solid rgb(64, 122, 207) 2px;
+        /* Print the col1 at the left end of row */
+        position: absolute;
+        left: 0;
+        margin-left: 8vw;
+    }
+    .patient_details .row .col2{
+        padding: 1rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        border-right: solid rgb(64, 122, 207) 2px;
+        /* Print the col1 at the left end of row */
+        position: absolute;
+        right: 0;
+        margin-right: 1vw;
+        width: 50%;
+        text-align: left;
     }
 
   </style>
@@ -147,23 +185,45 @@
 <div class="container patient_details">
     <h1 class="page-title">Patient Details</h1>
     <div class="row">
-        <div class="col1">
-            Patient Name: {{pat.First_Name}} {{pat.Last_Name}}
+        <div>
+          <span class="col1">
+              Patient Name: {{pat.First_Name}} {{pat.Last_Name}}
+          </span>
+          <span class="col2">
+              Email ID: {{pat.Email_ID}}
+          </span>
         </div>
-        <div class="col2">
-            Email ID: {{pat.Email_ID}}
+        <div>
+          <span class="col1">
+              Contact: {{pat.Phone}}
+          </span>
+          <span class="col2">
+              Age: {{pat.Age}}
+          </span>
         </div>
-        <div class="col1">
-            Contact: {{pat.Contact}}
+        <div>
+          <span class="col1">
+              Gender: {{pat.Gender}}
+          </span>
+          <span class="col2">
+              Blood Group: {{pat.Blood_Group}}
+          </span>
         </div>
-        <div class="col2">
-            Age: {{pat.Age}}
-        </div>
-        <div class="col1">
-            Gender: {{pat.Gender}}
-        </div>
-        <div class="col2">
-            Blood Group: {{pat.Blood_Group}}
+        <div>
+          <span class="col1">
+              Admit Status: {% if pat.Status == 1%}
+                Admitted
+              {% else%}
+                Not Admitted
+              {% endif %}
+          </span>
+          <span class="col2">
+              Insurance Number: {% if pat.Insurance_ID %}
+                {{pat.Insurance_ID}}
+              {% else %}
+                Not Available
+              {% endif %}
+          </span>
         </div>
     </div>
 </div>
