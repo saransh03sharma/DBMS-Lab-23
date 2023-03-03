@@ -1,5 +1,6 @@
 {% extends 'doctor_navbar.html' %}
 {% load static %}
+{% load my_filters %}
 {% block title %} Hospital Management System {% endblock %}
 {% block css %}
 <style>
@@ -224,16 +225,16 @@
 
 <div class="container mt-4">
 
-    <h1 class="text-center page-title"><strong>Previous Health Records</strong></h1>
+    <h1 class="text-center page-title"><strong>Previous Test Results</strong></h1>
     <table class="table table-hover" id="example">
         <thead>
             <tr>
                 <th><h1 class="h1">Sr.No</h1></th>
-                <th><h1 class="h1">Health Record ID</h1></th>
-                <th><h1 class="h1">Admission ID</h1></th> 
-                <th><h1 class="h1">Date</h1></th>
-                <th><h1 class="h1">Vitals</h1></th>
-                <th><h1 class="h1">Remarks</h1></th>
+                <th><h1 class="h1">Test ID</h1></th>
+                <th><h1 class="h1">Test Name</h1></th>
+                <th><h1 class="h1">Test Date</h1></th>
+                <th><h1 class="h1">Test Results</h1></th>
+                <th><h1 class="h1">Test Image</h1></th>
 
             </tr>
         </thead>
@@ -241,14 +242,12 @@
             {% for rec in records %}
             <tr>
                 <td>{{forloop.counter}}.</td>
-                <td>{{rec.Record_ID}}</td>
-                <td>{{rec.Admission_ID}}</td>
+                <td>{{rec.Test_ID}}</td>
+                <td>{{rec.Test_Name}}</td>
                 <td>{{rec.Date}}</td>
-                <!-- <td>{{rec.Vitals}}</td> -->
-                <!-- <td>{{rec.Remarks}}</td> -->
                 <td>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal{{forloop.counter}}">
-                        View Vitals
+                        View Test Results
                       </button>
                       
                     <!-- Modal -->
@@ -256,13 +255,13 @@
                         <div class="modal-dialog modal-dialog-centered">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Vitals</h5>
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Test Result</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-start" style="color: black; font-weight: lighter;">
                               <p>
 
-                                  {{rec.Vitals}}
+                                  {{rec.Test_result}}
                               </p>
                             </div>
                           </div>
@@ -271,22 +270,18 @@
                 </td>
                 <td>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example2Modal{{forloop.counter}}">
-                        View Remarks
+                        View Image
                       </button>
                       
-                    <!-- Modal -->
                     <div class="modal fade" id="example2Modal{{forloop.counter}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Remarks</h5>
+                              <h5 class="modal-title" id="exampleModalLabel" style="color: black;">Test Image</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-start" style="color: black; font-weight: lighter;">
-                              <p>
-                                {{rec.Remarks}}
-                            </p>
-                                
+                              <img src="data:image;base64,{{ rec.Test_Image | base64encode }}" width="100%" alt="Test Image">
                             </div>
                           </div>
                         </div>
@@ -297,7 +292,7 @@
         </tbody>
     </table>
 
-    <h1 class="text-center page-title"><strong>Previous Prescriptions</strong></h1>
+    <!-- <h1 class="text-center page-title"><strong>Previous Prescriptions</strong></h1>
     <table class="table table-hover" id="example2">
         <thead>
             <tr>
@@ -342,7 +337,7 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table> -->
 
     </div>
 {% endblock %}

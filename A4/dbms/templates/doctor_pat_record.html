@@ -126,7 +126,7 @@
 
 <div class="container mt-4">
     <h1 class="text-center page-title"><strong>Records of Treated Patients</strong></h1>
-    <table class="table table-hover" id="example">
+    <table class="table table-hover" id="example" style="width: 85vw;">
         <thead>
             <tr>
                 <th><h1>Sr.No</h1></th>
@@ -136,6 +136,7 @@
                 <th><h1>Gender</h1></th>
                 <th><h1>Admit Status</h1></th>
                 <th><h1>Detailed Health Record</h1></th>
+                <th><h1>Test Results</h1></th>
                 <th><h1>Prescribe Medication</h1></th>  
             </tr>
         </thead>
@@ -163,6 +164,9 @@
                 <td>
                   <button type="submit" name="pat_email_health" value={{patient.Email_ID}} form="apply_comp"
                   class="btn btn-reserve">Show Health Record</button></td>
+                <td>
+                  <button type="submit" name="pat_test_result" value={{patient.Email_ID}} form="apply_comp"
+                  class="btn btn-reserve">Test Results</button></td>
                 <td><button type="submit" name="comp_id" value={{patient.Email_ID}} form="apply_comp"
                   class="btn btn-reserve"
                   >Prescribe</button> </td>
