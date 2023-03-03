@@ -298,7 +298,7 @@ def scheduler(request):
                             'time' : time
                         })
                 form = schedule_app(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule a Appointment", 'url':"/schedule_appointment"})
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule an Appointment", 'url':"/schedule_appointment"})
             a = request.POST.get("slot_id")
             if a is not None:
                 a = int(a)
@@ -350,7 +350,7 @@ def schedule_appoint(request):
                 # print(pat)
                 # form = schedule_appoint()
                 if pat is not None:
-                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler','form':schedule_app,'user':user,'pat':pat,'heading':"Schedule a Appointment", 'url':"/schedule_appointment"})
+                    return render(request,'../templates/scheduler.html',{'whereto':'scheduler','form':schedule_app,'user':user,'pat':pat,'heading':"Schedule an Appointment", 'url':"/schedule_appointment"})
         return redirect('/')
 
 def index(request): # to return homepage depending upon the logged in user

@@ -238,9 +238,19 @@ class prescribe_form(forms.ModelForm):
     Age = forms.IntegerField(required=True)
     Gender = forms.CharField(max_length = 255,required=True)
     Blood_Group = forms.ChoiceField(choices = BLOOD_GROUP_CHOICES, label="Blood Group")
-    Prescribe_Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}), required=True)
+    Prescribe_Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'date', 'max': '2022-05-20'}))
     Prescription = forms.Textarea(attrs={"cols": "35", "rows": "10"})
     
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        date = datetime.datetime.now(tz=datetime.timezone.utc)
+        date = date + datetime.timedelta(days=1)
+        date = date.strftime("%Y-%m-%d")
+        print(date)
+        self.fields['Prescribe_Date'].widget.attrs['max'] = date
+
+
     class Meta():
         model = prescribes
         fields = ['First_Name','Last_Name','Age', 'Gender', 'Blood_Group','Prescribe_Date','Prescription']
@@ -423,8 +433,8 @@ class HealthRecordForm(forms.ModelForm):#form and formfields defined
     Patient_Email = forms.EmailField(label="Patient's Email ID")
     First_Name =forms.CharField(required=True,label="First Name")
     Last_Name =forms.CharField(required=True,label="Last Name")
-    Admission_ID =forms.ChoiceField(choices= [], required=True)
-    Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    Admission_ID =forms.ChoiceField(choices= [], required=True, label="Admission Details (Physician Time)")
+    Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'date', 'max': '2022-05-20'}))
     Vitals = forms.CharField(widget=forms.Textarea)
     Remarks = forms.CharField(widget=forms.Textarea)
     
@@ -438,7 +448,13 @@ class HealthRecordForm(forms.ModelForm):#form and formfields defined
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['Admission_ID'].choices = self.get_admission(self.data.get('Patient_Email'))
-        print("hi")
+        
+        date = datetime.datetime.now(tz=datetime.timezone.utc)
+        date = date + datetime.timedelta(days=1)
+        date = date.strftime("%Y-%m-%d")
+        print(date)
+        self.fields['Date'].widget.attrs['max'] = date
+
     
     class Meta(forms.ModelForm):#Model Meta is basically used to change the behavior of your model fields like changing order options,verbose_name and lot of other options.
         model = health_record
