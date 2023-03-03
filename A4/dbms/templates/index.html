@@ -35,7 +35,7 @@
     }
 
     .card-body{
-      display:none;
+      
     }
     .accordion:after {
       content: '\002B';
@@ -43,8 +43,13 @@
       font-weight: bold;
       float: right;
       margin-left: 5px;
-    
     }
+
+    .list div{
+      margin:0px;
+      padding:0px;
+    }
+   
     
     .active:after {
       content: "\2212";
@@ -245,7 +250,7 @@
                         <button class="fr" onclick="togglefr(event)"><h2 style=" color:white; font-size:0.9em" >Active Front Desk operators</h2></button>
                       </div>
                       <div class="card-body" style="border:2px solid #0e1a35;border-radius:5px;font-size:0.9em" id="fr_card">
-                        <ol>
+                        <ol class="list">
                           {% for front in fronts %}
                           <div class="form-group">
                             <li style="list-style-type:none">
@@ -256,9 +261,7 @@
                               <div class="card-body" style="display:flex;  justify-content:space-between;" >
                                 <span style="width:20vw" >
                                   User name: {{front.First_Name}} {{front.Last_Name}} <br>
-                                  User ID: {{front.Employee_ID}} <br>
-                                  Email ID: {{front.Email_ID}} <br>
-                                  
+                                  Email ID: {{front.Email_ID}}
                                 </span>
                                 <button type="submit" name="front_id" value={{front.Email_ID}} form="del_front"
                                 class="btn btn-block btn-success ml-5" style="width:20vw; background-color:red; height:6vh;"
@@ -285,7 +288,7 @@
                       <button class="fr" onclick="togglede(event)"><h2 style=" color:white; font-size:0.9em">Active Data Entry operators</h2></button>
                     </div>
                     <div class="card-body" style="border:2px solid #0e1a35;border-radius:5px;font-size:0.9em" id="de">
-                      <ol>
+                      <ol class="list">
                         {% for data in datas %}
                         <div class="form-group">
                           <li style="list-style-type:none">
@@ -325,7 +328,7 @@
                     <button class="fr" onclick="toggleph(event)"><h2 style=" color:white; font-size:0.9em">Active Physicians</h2></button>
                   </div>
                   <div class="card-body" style="border:2px solid #0e1a35;border-radius:5px;font-size:0.9em" id="ph">
-                    <ol>
+                    <ol class="list">
                       {% for doct in docts %}
                       <div class="form-group">
                         <li style="list-style-type:none">
@@ -400,8 +403,6 @@
                         <img src="{% static '/1.png' %}" style="height:5vw;border-radius:50%;position:relative; top:-6px;left:-12px">
                                         </button>
 											<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2" style="padding-right:0.5vw;">
-											  {% comment %} <li><a class="dropdown-item" href="{% url 'student_edit' %}">Edit Profile</a></li>
-											  <li><a class="dropdown-item" href="{% url 'apply_company' %}">Apply</a></li> {% endcomment %}
                         <li><a class="dropdown-item" href="{% url 'show_upcoming_appts' %}">Upcoming Appointments</a></li>
                         <li><hr class="dropdown-divider"></li>
 											  <li><a class="dropdown-item" href="{% url 'doctor_pat_record' %}">Patients' Records</a></li>
