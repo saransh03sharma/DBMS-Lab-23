@@ -27,15 +27,14 @@
 
 <body>
   <section>
-    <div class="container">
+    <div class="container" style="width:50vw">
       <div class="row">
         <div class="col-md-12 mx-auto">
           <div class="card" style="border:5px solid white;">
             <div class="card-header text-white" style="background-color:#0E1A35">
               {% load static %}
-              <a href="/"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
-             
-              <h2 style="margin-left:27vw">{{heading}}</h2>
+              <a href={{url}}><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
+              <h2 style="margin-left:15vw">{{heading}}</h2>
             </div>
             <div class="card-body">
               <form action="{% url whereto %}" enctype="multipart/form-data" method="POST">

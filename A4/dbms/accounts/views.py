@@ -23,13 +23,13 @@ class patient_reg_help(CreateView):
     template_name = '../templates/edit_details.html'
     
     def get(self, request):
-        return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register,'heading':"Register A Patient"})#display the form in the edit_details.html
+        return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register,'heading':"Register A Patient","url":"/"})#display the form in the edit_details.html
     
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
-            Email_ID, SSN, First_Name,Last_Name, Address, Insurance_ID, Phone, Age,Blood_Group, Status = form.save()#get data from form
+            Email_ID, SSN, First_Name,Last_Name, Address, Insurance_ID, Phone, Age,Blood_Group, Gender,Status = form.save()#get data from form
             pa = patient(Email_ID=Email_ID,First_Name=First_Name,Last_Name=Last_Name,SSN = SSN, Address = Address, Age = Age, Insurance_ID = Insurance_ID,Blood_Group=Blood_Group,
-                              Phone=Phone, Status = Status)
+                              Phone=Phone, Status = Status, Gender=Gender)
             pa.save()
         return redirect('/')
     

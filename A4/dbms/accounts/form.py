@@ -212,7 +212,7 @@ class admit_pat(forms.ModelForm):
 class patient_register(forms.ModelForm):
     
     Email_ID = forms.EmailField()   
-    SSN = forms.IntegerField(required=True)
+    SSN = forms.IntegerField(required=True, label="SSN")
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
     Address = forms.CharField(max_length = 255,required=True)
@@ -220,15 +220,16 @@ class patient_register(forms.ModelForm):
     Insurance_ID = forms.IntegerField()
     Age = forms.IntegerField(required=True)
     Blood_Group = forms.ChoiceField(choices = BLOOD_GROUP_CHOICES, label="Blood Group")
+    Gender = forms.CharField(required=True)
     
     class Meta():
         model = patient
-        fields = ['Email_ID','SSN','First_Name','Last_Name','Address','Phone','Insurance_ID','Age', 'Blood_Group']
+        fields = ['Email_ID','SSN','First_Name','Last_Name','Address','Phone','Insurance_ID','Age', 'Blood_Group','Gender']
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('Email_ID'),self.cleaned_data.get('SSN'),self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Address'),self.cleaned_data.get('Insurance_ID'),self.cleaned_data.get('Phone'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),0
+        return self.cleaned_data.get('Email_ID'),self.cleaned_data.get('SSN'),self.cleaned_data.get('First_Name').title(),self.cleaned_data.get('Last_Name').title(),self.cleaned_data.get('Address'),self.cleaned_data.get('Insurance_ID'),self.cleaned_data.get('Phone'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get("Gender").title(),0
 
 class prescribe_form(forms.ModelForm):
     
