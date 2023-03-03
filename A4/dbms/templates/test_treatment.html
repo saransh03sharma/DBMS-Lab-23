@@ -165,7 +165,7 @@
             </div>
           </div>
         </div>
-    {% if slots %}
+    {% if slots|length > 0 %}
       <br><br>
       <h2 style="color:white; margin-top: 8vh"> Scheduled Tests </h2>
       <table class="table table-hover" id="example" >
@@ -199,7 +199,7 @@
             {% endfor %}
         </tbody>
     </table>
-    {% comment %} {% else %}
+    {% elif slots is not defined %}
     <br><br>
       <h2 style="color:white; margin-top: 8vh"> Scheduled Tests </h2>
       <table class="table table-hover" id="example" >
@@ -213,10 +213,10 @@
                 
             </tr>
         </thead>
-    </table> {% endcomment %}
+    </table>
     {% endif %}
 
-    {% if undergoes %}
+    {% if undergoes|length > 0 %}
       <br><br>
       <h2 style="color:white; margin-top: 8vh;"> Scheduled Treatments </h2>
       <table class="table table-hover" id="example">
@@ -250,7 +250,7 @@
             {% endfor %}
         </tbody>
     </table>
-    {% comment %} {% else %}
+    {% elif undergoes is not defined %}
     <br><br>
       <h2 style="color:white; margin-top: 8vh;"> Scheduled Treatments </h2>
       <table class="table table-hover" id="example">
@@ -264,7 +264,7 @@
                 
             </tr>
         </thead>
-    </table> {% endcomment %}
+    </table>
     {% endif %}
      
   </section>

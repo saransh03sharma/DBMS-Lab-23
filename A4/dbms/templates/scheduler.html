@@ -164,7 +164,7 @@
         </div>
       </div>
     </div>
-      {% if slots %}
+      {% if slots|length > 0 %}
       <br><br>
       <h2 style="color:white; margin-top: 8vh;"> Available Slots </h2>
       <table class="table table-hover" id="example">
@@ -195,6 +195,18 @@
             </tr>
             {% endfor %}
         </tbody>
+    </table>
+    {% elif slots is not defined %}
+    <br><br>
+    <h2 style="color:white; margin-top: 8vh;"> Available Slots </h2>
+    <table class="table table-hover" id="example">
+      <thead>
+          <tr>
+              <th><h1>Sr. No.</h1></th>
+              <th><h1>Slot</h1></th>
+              <th><h1>Schedule</h1></th>
+          </tr>
+      </thead>
     </table>
     {% endif %}
      
