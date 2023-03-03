@@ -632,9 +632,9 @@ def patient_data_entry(request):
                                 'Physician_Name':physician.objects.get(Email_ID = i.Physician_Email).First_Name+" "+physician.objects.get(Email_ID = i.Physician_Email).Last_Name,
                                 'Prescription': i.Prescription,
                              })
+                        name = user.First_Name+" "+user.Last_Name
                     
-                    
-                    return render(request,'../templates/presc_list.html',{'whereto':'patient_operation', 'Email_ID':user.Email_ID, 'presc': prescription_list})#display the form in the edit_details.html
+                    return render(request,'../templates/presc_list.html',{'whereto':'patient_operation', 'Email_ID':user.Email_ID, 'name':name,'presc': prescription_list})#display the form in the edit_details.html
                 except patient.DoesNotExist:
                     return redirect('/patient_test')
             a = request.POST.get("health")
@@ -881,7 +881,7 @@ def scheduler_test(request):
                         })
                 
                 form = schedule_test(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule a Test", 'url':"/schedule_appointment"})
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_test', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values,'heading':"Schedule a Test", 'url':"/patient_data_entry"})
             a = request.POST.get("slot_id")
             if a is not None:
                 a = int(a)
@@ -930,7 +930,7 @@ def scheduler_treatment(request):
                         })
                 
                 form = schedule_treatment(values)
-                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values})
+                return render(request,'../templates/scheduler.html',{'whereto':'scheduler_treatment', 'form':form, 'pat':pat,'user':user, 'slots':appoints, 'vals':values, 'heading':"Schedule a Treatment", 'url':"/patient_data_entry"})
             a = request.POST.get("slot_id")
             if a is not None:
                 a = int(a)
