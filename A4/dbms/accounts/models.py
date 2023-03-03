@@ -51,6 +51,7 @@ class tested(models.Model):
     Test_ID = models.IntegerField()
     Date = models.DateTimeField()
     Test_result = models.TextField()
+    Test_Image = models.BinaryField()
    
  
     def __str__(self):
