@@ -207,7 +207,7 @@ class admit_pat(forms.ModelForm):
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Room'),self.cleaned_data.get('Start'), self.cleaned_data.get("PCP_Name")
+        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get("Last_Name").title(),self.cleaned_data.get('Room'),self.cleaned_data.get('Start'), self.cleaned_data.get("PCP_Name")
 
 class patient_register(forms.ModelForm):
     
@@ -247,7 +247,7 @@ class prescribe_form(forms.ModelForm):
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get('Last_Name'),self.cleaned_data.get('Age'),self.cleaned_data.get('Gender'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
+        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get('Last_Name').title(),self.cleaned_data.get('Age'),self.cleaned_data.get('Gender'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get('Prescribe_Date'),self.cleaned_data.get('Prescription')
         
 
 class schedule_app(forms.ModelForm):
@@ -310,7 +310,7 @@ class patient_test_form(forms.ModelForm):
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Tested_ID'),self.cleaned_data.get('Test_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result")
+        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get("Last_Name").title(),self.cleaned_data.get('Tested_ID'),self.cleaned_data.get('Test_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result")
 
 
 class patient_treatment_form(forms.ModelForm):
@@ -331,7 +331,7 @@ class patient_treatment_form(forms.ModelForm):
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name'),self.cleaned_data.get("Last_Name"),self.cleaned_data.get('Treatment_ID'),self.cleaned_data.get('Treatment_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Physician_Email"),self.cleaned_data.get("Remarks")
+        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get("Last_Name").title(),self.cleaned_data.get('Treatment_ID'),self.cleaned_data.get('Treatment_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Physician_Email"),self.cleaned_data.get("Remarks")
 
 
 class schedule_test(forms.ModelForm):
@@ -453,7 +453,6 @@ class HealthRecordForm(forms.ModelForm):#form and formfields defined
         Date = self.cleaned_data.get('Date')
         Vitals = self.cleaned_data.get('Vitals')
         Remarks = self.cleaned_data.get('Remarks')
-       
        
         return Patient_Email, First_Name, Last_Name, Admission_ID, Date, Vitals, Remarks
 
