@@ -301,16 +301,17 @@ class patient_test_form(forms.ModelForm):
     Test_Name = forms.CharField(max_length = 255,required=True)
     Date = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
     Test_Result = forms.CharField(widget=forms.Textarea)
+    Test_Image = forms.ImageField(required=False)
     
     class Meta():
         model = patient
-        fields = ['First_Name','Last_Name', "Test_Name", "Tested_ID", 'Date', "Test_Result"]
+        fields = ['First_Name','Last_Name', "Test_Name", "Tested_ID", 'Date', "Test_Result", "Test_Image"]
         
 
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get("Last_Name").title(),self.cleaned_data.get('Tested_ID'),self.cleaned_data.get('Test_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result")
+        return self.cleaned_data.get('First_Name').title(),self.cleaned_data.get("Last_Name").title(),self.cleaned_data.get('Tested_ID'),self.cleaned_data.get('Test_Name'),self.cleaned_data.get('Date'), self.cleaned_data.get("Test_Result"), self.cleaned_data.get("Test_Image")
 
 
 class patient_treatment_form(forms.ModelForm):

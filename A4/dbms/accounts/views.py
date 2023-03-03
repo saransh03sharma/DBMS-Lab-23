@@ -763,10 +763,11 @@ class test_update(CreateView):
     
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
-            First_Name,Last_Name, Tested_ID, Test_Name, Date, Test_Result= form.save()#get data from form
+            First_Name,Last_Name, Tested_ID, Test_Name, Date, Test_Result, Test_Image= form.save()#get data from form
             tested_pat = tested.objects.get(Tested_ID = Tested_ID)
             tested_pat.Test_result = Test_Result
-            tested_pat.save()
+            tested_pat.Test_Image = Test_Image.read()
+            # tested_pat.save()
             
           
         return redirect('/patient_data_entry')
