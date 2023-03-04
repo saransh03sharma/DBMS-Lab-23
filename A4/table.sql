@@ -68,7 +68,7 @@ CREATE TABLE accounts_undergoes (
 
 
 CREATE TABLE accounts_room (
-    -- Room_ID int AUTO_INCREMENT PRIMARY KEY,
+    Room_ID int AUTO_INCREMENT PRIMARY KEY,
     Type varchar(255) not null,
     Room_Name varchar(255) not null,
     Capacity int not null,
