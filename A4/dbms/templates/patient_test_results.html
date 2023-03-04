@@ -281,7 +281,12 @@
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-start" style="color: black; font-weight: lighter;">
+                              {% if rec.Test_Image %}
                               <img src="data:image;base64,{{ rec.Test_Image | base64encode }}" width="100%" alt="Test Image">
+                              {% else %}
+                              <p> No Images to display!</p>
+                              {% endif %}
+                            
                             </div>
                           </div>
                         </div>

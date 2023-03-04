@@ -236,7 +236,7 @@
                   <hr style="border:2px solid black;">
             <!-- Banner -->
               <section id="banner">
-                <div class="content">
+                <div class="content"  style="margin-top:4vh;font-size:1.1em">
                   <header>
                     <p>Name: {{user.username}} </p>
                   </header>
@@ -418,14 +418,23 @@
 								<section id="banner">
 									<div class="content">
 										<header>
+
+                      <div style="margin-top:4vh;font-size:1.1em">
                       <p>Employee ID: {{user.Employee_ID}}</p>
                       <p>Name: {{user.First_Name}} {{user.Last_Name}}</p>
                       <p>Email-id: {{user.Email_ID}}</p>
 											<p>Position: {{user.Position}}</p>
 											<p>Department: {{user.Department}}</p>
+                      </div>
+                      
+                     
+                      <div style="margin-top:10vh">
+                      <h4 style="position:relative;left:-20px"> Doctor Statistics</h4 style="position:relative;left:-15px">
+                      <hr style="height:5px;border-width:2px;width:50%">
                       <p>No of Past Appointments: {{past_appoint_count}}</p>
                       <p>No of Patients Treated in the past: {{past_patients_count}}</p>
                       <p>No of Medical Operations done in the past: {{no_of_ops}}</p>
+                      </div>
 
 										</header>
 										</div>
@@ -487,7 +496,7 @@
 							<!-- Banner -->
 								<section id="banner">
 									<div class="content">
-										<header>
+										<header  style="margin-top:4vh;font-size:1.1em">
 											<p>Name: {{user.First_Name}} {{user.Last_Name}}</p>
 											<p>Registration ID: {{user.Employee_ID}}</p>
                       <p>Email ID: {{user.Email_ID}}</p>
@@ -675,7 +684,7 @@
 							<!-- Banner -->
 								<section id="banner">
 									<div class="content">
-										<header>
+										<header  style="margin-top:4vh;font-size:1.1em">
 											<p>Name: {{user.First_Name}} {{user.Last_Name}}</p>
 											<p>Registration ID: {{user.Employee_ID}}</p>
                       <p>Email ID: {{user.Email_ID}}</p>
