@@ -5,7 +5,7 @@
 {% block css %}
 <style>
   body {
-    background-color: #1f2739;
+    background-color: #0E1A35;
   }
 </style>
 {% endblock %}
@@ -84,7 +84,7 @@
     }
   
     .container th {
-      background-color: #1f2739;
+      background-color: #0E1A35;
     }
   
     .container tr:hover {
@@ -135,8 +135,8 @@
         background: rgb(64, 122, 207);
         border-radius: 20px;
         height: 40vh;
-        width: 80vw;
-        margin-left: 10vw;
+        width: 60vw;
+        margin-left: 20vw;
     }
     .patient_details .page-title{
         font-size: 4vh;
@@ -175,9 +175,20 @@
         text-align: left;
     }
 
+    .go_back{
+      cursor:pointer;
+      width:65px;
+      margin:auto;
+      border-radius:5px;
+      float:left;
+      position:relative;
+      left:-4vw;
+      top:3vh;
+    }
   </style>
 
 <div class="patient_details">
+  <a href="/doctor_pat_record"><img src="{% static '/arrow.png' %}" class="go_back"></button></a>
     <h1 class="page-title">Patient Details</h1>
     <div class="row">
         <div>

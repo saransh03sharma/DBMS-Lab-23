@@ -171,7 +171,7 @@ class admit_pat(forms.ModelForm):
     Last_Name = forms.CharField(max_length = 255,required=True)
     Room = forms.ChoiceField(choices=[])
     Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
-    PCP_Name = forms.ChoiceField(choices=[])
+    PCP_Name = forms.ChoiceField(choices=[], label="Physician Name")
     
     def get_pcp(self):
         # Retrieve the choices from the database or some other source
