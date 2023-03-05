@@ -26,7 +26,7 @@ class patient_reg_help(CreateView):
         return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register,'heading':"Register A Patient","url":"/"})#display the form in the edit_details.html
     
     def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='front_desk':#if request is from an authenticated user 
             Email_ID, SSN, First_Name,Last_Name, Address, Insurance_ID, Phone, Age,Blood_Group, Gender,Status = form.save()#get data from form
             pa = patient(Email_ID=Email_ID,First_Name=First_Name,Last_Name=Last_Name,SSN = SSN, Address = Address, Age = Age, Insurance_ID = Insurance_ID,Blood_Group=Blood_Group,
                               Phone=Phone, Status = Status, Gender=Gender)
@@ -37,26 +37,32 @@ class doctor_register(CreateView):
     form_class = DoctorSignUpForm #student form specified
     template_name = '../templates/doctor_register.html' #template spcified
 
+    
     def form_valid(self, form): #form valid check
-        user = form.save() #save the form
-        return redirect('/') #redirect to main index page
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='db_admin':
+            user = form.save() #save the form
+            return redirect('/') #redirect to main index page
+        return redirect('/')
     
 class front_desk_register(CreateView):
     form_class = FrontSignUpForm #student form specified
     template_name = '../templates/front_desk_register.html' #template spcified
 
     def form_valid(self, form): #form valid check
-        user = form.save() #save the form
-        return redirect('/') #redirect to main index page
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='db_admin':
+            user = form.save() #save the form
+            return redirect('/') #redirect to main index page
+        return redirect("/")
     
 class data_entry_register(CreateView):
     form_class = DataSignUpForm #student form specified
     template_name = '../templates/data_entry_register.html' #template spcified
-
+    
     def form_valid(self, form): #form valid check
-        user = form.save() #save the form
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='db_admin':
+            user = form.save() #save the form
+            return redirect('/') #redirect to main index page
         return redirect('/') #redirect to main index page
-  
 
 def login_admin(request):
     
@@ -165,7 +171,7 @@ def logout_view(request):#logout request
 
 def handle_admit(request):
     if(request.method == 'GET'):
-        if 'user' in request.session and 'type' in request.session:
+        if 'user' in request.session and 'type' in request.session and request.session['type']=='front_desk':
             user = front_desk.objects.get(Email_ID = (request.session['user']))
             if user is not None:
                 pat = patient.objects.all()
@@ -244,7 +250,7 @@ class admit_patient(CreateView):
         return redirect("/admit_discharge")
     
     def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='front_desk':#if request is from an authenticated user 
             Email_ID = self.request.POST.get("my_variable")
             user = front_desk.objects.get(Email_ID = (self.request.session['user']))
             if user is not None:
@@ -459,7 +465,7 @@ def index(request): # to return homepage depending upon the logged in user
 
 def doctor_pat_record(request):
     if (request.method == 'GET'):
-        if 'user' in request.session and 'type' in request.session:
+        if 'user' in request.session and 'type' in request.session and request.session['type']=='doctor':
             # try:
             user = physician.objects.get(Email_ID = (request.session['user']))
             # print(user.Email_ID)
@@ -476,11 +482,12 @@ def doctor_pat_record(request):
                     patients.append(pat)
 
                 return render(request, '../templates/doctor_pat_record.html', {'user': user, 'whereto': 'doctor_pat_record', 'patients':patients})
+            return redirect("/")
             # except Exception as e:
             #     print(e)
                 # return redirect('/')
     if (request.method == 'POST'):
-        if 'user' in request.session and 'type' in request.session:
+        if 'user' in request.session and 'type' in request.session and request.session['type']=='doctor':
             # try:
             user = physician.objects.get(Email_ID = (request.session['user']))
             if user is not None:
@@ -535,6 +542,7 @@ def doctor_pat_record(request):
                         record['Test_Image'] = test.Test_Image
                         records.append(record)
                     return render(request, '../templates/patient_test_results.html', {'user': user, 'whereto': 'doctor_pat_record', 'pat':pat, 'records':records})
+            return redirect("/")
         return redirect('/')
         
 class doctor_prescribe(CreateView):
@@ -546,22 +554,23 @@ class doctor_prescribe(CreateView):
         return redirect('doctor_pat_record')
         
     def form_valid(self, form):
-        if 'user' in self.request.session and 'type' in self.request.session:
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='doctor':
             user = physician.objects.get(Email_ID = (self.request.session['user']))
-            print(user.Email_ID)
-            First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription = form.save()
-            print(First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription,self.request.POST.get('patient_id'))
-            pres = prescribes(Physician_Email = user.Email_ID, Patient_Email = self.request.POST.get('patient_id'), Date=Prescribe_Date, Prescription=Prescription)
-            pres.save()
-            return redirect('doctor_pat_record')
-
+            if user is not None:
+                print(user.Email_ID)
+                First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription = form.save()
+                print(First_Name,Last_Name,Age, Gender, Blood_Group,Prescribe_Date,Prescription,self.request.POST.get('patient_id'))
+                pres = prescribes(Physician_Email = user.Email_ID, Patient_Email = self.request.POST.get('patient_id'), Date=Prescribe_Date, Prescription=Prescription)
+                pres.save()
+                return redirect('doctor_pat_record')
+            return redirect("/")
         else:
             return redirect('/')
 
 
 def show_upcoming_appts(request):
     if (request.method == 'GET'):
-        if 'user' in request.session and 'type' in request.session:
+        if 'user' in request.session and 'type' in request.session and request.session['type']=='doctor':
 
             user = physician.objects.get(Email_ID = (request.session['user']))
             
@@ -582,15 +591,16 @@ def show_upcoming_appts(request):
                 print(patients)
 
                 return render(request, '../templates/doctor_apts.html', {'user': user, 'whereto': 'show_upcoming_appts', 'appointments': doctor_apts, 'patients': patients})
-
+            return redirect("/")
     
 def patient_data_entry(request):
     if(request.method == 'GET'):
-        if 'user' in request.session and 'type' in request.session:
+        if 'user' in request.session and 'type' in request.session and request.session['type']=='data_entry':
             user = data_entry.objects.get(Email_ID = (request.session['user']))
             if user is not None:
                 pat = patient.objects.all()
                 return render(request,'../templates/pat_list.html',{'whereto':'patient_data_entry','pat':pat,'user':user})
+            return redirect("/")
         return redirect('/')  
     elif request.method == 'POST':
         user = data_entry.objects.get(Email_ID = (request.session['user']))
@@ -656,8 +666,8 @@ def patient_data_entry(request):
                                           
                 except patient.DoesNotExist:
                     return redirect('/patient_test')
+        return redirect("/")
     return redirect("/")
-
 
  
 def patient_test(request):
@@ -780,8 +790,6 @@ def patient_test(request):
                     form.fields['Physician_Email'].widget.attrs['readonly']  =True
                     
                     return render(request,'../templates/edit_details.html',{'whereto':'treatment_update','form':form, 'Email_ID':user.Email_ID, 'heading':"Treatment Status Form"})#display the form in the edit_details.html
-                
-        
         return redirect("/patient_data_entry")
     return redirect("/patient_data_entry")
 
@@ -796,14 +804,12 @@ class test_update(CreateView):
         return redirect('/patient_data_entry')
     
     def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             First_Name,Last_Name, Tested_ID, Test_Name, Date, Test_Result, Test_Image= form.save()#get data from form
             tested_pat = tested.objects.get(Tested_ID = Tested_ID)
             tested_pat.Test_result = Test_Result
             tested_pat.Test_Image = Test_Image.read()
-            tested_pat.save()
-            
-          
+            tested_pat.save()          
         return redirect('/patient_data_entry')
 
 class test_health(CreateView):
@@ -815,7 +821,7 @@ class test_health(CreateView):
         return redirect('/patient_data_entry')
     
     def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             Email_ID,First_Name,Last_Name, Admission_ID, Date, Vitals, Remarks= form.save()#get data from form
             tested_pat = health_record(Admission_ID=Admission_ID,Date=Date,Vitals=Vitals,Remarks=Remarks)
             temp_pat = patient.objects.get(Email_ID = Email_ID)
@@ -833,15 +839,8 @@ class test_health(CreateView):
                 html_message= e_mess_comp
             )
             
-            
             tested_pat.save()
-            
-          
         return redirect('/patient_data_entry')
-
-
-
-
 
 
 
@@ -854,13 +853,12 @@ class treatment_update(CreateView):
         return redirect('/patient_data_entry')
     
     def form_valid(self,form):#form valid function
-        if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
+        if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             First_Name,Last_Name, Treatment_ID, Treatment_Name, Date,Email, Remarks= form.save()#get data from form
             operation = undergoes.objects.get(Treatment_ID = Treatment_ID)
             operation.Remarks = Remarks
             operation.save()
             
-          
         return redirect('/patient_data_entry')
 
 
