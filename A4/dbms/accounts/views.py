@@ -818,6 +818,22 @@ class test_health(CreateView):
         if 'user' in self.request.session and 'type' in self.request.session:#if request is from an authenticated user 
             Email_ID,First_Name,Last_Name, Admission_ID, Date, Vitals, Remarks= form.save()#get data from form
             tested_pat = health_record(Admission_ID=Admission_ID,Date=Date,Vitals=Vitals,Remarks=Remarks)
+            temp_pat = patient.objects.get(Email_ID = Email_ID)
+            admit = admission.objects.get(Admission_ID = Admission_ID)
+            temp_doc = physician.objects.get(Email_ID =admit.PCP_Email)
+            e_mess_comp = "Hello <b>" + temp_doc.First_Name + " " + temp_doc.Last_Name + "</b>,<br><br>Health Record of <b>" + temp_pat.First_Name + " " + temp_pat.Last_Name + "</b> of <b>" + str(Date.strftime("%B %d, %Y, %I:%M:%S %p %Z")) + "</b> are as follows: <br><br> Vitals:<br>"+Vitals+"<br>Remarks:<br>"+Remarks
+            print(e_mess_comp)
+            print(temp_doc.Email_ID)
+            send_mail(
+                "Health Record Update", #subject
+                "", #message
+                "opigs.iitkgp@gmail.com", #from_email
+                [temp_doc.Email_ID], #to_email_list
+                fail_silently=True,
+                html_message= e_mess_comp
+            )
+            
+            
             tested_pat.save()
             
           
