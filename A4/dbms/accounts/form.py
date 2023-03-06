@@ -170,7 +170,7 @@ class admit_pat(forms.ModelForm):
     First_Name = forms.CharField(max_length = 255,required=True)
     Last_Name = forms.CharField(max_length = 255,required=True)
     Room = forms.ChoiceField(choices=[])
-    Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local'}))
+    Start = forms.DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local','min':'2022-05-20'}))
     PCP_Name = forms.ChoiceField(choices=[], label="Physician Name")
     
     def get_pcp(self):
@@ -180,13 +180,8 @@ class admit_pat(forms.ModelForm):
         doct = physician.objects.all()
         for x in doct:
             print(x.Email_ID) 
-            patient_list.append((x.Email_ID,x.First_Name+" "+x.Last_Name))
+            patient_list.append((x.Email_ID,"DR. " + x.First_Name+" "+x.Last_Name))
         return patient_list
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['Room'].choices = self.get_my_choices()
-        self.fields['PCP_Name'].choices = self.get_pcp()
-
     def get_my_choices(self):
         # Retrieve the choices from the database or some other source
         # and return them as a list of tuples in the format (value, label)
@@ -198,6 +193,14 @@ class admit_pat(forms.ModelForm):
         if all_room == []:
                 all_room.append((-1, "NO ROOM AVAILABLE"))
         return all_room
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Room'].choices = self.get_my_choices()
+        self.fields['PCP_Name'].choices = self.get_pcp()
+        date = datetime.datetime.now(tz=datetime.timezone.utc)
+        date = date + datetime.timedelta(days=1)
+        date = date.strftime("%Y-%m-%dT%H:%M")
+        self.fields['Start'].widget.attrs['min'] = date
     
     class Meta():
         model = patient
@@ -247,7 +250,7 @@ class prescribe_form(forms.ModelForm):
         date = datetime.datetime.now(tz=datetime.timezone.utc)
         date = date + datetime.timedelta(days=1)
         date = date.strftime("%Y-%m-%d")
-        print(date)
+        # print(date)
         self.fields['Prescribe_Date'].widget.attrs['max'] = date
 
 
@@ -452,7 +455,6 @@ class HealthRecordForm(forms.ModelForm):#form and formfields defined
         date = datetime.datetime.now(tz=datetime.timezone.utc)
         date = date + datetime.timedelta(days=1)
         date = date.strftime("%Y-%m-%d")
-        print(date)
         self.fields['Date'].widget.attrs['max'] = date
 
     

@@ -24,7 +24,7 @@ class patient_reg_help(CreateView):
     
     def get(self, request):
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='front_desk':
-            user = front_desk.objects.get(username = self.request.session['user'])
+            user = front_desk.objects.get(Email_ID = self.request.session['user'])
             if user is not None:
                 return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register,'heading':"Register A Patient","url":"/"})
     
