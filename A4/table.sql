@@ -115,7 +115,8 @@ CREATE TABLE accounts_tested (
     Patient_Email varchar(255) not null,
     Test_ID int not null,
     Date DATETIME not null,
-    Test_Result text
+    Test_Result text,
+    Test_Image mediumblob
 );
 
 

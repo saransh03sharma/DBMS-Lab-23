@@ -826,7 +826,7 @@ class test_update(CreateView):
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             user = data_entry.objects.get(Email_ID = self.request.session['user'])
-            if user is None:
+            if user is not None:
                 First_Name,Last_Name, Tested_ID, Test_Name, Date, Test_Result, Test_Image= form.save()#get data from form
                 tested_pat = tested.objects.get(Tested_ID = Tested_ID)
                 tested_pat.Test_result = Test_Result
@@ -845,7 +845,7 @@ class test_health(CreateView):
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             user = data_entry.objects.get(Email_ID = self.request.session['user'])
-            if user is None:
+            if user is not None:
                 Email_ID,First_Name,Last_Name, Admission_ID, Date, Vitals, Remarks= form.save()#get data from form
                 tested_pat = health_record(Admission_ID=Admission_ID,Date=Date,Vitals=Vitals,Remarks=Remarks)
                 temp_pat = patient.objects.get(Email_ID = Email_ID)
@@ -879,7 +879,7 @@ class treatment_update(CreateView):
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='data_entry':#if request is from an authenticated user 
             user = data_entry.objects.get(Email_ID = self.request.session['user'])
-            if user is None:
+            if user is not None:
                 First_Name,Last_Name, Treatment_ID, Treatment_Name, Date,Email, Remarks= form.save()#get data from form
                 operation = undergoes.objects.get(Treatment_ID = Treatment_ID)
                 operation.Remarks = Remarks
