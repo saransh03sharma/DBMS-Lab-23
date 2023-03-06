@@ -580,15 +580,15 @@ def show_upcoming_appts(request):
                 date = datetime.datetime.date(make_aware(datetime.datetime.now()))
                 # print(date)
                 # aware_datetime = datetime.datetime
-                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date).order_by('-Start')
+                doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = date).order_by('Start')
                 # doctor_apts = appointment.objects.filter(Physician_Email = user.Email_ID, Start__gte = make_aware(datetime.datetime.now()))
-                print(doctor_apts)
+                # print(doctor_apts)
                 patients = set()
                 for apt in doctor_apts:
                     pat = patient.objects.get(Email_ID = apt.Patient_Email)
                     patients.add(pat)
 
-                print(patients)
+                # print(patients)
 
                 return render(request, '../templates/doctor_apts.html', {'user': user, 'whereto': 'show_upcoming_appts', 'appointments': doctor_apts, 'patients': patients})
             return redirect("/")
