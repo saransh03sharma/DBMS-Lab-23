@@ -300,7 +300,7 @@
                             <div class="card-body" style="display:flex;  justify-content:space-between; " >
                               <span style="width:20vw">
                                 User name: {{data.First_Name}} {{data.Last_Name}} <br>
-                                User ID: {{data.Employee_ID}} <br>
+                                <!-- User ID: {{data.Employee_ID}} <br> -->
                                 Email ID: {{data.Email_ID}} <br>
                               </span>
                               <button type="submit" name="data_id" value={{data.Email_ID}} form="del_data"
@@ -339,8 +339,8 @@
                           </form>
                           <div class="card-body" style="display:flex;  justify-content:space-between; " >
                             <span style="width:20vw">
-                              User name: {{doct.First_Name}} {{doct.Last_Name}} <br>
-                              User ID: {{doct.Email_ID}} <br>
+                              User name: Dr. {{doct.First_Name}} {{doct.Last_Name}} <br>
+                              Email ID: {{doct.Email_ID}} <br>
                             </span>
                             <button type="submit" name="doct_id" value={{doct.Email_ID}} form="del_doctor"
                             class="btn btn-block btn-success ml-5" style="width:20vw; background-color:red;margin-top:10px; height:6vh;"
