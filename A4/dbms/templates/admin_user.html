@@ -156,7 +156,7 @@
                       <td><button type="submit" name="comp_id" value={{patient.Email_ID}} form="apply_comp"
                         class="btn btn-block btn-secondary ml-5" style="width:10vw" disabled>Admitted</button></td>
                       <td><button type="submit" name="dis_id" value={{patient.Email_ID}} form="apply_comp"
-                        class="btn btn-block btn-success ml-5" style="width:10vw"
+                        class="btn btn-block btn-success ml-5" style="width:10vw" onclick="confirm_it(event)"
                         >Discharge</button></td>
                       <td><button type="submit" name="info" value={{patient.Email_ID}} form="apply_comp"
                         class="btn btn-block btn-success ml-5" style="width:10vw"
@@ -179,5 +179,15 @@
       </table>
     </div>
   </section>
+  {% block scripts %}
+  <script>
+    function confirm_it(event){
+      if (!window.confirm("Are you sure you want to discharge this patient?")) {
+        event.preventDefault();
+      }
+    }
+  </script>
+
+  {% endblock %}
 {% endblock %}
 </html>
