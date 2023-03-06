@@ -851,9 +851,9 @@ class test_health(CreateView):
                 temp_pat = patient.objects.get(Email_ID = Email_ID)
                 admit = admission.objects.get(Admission_ID = Admission_ID)
                 temp_doc = physician.objects.get(Email_ID =admit.PCP_Email)
-                e_mess_comp = "Hello <b>" + temp_doc.First_Name + " " + temp_doc.Last_Name + "</b>,<br><br>Health Record of <b>" + temp_pat.First_Name + " " + temp_pat.Last_Name + "</b> of <b>" + str(Date.strftime("%B %d, %Y, %I:%M:%S %p %Z")) + "</b> are as follows: <br><br> Vitals:<br>"+Vitals+"<br>Remarks:<br>"+Remarks
-                print(e_mess_comp)
-                print(temp_doc.Email_ID)
+                e_mess_comp = "Hello <b>DR. " + temp_doc.First_Name + " " + temp_doc.Last_Name + "</b>,<br><br>Health Record of <b>" + temp_pat.First_Name + " " + temp_pat.Last_Name + "</b> of <b>" + str(Date.strftime("%B %d, %Y, %I:%M:%S %p %Z")) + "</b> are as follows: <br><br> Vitals:<br>"+Vitals+"<br>Remarks:<br>"+Remarks+".<br><br><br>Regards,<br>Hospital Team"
+                # print(e_mess_comp)
+                # print(temp_doc.Email_ID)
                 send_mail(
                     "Health Record Update", #subject
                     "", #message

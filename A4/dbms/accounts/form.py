@@ -446,7 +446,8 @@ class HealthRecordForm(forms.ModelForm):#form and formfields defined
         admission_list=[]
         admit = admission.objects.filter(Patient_Email = patient_email)
         for x in admit:
-            admission_list.append((x.Admission_ID,x.PCP_Email+" "+str(x.Start)))
+            doc = physician.objects.get(Email_ID = x.PCP_Email)
+            admission_list.append((x.Admission_ID,"DR. " + doc.First_Name+" "+doc.Last_Name+" | "+str(x.Start)))
         return admission_list
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
