@@ -232,8 +232,21 @@ class patient_register(forms.ModelForm):
 
     @transaction.atomic  #if an exception occurs changes are not saved
     def save(self):
-        return self.cleaned_data.get('Email_ID'),self.cleaned_data.get('SSN'),self.cleaned_data.get('First_Name').title(),self.cleaned_data.get('Last_Name').title(),self.cleaned_data.get('Address'),self.cleaned_data.get('Insurance_ID'),self.cleaned_data.get('Phone'),self.cleaned_data.get('Age'),self.cleaned_data.get('Blood_Group'),self.cleaned_data.get("Gender").title(),0
-
+        
+        Email_ID = self.cleaned_data.get("Email_ID")
+        First_Name = self.cleaned_data.get("First_Name").title()
+        Last_Name = self.cleaned_data.get("Last_Name").title()
+        SSN = self.cleaned_data.get("SSN")
+        Address = self.cleaned_data.get("Address")
+        Age = self.cleaned_data.get("Age")
+        Insurance_ID = self.cleaned_data.get("Insurance_ID")
+        Blood_Group = self.cleaned_data.get("Blood_Group")
+        Phone = self.cleaned_data.get("Phone")
+        Gender = self.cleaned_data.get("Gender")
+        pa = patient(First_Name=First_Name,Last_Name=Last_Name,SSN = SSN, Address = Address, Age = Age, Insurance_ID = Insurance_ID,Blood_Group=Blood_Group,
+                               Phone=Phone, Status = 0, Gender=Gender,Email_ID=Email_ID)
+        pa.save()
+        return pa
 class prescribe_form(forms.ModelForm):
     
     First_Name = forms.CharField(max_length = 255,required=True)
