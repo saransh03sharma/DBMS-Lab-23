@@ -18,22 +18,21 @@ def register(request):
     return render(request, '../templates/register.html')
 
 class patient_reg_help(CreateView):
-    model = patient
     form_class = patient_register
-    template_name = '../templates/edit_details.html'
+    template_name = '../templates/pat_register.html'
     
     def get(self, request):
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='front_desk':
             user = front_desk.objects.get(Email_ID = self.request.session['user'])
             if user is not None:
-                return render(request,'../templates/edit_details.html',{'whereto':'patient_reg','form':patient_register,'heading':"Register A Patient","url":"/"})
-    
+                return render(request,'../templates/pat_register.html',{'form':patient_register,"url":"/"})
+        return redirect("/")
+         
     def form_valid(self,form):#form valid function
         if 'user' in self.request.session and 'type' in self.request.session and self.request.session['type']=='front_desk':#if request is from an authenticated user 
-            Email_ID, SSN, First_Name,Last_Name, Address, Insurance_ID, Phone, Age,Blood_Group, Gender,Status = form.save()#get data from form
-            pa = patient(Email_ID=Email_ID,First_Name=First_Name,Last_Name=Last_Name,SSN = SSN, Address = Address, Age = Age, Insurance_ID = Insurance_ID,Blood_Group=Blood_Group,
-                              Phone=Phone, Status = Status, Gender=Gender)
-            pa.save()
+                print("hi")
+                pa = form.save()
+                return redirect("/")
         return redirect('/')
     
 class doctor_register(CreateView):
@@ -590,7 +589,6 @@ class doctor_prescribe(CreateView):
         else:
             return redirect('/')
 
-
 def show_upcoming_appts(request):
     if (request.method == 'GET'):
         if 'user' in request.session and 'type' in request.session and request.session['type']=='doctor':
@@ -689,7 +687,6 @@ def patient_data_entry(request):
                 except patient.DoesNotExist:
                     return redirect('/patient_test')
     return redirect("/")
-
  
 def patient_test(request):
     if(request.method == 'POST'):
@@ -813,8 +810,6 @@ def patient_test(request):
                     return render(request,'../templates/edit_details.html',{'whereto':'treatment_update','form':form, 'Email_ID':user.Email_ID, 'heading':"Treatment Status Form"})#display the form in the edit_details.html
     return redirect("/patient_data_entry")
 
-
-
 class test_update(CreateView):
     model = tested
     form_class = patient_test_form
@@ -865,8 +860,6 @@ class test_health(CreateView):
                 
                 tested_pat.save()
         return redirect('/patient_data_entry')
-
-
 
 class treatment_update(CreateView):
     model = tested
