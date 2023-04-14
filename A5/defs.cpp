@@ -1,7 +1,8 @@
 #include "defs.h"
-#include<iostream>
+#include <iostream>
+#include <cstring>
 
-Page::Page():pin(false),ref_bit(false),fptr(NULL),page_num(-1){
+Page::Page():fptr(NULL),page_num(-1),ref_bit(false),pin(false){
 	disk_block = malloc(PAGE_SIZE);
 }
 
@@ -10,7 +11,7 @@ Page::~Page(){
 }
 
 clock_buffer_manager::clock_buffer_manager(unsigned int n):
-num_bufs(n),clock_hand(n-1),accesses(0),disk_reads(0),buf_cnt(0){
+clock_hand(n-1),num_bufs(n),buf_cnt(0),accesses(0),disk_reads(0){
 	buf_pool = new Page[n];
 }
 
@@ -24,7 +25,7 @@ void clock_buffer_manager::unpin_page(Page* p){
 
 //clock replacement algorithm
 int clock_buffer_manager::replace_page(FILE*f,int page_number){
-	for(int i=0;i<2*num_bufs;i++){
+	for(int i=0;i<(int)(2*num_bufs);i++){
 		clock_hand = (clock_hand + 1)%num_bufs;
 		if(buf_pool[clock_hand].ref_bit == 1){
 			buf_pool[clock_hand].ref_bit = 0;
@@ -57,7 +58,7 @@ Page *clock_buffer_manager::read_page(FILE *f,int page_number){
 		idx = buf_map[key];
 		buf_pool[idx].pin = buf_pool[idx].ref_bit = 1;
 	}
-	else if(buf_cnt<num_bufs){
+	else if(buf_cnt<(int)num_bufs){
 		int r = fseek(f,page_number*PAGE_SIZE,SEEK_SET);
 		if(r<0)return NULL;
 		r = fread(buf_pool[buf_cnt].disk_block,PAGE_SIZE,1,f);
@@ -86,7 +87,7 @@ Page *clock_buffer_manager::read_page(FILE *f,int page_number){
 }
 
 lru_buffer_manager::lru_buffer_manager(unsigned int n):
-num_bufs(n), accesses(0), disk_reads(0),buf_cnt(0){
+num_bufs(n),buf_cnt(0), accesses(0),disk_reads(0){
 	buf_pool.clear();
 }
 
@@ -124,7 +125,7 @@ Page* lru_buffer_manager::read_page(FILE *fptr,int page_number){
 		buf_map[key] = buf_pool.begin();
 		return p;
 	}
-	else if(buf_cnt<num_bufs){
+	else if(buf_cnt<(int)num_bufs){
 		int r = fseek(fptr,page_number*PAGE_SIZE,SEEK_SET);
 		if(r<0)return NULL;
 		Page *x = new Page;
@@ -150,13 +151,27 @@ Page* lru_buffer_manager::read_page(FILE *fptr,int page_number){
 		
 		int r = fseek(fptr,page_number*PAGE_SIZE,SEEK_SET);
 		if(r<0)return NULL;
+
+		void *temp = malloc(PAGE_SIZE);
+		memcpy(temp,x->disk_block,PAGE_SIZE);
+		
+		r = fread(x->disk_block,PAGE_SIZE,1,fptr);
+		if(r!=1){
+			memcpy(x->disk_block,temp,PAGE_SIZE);
+			free(temp);
+			// buf_map.erase(make_pair(x->fptr,x->page_num));
+			// buf_pool.erase(it);
+			// buf_cnt--;
+			return NULL;
+		}
+		free(temp);
+		
 		buf_map.erase(make_pair(x->fptr,x->page_num));
 		buf_pool.erase(it);
 		
 		x->pin = 1;
 		x->fptr = fptr;
 		x->page_num = page_number;
-		fread(x->disk_block,PAGE_SIZE,1,fptr);
 		
 		buf_pool.push_front(x);
 		buf_map[make_pair(x->fptr,x->page_num)] = buf_pool.begin();

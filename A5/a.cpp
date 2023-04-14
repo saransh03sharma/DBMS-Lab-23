@@ -21,7 +21,7 @@ struct Student_d {
 string remove_foreign_ascii(const string& input) {
     string output;
     for (char c : input) {
-        if (c >= 0 && c <= 127 || c>=0 && c<=9 || c=='.') {
+        if ((c >= 0 && c <= 127) || (c>=0 && c<=9) || c=='.') {
             output += c;
         }
     }
@@ -30,7 +30,7 @@ string remove_foreign_ascii(const string& input) {
 string remove_space(string str)
 {
   
-    for(int i=0;i<str.size()-1;++i)
+    for(int i=0;i+1<str.size();++i)
     {
         if(str[i]==' ' && str[i+1]==' ')
         {
@@ -98,7 +98,7 @@ int main() {
     // Read pages using clock replacement algorithm
     while(1) 
     {
-    
+        cout << "outer loop" << endl;
         if(replace==0)p = clock_mgr.read_page(f1, i);
         else if (replace==1)p = lru_mgr.read_page(f1, i);
         else p = clock_mgr.read_page(f1, i);
@@ -119,7 +119,7 @@ int main() {
                 num_rows++;
             }
         }
-
+        
         ss.clear();
         ss.seekg(0, ios::beg);
 
