@@ -1,4 +1,5 @@
 #include "defs.h"
+#include<iostream>
 
 Page::Page():pin(false),ref_bit(false),fptr(NULL),page_num(-1){
 	disk_block = malloc(PAGE_SIZE);
@@ -23,7 +24,7 @@ void clock_buffer_manager::unpin_page(Page* p){
 
 //clock replacement algorithm
 int clock_buffer_manager::replace_page(FILE*f,int page_number){
-	for(int i=0;i<num_bufs;i++){
+	for(int i=0;i<2*num_bufs;i++){
 		clock_hand = (clock_hand + 1)%num_bufs;
 		if(buf_pool[clock_hand].ref_bit == 1){
 			buf_pool[clock_hand].ref_bit = 0;
