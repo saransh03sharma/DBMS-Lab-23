@@ -18,15 +18,6 @@ struct Student_d {
     float ms_marks;
 };
 
-string remove_foreign_ascii(const string& input) {
-    string output;
-    for (char c : input) {
-        if ((c >= 0 && c <= 127) || (c>=0 && c<=9) || c=='.') {
-            output += c;
-        }
-    }
-    return output;
-}
 string remove_space(string str)
 {
   
@@ -49,7 +40,7 @@ string toLowerCase(string str) {
 }
 
 int main() {
-    int option, flag = 0, replace;
+    int option, flag = 0, replace,s_count=0, j_count=0;
     cout << "Which replacement technique you want to run: Clock (0) or LRU (1) or MRU (2): ";
     cin>>replace;
     cout << "\nWhich query you want to run: Select (0) or Join (1): ";
@@ -98,7 +89,7 @@ int main() {
     // Read pages using clock replacement algorithm
     while(1) 
     {
-        cout << "outer loop" << endl;
+        //cout << "outer loop" << endl;
         if(replace==0)p = clock_mgr.read_page(f1, i);
         else if (replace==1)p = lru_mgr.read_page(f1, i);
         else p = clock_mgr.read_page(f1, i);
@@ -109,7 +100,7 @@ int main() {
 
         string data =  reinterpret_cast<char *>(p->disk_block);
         //cout << "Read page " << i << " using clock replacement." << endl;
-        cout << "Page content: \n" << data << endl;
+        //cout << "Page content: \n" << data << endl;
         stringstream ss(data);
         string line;
 
@@ -128,17 +119,45 @@ int main() {
         Student_d stud;
         while (getline(ss, line)) {
             if (!line.empty()) {
-                if(line.size()==2)continue;
-                stud.name = toLowerCase(remove_space(line.substr(22,30)));
+                stud.name = remove_space(line.substr(22,30));
                 
                 stud.roll = line.substr(8, 9);
                 stud.ct_marks = stof(remove_space(line.substr(51, 7)));
                 stud.ms_marks = stof(remove_space(line.substr(59, 5)));
                 if(option ==0){
-                    if(stud.name.compare(toLowerCase(input_string))==0)
+                     if(s_count==0)
+                        {
+                            for(int s = 0; s < 80; s++) {
+                                cout << "-";
+                            }
+                            cout<<endl;
+                            cout << setw(29) << left << "             Name" 
+                            << setw(15) << left << "Roll Number" 
+                            << setw(20) << left << "Class-Test 1 marks" 
+                            << setw(10) << left << "Mid-Sem marks" 
+                            << endl;
+                            for(int s = 0; s < 80; s++) {
+                                cout << "-";
+                            }
+                            cout<<endl;
+                        }
+                        s_count++;
+                    if(toLowerCase(stud.name).compare(toLowerCase(input_string))==0)
                     {
-                        
-                        cout << "Name: " << stud.name << "\nRoll Number: "<<stud.roll <<"\nClass Test 1 ct_marks: " << stud.ct_marks << "\nMid-Sem ct_marks: " << stud.ms_marks << endl;
+                        int name_len = stud.name.length(); // length of the name
+                        int name_pad = (30 - name_len) / 2; 
+                        cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
+                        << setw(name_pad) << setfill(' ') << "" 
+                        <<  setw(15) << setfill(' ') << left <<stud.roll 
+                        << setw(8) << setfill(' ') << right << stud.ct_marks 
+                        << setw(8) << setfill(' ') << ""
+                        <<setw(10) << setfill(' ') << right << stud.ms_marks 
+                        << setw(7) << setfill(' ') << "" 
+                        << endl;
+                        for(int s = 0; s < 80; s++) {
+                                cout << "-";
+                            }
+                        cout<<endl;
                         flag=1;
                         break;
                     }
@@ -169,6 +188,25 @@ int main() {
                         ss.seekg(0, ios::beg);
 
                         Student_n q_stud;
+                        if(j_count==0)
+                        {
+                            for(int s = 0; s < 120; s++) {
+                                cout << "-";
+                            }
+                            cout<<endl;
+                            cout << setw(34) << left << "                Name" 
+                            << setw(15) << left << "Roll Number" 
+                            << setw(20) << left << "Networks CT-1" 
+                            << setw(10) << left << "Networks Mid-Sem"
+                            << setw(20) << left << "DBMS CT-1" 
+                            << setw(10) << left << "DBMS Mid-Sem" 
+                            << endl;
+                            for(int s = 0; s < 120; s++) {
+                                cout << "-";
+                            }
+                            cout<<endl;
+                        }
+                        j_count++;
                         while (getline(ss, q_line)) {
                             if (!q_line.empty()) {
                                 q_stud.roll = q_line.substr(4, 9);
@@ -176,7 +214,25 @@ int main() {
                                 q_stud.ct_marks = stof(remove_space(q_line.substr(25, 4)));
                                 if(q_stud.roll.compare(stud.roll)==0)
                                 {
-                                    cout << "\nName: "<<stud.name<< "\nRoll Number: "<<q_stud.roll << "\nNetworks Mid-Sem Marks: "<<q_stud.ms_marks<< "\nDBMS Mid-Sem Marks: "<<stud.ms_marks<< "\nNetworks Class Test Marks: "<<q_stud.ct_marks<<"\nDBMS Class Test Marks: "<<stud.ct_marks<<endl;
+                                    cout<<"\n";
+                                    int name_len = stud.name.length(); // length of the name
+                                    int name_pad = (35 - name_len) / 2; 
+                                    cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
+                                    << setw(name_pad) << setfill(' ') << "" 
+                                    <<  setw(15) << setfill(' ') << left <<stud.roll 
+                                    << setw(8) << setfill(' ') << right << q_stud.ct_marks 
+                                    << setw(8) << setfill(' ') << ""
+                                    <<setw(10) << setfill(' ') << right << q_stud.ms_marks 
+                                    << setw(7) << setfill(' ') << ""
+                                    << setw(8) << setfill(' ') << right << stud.ct_marks 
+                                    << setw(8) << setfill(' ') << ""
+                                    <<setw(10) << setfill(' ') << right << stud.ms_marks 
+                                    << setw(7) << setfill(' ') << "" 
+                                    << endl;
+                                    for(int s = 0; s < 120; s++) {
+                                        cout << "-";
+                                    }
+                                    cout<<endl;
                                     flag=1;
                                 }
                                 else{
@@ -199,7 +255,27 @@ int main() {
 
         i++;
     }
-    if (flag==0)cout <<"No matching entry found.";
+    if (flag==0)
+    {
+        if(option==0)
+        {
+            cout <<setw(50) << setfill(' ') << right << "No matching entry found"
+            << setw(20) << setfill(' ') << "" <<endl;
+            for(int s = 0; s < 80; s++) {
+                cout << "-";
+            }
+            cout<<endl;
+        }
+        if(option==1)
+        {
+            cout <<setw(50) << setfill(' ') << right << "No matching entry found"
+            << setw(50) << setfill(' ') << "" <<endl;
+            for(int s = 0; s < 120; s++) {
+                cout << "-";
+            }
+            cout<<endl;
+        }
+    }
 
     fclose(f1);
 
