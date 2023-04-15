@@ -119,6 +119,7 @@ int main() {
         Student_d stud;
         while (getline(ss, line)) {
             if (!line.empty()) {
+                if(line.size()!=63)continue;
                 stud.name = remove_space(line.substr(22,30));
                 
                 stud.roll = line.substr(8, 9);
