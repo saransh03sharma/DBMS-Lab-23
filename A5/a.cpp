@@ -198,7 +198,7 @@ int main() {
                             << setw(15) << left << "Roll Number" 
                             << setw(20) << left << "Networks CT-1" 
                             << setw(10) << left << "Networks Mid-Sem"
-                            << setw(20) << left << "DBMS CT-1" 
+                            << setw(20) << left << "  DBMS CT-1" 
                             << setw(10) << left << "DBMS Mid-Sem" 
                             << endl;
                             for(int s = 0; s < 120; s++) {
