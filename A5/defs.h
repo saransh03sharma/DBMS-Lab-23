@@ -8,7 +8,7 @@
 #include <list>
 using namespace std;
 
-#define PAGE_SIZE 512
+#define PAGE_SIZE 1024
 
 class Page;
 
