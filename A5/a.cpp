@@ -318,6 +318,23 @@ int main() {
     }
 
     fclose(f1);
+    if(option==1)fclose(f2);
+
+    if(replace==0)
+    {
+        cout<<"Number of Buffer hits: "<<clock_mgr.accesses<<endl;
+        cout<<"Number of Disk I/O i.e. buffer miss: "<< clock_mgr.disk_reads<<endl;
+    }
+    if(replace==1)
+    {
+        cout<<"Number of Buffer hits: "<< lru_mgr.accesses<< endl;
+        cout<<"Number of Disk I/O i.e. buffer miss: "<<lru_mgr.disk_reads<<endl;
+    }
+    if(replace==2)
+    {
+        cout<<"Number of Buffer hits: "<< mru_mgr.accesses<<endl;
+        cout<<"Number of Disk I/O i.e. buffer miss: "<< mru_mgr.disk_reads<<endl;
+    }
 
     return 0;
 }
