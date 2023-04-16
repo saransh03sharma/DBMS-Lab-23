@@ -48,7 +48,7 @@ int main() {
     string file1="b.txt", file2="a.txt";
     FILE *f1, *f2;
     Page *p, *q;
-
+    int select_flag;
 
 
     string input_string;
@@ -61,6 +61,7 @@ int main() {
             cerr << "Error: could not open data file." << endl;
             return 1;
         }
+        f2=f1;
     }
     
     if(option==1)
@@ -84,15 +85,16 @@ int main() {
     int num_bufs = 5;
     clock_buffer_manager clock_mgr(num_bufs);
     lru_buffer_manager lru_mgr(num_bufs);
+    mru_buffer_manager mru_mgr(num_bufs);
 
     int i=0;
     // Read pages using clock replacement algorithm
     while(1) 
     {
-        //cout << "outer loop" << endl;
+        //cout << "\nouter loop" <<i<< endl;
         if(replace==0)p = clock_mgr.read_page(f1, i);
         else if (replace==1)p = lru_mgr.read_page(f1, i);
-        else p = clock_mgr.read_page(f1, i);
+        else p = mru_mgr.read_page(f1, i);
 
         if (!p) {
             break;
@@ -101,158 +103,195 @@ int main() {
         string data =  reinterpret_cast<char *>(p->disk_block);
         //cout << "Read page " << i << " using clock replacement." << endl;
         //cout << "Page content: \n" << data << endl;
-        stringstream ss(data);
+        stringstream ssp(data);
         string line;
 
         int num_rows = 0;
-        while (getline(ss, line)) {
+        while (getline(ssp, line)) {
             if (!line.empty()) {
                 num_rows++;
             }
         }
+        //cout<<"--"<<num_rows<<endl;
         
-        ss.clear();
-        ss.seekg(0, ios::beg);
+        ssp.clear();
+        ssp.seekg(0, ios::beg);
 
 
         int j = 0;
         Student_d stud;
-        while (getline(ss, line)) {
-            if (!line.empty()) {
-                if(line.size()!=63)continue;
-                stud.name = remove_space(line.substr(22,30));
-                
-                stud.roll = line.substr(8, 9);
-                stud.ct_marks = stof(remove_space(line.substr(51, 7)));
-                stud.ms_marks = stof(remove_space(line.substr(59, 5)));
-                if(option ==0){
-                     if(s_count==0)
-                        {
-                            for(int s = 0; s < 80; s++) {
-                                cout << "-";
-                            }
-                            cout<<endl;
-                            cout << setw(29) << left << "             Name" 
-                            << setw(15) << left << "Roll Number" 
-                            << setw(20) << left << "Class-Test 1 marks" 
-                            << setw(10) << left << "Mid-Sem marks" 
-                            << endl;
-                            for(int s = 0; s < 80; s++) {
-                                cout << "-";
-                            }
-                            cout<<endl;
-                        }
-                        s_count++;
-                    if(toLowerCase(stud.name).compare(toLowerCase(input_string))==0)
-                    {
-                        int name_len = stud.name.length(); // length of the name
-                        int name_pad = (30 - name_len) / 2; 
-                        cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
-                        << setw(name_pad) << setfill(' ') << "" 
-                        <<  setw(15) << setfill(' ') << left <<stud.roll 
-                        << setw(8) << setfill(' ') << right << stud.ct_marks 
-                        << setw(8) << setfill(' ') << ""
-                        <<setw(10) << setfill(' ') << right << stud.ms_marks 
-                        << setw(7) << setfill(' ') << "" 
-                        << endl;
-                        for(int s = 0; s < 80; s++) {
-                                cout << "-";
-                            }
-                        cout<<endl;
-                        flag=1;
-                        break;
-                    }
-                }
-                if(option==1){
-                    int k=0;
-                    while(1)
-                    {
-                        if(replace==0) q = clock_mgr.read_page(f2, k);
-                        else if (replace==1) q = lru_mgr.read_page(f2, k);
-                        else q = clock_mgr.read_page(f2, k);
-                        if (!q) {
-                            break;
-                        }
 
-                        string q_data =  reinterpret_cast<char *>(q->disk_block);
-                        stringstream ss(q_data);
-                        string q_line;
-
-                        int q_num_rows = 0;
-                        while (getline(ss, q_line)) {
-                            if (!q_line.empty()) {
-                                q_num_rows++;
+        int k=0;
+        if(option==0)
+        {
+             while (getline(ssp, line)) {
+                //cout<<"\tinner p"<<i<<endl;
+                if (!line.empty()) {
+                    //cout<<"yes1\n";
+                    if(line.size()!=63)continue;
+                    stud.name = remove_space(line.substr(22,30));
+                    
+                    stud.roll = line.substr(8, 9);
+                    stud.ct_marks = stof(remove_space(line.substr(51, 7)));
+                    stud.ms_marks = stof(remove_space(line.substr(59, 5)));
+                    if(option == 0){
+                        //cout<<"yes\n";
+                        if(s_count==0)
+                            {
+                                for(int s = 0; s < 80; s++) {
+                                    cout << "-";
+                                }
+                                cout<<endl;
+                                cout << setw(29) << left << "             Name" 
+                                << setw(15) << left << "Roll Number" 
+                                << setw(20) << left << "Class-Test 1 marks" 
+                                << setw(10) << left << "Mid-Sem marks" 
+                                << endl;
+                                for(int s = 0; s < 80; s++) {
+                                    cout << "-";
+                                }
+                                cout<<endl;
                             }
-                        }
-
-                        ss.clear();
-                        ss.seekg(0, ios::beg);
-
-                        Student_n q_stud;
-                        if(j_count==0)
-                        {
-                            for(int s = 0; s < 120; s++) {
-                                cout << "-";
-                            }
-                            cout<<endl;
-                            cout << setw(34) << left << "                Name" 
-                            << setw(15) << left << "Roll Number" 
-                            << setw(20) << left << "Networks CT-1" 
-                            << setw(10) << left << "Networks Mid-Sem"
-                            << setw(20) << left << "  DBMS CT-1" 
-                            << setw(10) << left << "DBMS Mid-Sem" 
-                            << endl;
-                            for(int s = 0; s < 120; s++) {
-                                cout << "-";
-                            }
-                            cout<<endl;
-                        }
-                        j_count++;
-                        while (getline(ss, q_line)) {
-                            if (!q_line.empty()) {
-                                q_stud.roll = q_line.substr(4, 9);
-                                q_stud.ms_marks = stof(remove_space(q_line.substr(16, 5)));
-                                q_stud.ct_marks = stof(remove_space(q_line.substr(25, 4)));
-                                if(q_stud.roll.compare(stud.roll)==0)
-                                {
-                                    cout<<"\n";
-                                    int name_len = stud.name.length(); // length of the name
-                                    int name_pad = (35 - name_len) / 2; 
-                                    cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
-                                    << setw(name_pad) << setfill(' ') << "" 
-                                    <<  setw(15) << setfill(' ') << left <<stud.roll 
-                                    << setw(8) << setfill(' ') << right << q_stud.ct_marks 
-                                    << setw(8) << setfill(' ') << ""
-                                    <<setw(10) << setfill(' ') << right << q_stud.ms_marks 
-                                    << setw(7) << setfill(' ') << ""
-                                    << setw(8) << setfill(' ') << right << stud.ct_marks 
-                                    << setw(8) << setfill(' ') << ""
-                                    <<setw(10) << setfill(' ') << right << stud.ms_marks 
-                                    << setw(7) << setfill(' ') << "" 
-                                    << endl;
-                                    for(int s = 0; s < 120; s++) {
+                            s_count++;
+                       
+                            if(toLowerCase(stud.name).compare(toLowerCase(input_string))==0)
+                            {
+                                if(option==0)select_flag=1;
+                                int name_len = stud.name.length(); // length of the name
+                                int name_pad = (30 - name_len) / 2; 
+                                cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
+                                << setw(name_pad) << setfill(' ') << "" 
+                                <<  setw(15) << setfill(' ') << left <<stud.roll 
+                                << setw(8) << setfill(' ') << right << stud.ct_marks 
+                                << setw(8) << setfill(' ') << ""
+                                <<setw(10) << setfill(' ') << right << stud.ms_marks 
+                                << setw(7) << setfill(' ') << "" 
+                                << endl;
+                                for(int s = 0; s < 80; s++) {
                                         cout << "-";
                                     }
-                                    cout<<endl;
-                                    flag=1;
-                                }
-                                else{
-                                    continue;
-                                }
-                            
+                                cout<<endl;
+                                flag=1;
+                                break;
                             }
-                        }
-                        if(replace == 0)clock_mgr.unpin_page(q);
-                        else if(replace == 1)lru_mgr.unpin_page(q);
-                        else clock_mgr.unpin_page(q);
-                        k++;
                     }
                 }
             }
         }
+        else{
+            while(1)
+        {
+            
+            if(replace==0) q = clock_mgr.read_page(f2, k);
+            else if (replace==1) q = lru_mgr.read_page(f2, k);
+            else q = mru_mgr.read_page(f2, k);
+            if (!q) {
+                break;
+            }
+
+            string q_data =  reinterpret_cast<char *>(q->disk_block);
+            stringstream ss(q_data);
+            string q_line;
+
+            int q_num_rows = 0;
+            while (getline(ss, q_line)) {
+                if (!q_line.empty()) {
+                    q_num_rows++;
+                }
+            }
+
+            ss.clear();
+            ss.seekg(0, ios::beg);
+
+            Student_n q_stud;
+            if(option==1){
+                if(j_count==0)
+                {
+                    for(int s = 0; s < 120; s++) {
+                        cout << "-";
+                    }
+                    cout<<endl;
+                    cout << setw(34) << left << "                Name" 
+                    << setw(15) << left << "Roll Number" 
+                    << setw(20) << left << "Networks CT-1" 
+                    << setw(10) << left << "Networks Mid-Sem"
+                    << setw(20) << left << "  DBMS CT-1" 
+                    << setw(10) << left << "DBMS Mid-Sem" 
+                    << endl;
+                    for(int s = 0; s < 120; s++) {
+                        cout << "-";
+                    }
+                    cout<<endl;
+                }
+            }
+            j_count++;
+                        
+            while (getline(ssp, line)) {
+                //cout<<"\tinner p"<<i<<endl;
+                if (!line.empty()) {
+                    //cout<<"yes1\n";
+                    if(line.size()!=63)continue;
+                    stud.name = remove_space(line.substr(22,30));
+                    
+                    stud.roll = line.substr(8, 9);
+                    stud.ct_marks = stof(remove_space(line.substr(51, 7)));
+                    stud.ms_marks = stof(remove_space(line.substr(59, 5)));
+                    
+                    if(option==1){
+                        while (getline(ss, q_line)) {
+                                //cout<<"\t\tinner q"<<k<<endl;
+                                if (!q_line.empty()) {
+                                    q_stud.roll = q_line.substr(4, 9);
+                                    q_stud.ms_marks = stof(remove_space(q_line.substr(16, 5)));
+                                    q_stud.ct_marks = stof(remove_space(q_line.substr(25, 4)));
+                                    if(q_stud.roll.compare(stud.roll)==0)
+                                    {
+                                        cout<<"\n";
+                                        int name_len = stud.name.length(); // length of the name
+                                        int name_pad = (35 - name_len) / 2; 
+                                        cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
+                                        << setw(name_pad) << setfill(' ') << "" 
+                                        <<  setw(15) << setfill(' ') << left <<stud.roll 
+                                        << setw(8) << setfill(' ') << right << q_stud.ct_marks 
+                                        << setw(8) << setfill(' ') << ""
+                                        <<setw(10) << setfill(' ') << right << q_stud.ms_marks 
+                                        << setw(7) << setfill(' ') << ""
+                                        << setw(8) << setfill(' ') << right << stud.ct_marks 
+                                        << setw(8) << setfill(' ') << ""
+                                        <<setw(10) << setfill(' ') << right << stud.ms_marks 
+                                        << setw(7) << setfill(' ') << "" 
+                                        << endl;
+                                        for(int s = 0; s < 120; s++) {
+                                            cout << "-";
+                                        }
+                                        cout<<endl;
+                                        flag=1;
+                                    }
+                                    else{
+                                        continue;
+                                    }
+                                
+                                }
+                                
+                            }
+                            ss.clear();
+                            ss.seekg(0, ios::beg);
+                            
+                        }
+                    }
+                }
+                 if(select_flag==1)break;
+                ssp.clear();
+                ssp.seekg(0, ios::beg);
+            if(replace == 0)clock_mgr.unpin_page(q);
+            else if(replace == 1)lru_mgr.unpin_page(q);
+            else mru_mgr.unpin_page(q);
+            k++;
+        }
+        }
         if(replace==0)clock_mgr.unpin_page(p);
         else if(replace==1)lru_mgr.unpin_page(p);
-        else clock_mgr.unpin_page(p);
+        else mru_mgr.unpin_page(p);
 
         i++;
     }
