@@ -46,7 +46,7 @@ int main() {
     cin>>replace;
     cout << "\nWhich query you want to run: Select (0) or Join (1): ";
     cin>>option;
-    string file1="b.txt", file2="a.txt";
+    string file1="dbms.txt", file2="networks.txt";
     FILE *f1, *f2;
     Page *p, *q;
     int select_flag;
