@@ -8,7 +8,7 @@
 #include <list>
 using namespace std;
 
-#define PAGE_SIZE 1024
+#define PAGE_SIZE 512
 
 class Page;
 
@@ -22,6 +22,7 @@ struct hash_struct{
 
 class clock_buffer_manager{
 	private:
+		FILE *log_ptr;
 		int clock_hand;
 		unsigned int num_bufs;
 		int buf_cnt;
@@ -38,6 +39,7 @@ class clock_buffer_manager{
 
 class lru_buffer_manager{
 	private:
+		FILE *log_ptr;
 		unsigned int num_bufs;
 		int buf_cnt;
 		list <Page*> buf_pool;
@@ -46,6 +48,21 @@ class lru_buffer_manager{
 		int accesses, disk_reads;
 		lru_buffer_manager(unsigned int n);
 		~lru_buffer_manager();
+		Page *read_page(FILE *f,int page_number);
+		void unpin_page(Page* p);
+};
+
+class mru_buffer_manager{
+	private:
+		FILE *log_ptr;
+		unsigned int num_bufs;
+		int buf_cnt;
+		list <Page*> buf_pool;
+		unordered_map <pair<FILE*,int>,list<Page*>::iterator,hash_struct> buf_map;
+	public:
+		int accesses, disk_reads;
+		mru_buffer_manager(unsigned int n);
+		~mru_buffer_manager();
 		Page *read_page(FILE *f,int page_number);
 		void unpin_page(Page* p);
 };
@@ -62,6 +79,7 @@ class Page{
 		void *disk_block;
 		friend class clock_buffer_manager;
 		friend class lru_buffer_manager;
+		friend class mru_buffer_manager;
 };
 
 #endif
