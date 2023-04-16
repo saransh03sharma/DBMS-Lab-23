@@ -73,7 +73,7 @@ Page *clock_buffer_manager::read_page(FILE *f,int page_number){
 		buf_pool[idx].fptr = f;
 		buf_pool[idx].page_num = page_number;
 		buf_cnt++;
-		fprintf(log_ptr,"Could not find page in buffer pool but the page has free space. Read page no.: %d from for FILE: %p into buffer pool at index %d\n",page_number,f,idx);
+		fprintf(log_ptr,"Could not find page in buffer pool but the pool has free space. Read page no.: %d from for FILE: %p into buffer pool at index %d\n",page_number,f,idx);
 	}
 	else{
 		idx = replace_page(f,page_number);
