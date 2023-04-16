@@ -41,6 +41,7 @@ string toLowerCase(string str) {
 
 int main() {
     int option, flag = 0, replace,s_count=0, j_count=0;
+    std::ofstream outfile("output.txt");
     cout << "Which replacement technique you want to run: Clock (0) or LRU (1) or MRU (2): ";
     cin>>replace;
     cout << "\nWhich query you want to run: Select (0) or Join (1): ";
@@ -208,10 +209,10 @@ int main() {
                 if(j_count==0)
                 {
                     for(int s = 0; s < 120; s++) {
-                        cout << "-";
+                        outfile << "-";
                     }
-                    cout<<endl;
-                    cout << setw(34) << left << "                Name" 
+                    outfile<<endl;
+                    outfile << setw(34) << left << "                Name" 
                     << setw(15) << left << "Roll Number" 
                     << setw(20) << left << "Networks CT-1" 
                     << setw(10) << left << "Networks Mid-Sem"
@@ -219,9 +220,9 @@ int main() {
                     << setw(10) << left << "DBMS Mid-Sem" 
                     << endl;
                     for(int s = 0; s < 120; s++) {
-                        cout << "-";
+                        outfile << "-";
                     }
-                    cout<<endl;
+                    outfile<<endl;
                 }
             }
             j_count++;
@@ -246,10 +247,10 @@ int main() {
                                     q_stud.ct_marks = stof(remove_space(q_line.substr(25, 4)));
                                     if(q_stud.roll.compare(stud.roll)==0)
                                     {
-                                        cout<<"\n";
+                                        outfile<<"\n";
                                         int name_len = stud.name.length(); // length of the name
                                         int name_pad = (35 - name_len) / 2; 
-                                        cout <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
+                                        outfile <<setw(name_pad + name_len) << setfill(' ') << right << stud.name 
                                         << setw(name_pad) << setfill(' ') << "" 
                                         <<  setw(15) << setfill(' ') << left <<stud.roll 
                                         << setw(8) << setfill(' ') << right << q_stud.ct_marks 
@@ -262,9 +263,9 @@ int main() {
                                         << setw(7) << setfill(' ') << "" 
                                         << endl;
                                         for(int s = 0; s < 120; s++) {
-                                            cout << "-";
+                                            outfile << "-";
                                         }
-                                        cout<<endl;
+                                        outfile<<endl;
                                         flag=1;
                                     }
                                     else{
@@ -318,7 +319,11 @@ int main() {
     }
 
     fclose(f1);
-    if(option==1)fclose(f2);
+    if(option==1)
+    {   
+        cout<<"Output written to output.txt\n";
+        fclose(f2);
+    }
 
     if(replace==0)
     {
@@ -335,6 +340,6 @@ int main() {
         cout<<"Number of Buffer hits: "<< mru_mgr.accesses<<endl;
         cout<<"Number of Disk I/O i.e. buffer miss: "<< mru_mgr.disk_reads<<endl;
     }
-
+    outfile.close();
     return 0;
 }
